@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-roboto: "Roboto", ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+    --font-anek_bangla: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --tertiary: 193 50% 24%;
+    --tertiary-foreground: 192 33% 94%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --success: 160 56% 18%;
+    --success-foreground: 160 43% 95%;
+
+    --warning: 24 53% 26%;
+    --warning-foreground: 23 100% 96%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 193 50% 24%;
+    --input: 193 50% 24%;
+    --ring: 193 50% 24%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --roboto: "Roboto", ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+    --anek_bangla: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --tertiary: 193 50% 24%;
+    --tertiary-foreground: 192 33% 94%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 160 56% 18%;
+    --success-foreground: 160 43% 95%;
+
+    --warning: 24 53% 26%;
+    --warning-foreground: 23 100% 96%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 193 50% 24%;
+    --input: 193 50% 24%;
+    --ring: 193 50% 24%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-roboto;
+  }
+
+  /* CUSTOMIZE SCROLLBAR */
+  ::-webkit-scrollbar {
+    @apply w-1;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-foreground/20 rounded-sm hover:bg-foreground/50 transition-colors duration-200;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  /* THIS WILL REMOVE THE UPPER AND LOWER ARROW ON THE NUMBER INPUT */
+  /* FOR WEBKIT (CHROME, SAFARI) */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* FOR FIREFOX */
+  input::-moz-number-spin-inner,
+  input::-moz-number-spin-outer {
+    /* OVERRIDE FIREFOX'S DEFAULT STYLING FOR NUMBER INPUTS */
+    -moz-appearance: textfield !important;
+    margin: 0;
+  }
+  /* FOR WEBKIT (CHROME, SAFARI AND FIREFOX) */
+  input {
+    /* FOR WEBKIT */
+    -webkit-appearance: textfield;
+    /* FOR FIREFOX */
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+  }
+
+  /* HIDE SCROLLBAR FRO CHROME, SAFARI AND OPERA */
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* HIDE SCROLLBAR FOR IE, EDGE AND FIREFOX */
+  .scroll-hidden {
+    -ms-overflow-style: none; /* IE AND EDGE */
+    scrollbar-width: none; /* FIREFOX */
+  }
+}
+
+/* CUSTOMIZE TAILWIND CALSSES */
+@layer utilities {
+  /* CONTAINER CLASSES */
+
+  /* ICON CLASSES */
+  .button-icon-size {
+    @apply h-[1.2rem] w-[1.2rem];
+  }
+
+  /* CUSTOM TOOLTIP */
+
+  .custom-tooltip-top {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:-top-10 delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 -top-7 scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-bottom {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:-top-10 delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 -top-7 scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-right {
+    @apply invisible group-hover:visible rounded-md absolute group-hover:left-[120%] delay-500 border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 left-[50%] scale-75 group-hover:scale-100;
+  }
+  .custom-tooltip-left {
+    @apply group-hover:visible invisible rounded-md absolute delay-500 group-hover:border group-hover:right-[120%]  bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100  scale-75 group-hover:scale-100 right-[50%];
+  }
+
+  /* HEADING AND PARAGRAPH CLASSES */
+  .heading-primary {
+    @apply text-[32px] font-[500] text-foreground leading-7 text-ellipsis;
+  }
+  .heading-secondary {
+    @apply text-[24px] font-[500] text-foreground leading-7 text-ellipsis;
+  }
+  .heading-tertiary {
+    @apply text-[20px] font-[400] text-foreground/90 leading-7 text-ellipsis;
+  }
+  .paragraph {
+    @apply text-[16px] font-[400] text-foreground/90 leading-7  max-w-none truncate;
+  }
+
+  /* USE FOR TESTING */
+  .test-border {
+    @apply border-[1px] border-red-500;
+  }
+  .test-breakpoint {
+    @apply bg-red-300 sm:bg-purple-500 md:bg-green-500 lg:bg-amber-400 xl:bg-blue-500 2xl:bg-pink-500;
+  }
+}
