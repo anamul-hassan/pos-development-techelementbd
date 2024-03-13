@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LuLayoutGrid } from "react-icons/lu";
+import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
 
 interface IDashboardUpperNavProps {
   sidebarOpen: boolean;
@@ -46,7 +54,7 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
           </li>
         </ul>
 
-        <ul className="flex items-center max-w-full gap-x-2">
+        <ul className="hidden items-center max-w-full gap-x-2 md:flex">
           <li>
             <Link to="/">
               <Button variant="success" size="rounded">
@@ -83,6 +91,52 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
         {/* CUSTOMIZABLE BUTTON FOR LANGUAGE AND THEME */}
         <ul className="flex items-center justify-between gap-x-2">
           {/* BUTTON FOR NOTIFICATION */}
+          <li className="block md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <LuLayoutGrid className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link className="w-full" to="/">
+                    <Button className="w-full" variant="success" size="xs">
+                      Sell
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link className="w-full" to="/">
+                    <Button className="w-full" variant="warning" size="xs">
+                      Due
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link className="w-full" to="/">
+                    <Button className="w-full" variant="tertiary" size="xs">
+                      Customer
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link className="w-full" to="/pos_list">
+                    <Button className="w-full" size="xs">
+                      POS
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link className="w-full" to="/day_book_report">
+                    <Button className="w-full" size="xs">
+                      Day-book
+                    </Button>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </li>
           <li>
             <Popover>
               <PopoverTrigger asChild>
@@ -92,7 +146,7 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end">
-                Place content for the popover here.
+                {CLIENT_DETAILS.progressMessage}
               </PopoverContent>
             </Popover>
           </li>

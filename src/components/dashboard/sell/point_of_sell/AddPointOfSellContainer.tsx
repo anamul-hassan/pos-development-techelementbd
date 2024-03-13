@@ -35,7 +35,6 @@ import {
 import { useAppContext } from "@/context/hook/useAppContext";
 import POSProductDetails from "./POSProductDetails";
 import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
-import { useSearchSingleCustomerQuery } from "@/store/customer/customerApi";
 import { useGetAccountsQuery } from "@/store/account/accountApi";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -55,6 +54,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
+import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
+import { useGetCustomersQuery } from "@/store/customer/customerApi";
 
 interface IAddPointOfSellContainerProps {
   register: any;
@@ -101,7 +103,6 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
 
   // CLIENT ADD DIALOG STATE
   const [clientAddOpen, setClientAddOpen] = useState<boolean>(false);
-
   // STATE FOR POPOVER COMBOBOX
   const [productOpen, setProductOpen] = useState<boolean>(false);
   const [productValue, setProductValue] = useState<string>("");
@@ -149,8 +150,13 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
     useSearchSinglePurchaseQuery(productSearch) as any;
 
   // GET SINGLE CLIENT INFORMATION QUERY
-  const { data: clientData, isLoading: isClientLoading } =
-    useSearchSingleCustomerQuery(clientSearch);
+  const { data: clientData, isLoading: isClientLoading } = useGetCustomersQuery(
+    {
+      search: clientSearch,
+      page: 1,
+      size: 100000000,
+    }
+  );
 
   // GET ALL THE BANK ACCOUNT QUERY
   const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
@@ -404,7 +410,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                                       {singleProduct?.size}
                                     </span>
                                     <b className="uppercase ml-1 text-xs">
-                                      {singleProduct?.sellPrice}
+                                      {singleProduct?.sellPrice.toFixed(2)}
                                     </b>
                                   </li>
                                 </ul>
@@ -440,8 +446,8 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                       asChild
                       className={`w-full  ${
                         sidebarOpen
-                          ? "md:w-[140px] lg:w-[155px] xl:w-[210px]  2xl:!w-[280px] truncate"
-                          : "md:w-[250px] lg:w-[200px] xl:w-[270px] 2xl:!w-[321px]"
+                          ? "md:w-[140px] lg:w-[151px] xl:w-[206px]  2xl:!w-[272px] truncate"
+                          : "md:w-[250px] lg:w-[196px] xl:w-[266px] 2xl:!w-[313px]"
                       }`}
                     >
                       <Button
@@ -451,9 +457,12 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                         className="w-full justify-between"
                       >
                         {selectedClient?.firstName
-                          ? selectedClient?.firstName +
-                            " " +
-                            selectedClient?.lastName
+                          ? capitalizeEveryWord(
+                              fullNameConverter(
+                                selectedClient?.firstName,
+                                selectedClient?.lastName
+                              )
+                            )
                           : search_client.placeholder[locale]}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0  opacity-50" />
                       </Button>
@@ -462,8 +471,8 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                       align="start"
                       className={`w-full  ${
                         sidebarOpen
-                          ? "md:w-[250px] lg:w-[155px] xl:w-[210px]  2xl:!w-[280px] truncate"
-                          : "md:w-[250px] lg:w-[200px] xl:w-[270px] 2xl:!w-[321px]"
+                          ? "md:w-[250px] lg:w-[151px] xl:w-[206px]  2xl:!w-[272px] truncate"
+                          : "md:w-[250px] lg:w-[196px] xl:w-[266px] 2xl:!w-[313px]"
                       }`}
                     >
                       <Command>
@@ -506,9 +515,12 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                                   )}
                                 />
                                 {singleClient?.firstName
-                                  ? singleClient?.firstName +
-                                    " " +
-                                    singleClient?.lastName
+                                  ? capitalizeEveryWord(
+                                      fullNameConverter(
+                                        singleClient?.firstName,
+                                        singleClient?.lastName
+                                      )
+                                    )
                                   : "Not found"}
                               </CommandItem>
                             )
@@ -537,6 +549,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                     <DialogContent>
                       {/* ADD NEW CLIENT FORM CONTAINER */}
                       <AddClientFormContainer
+                        setSelectedClient={setSelectedClient}
                         setClientAddOpen={setClientAddOpen}
                       />
                     </DialogContent>
@@ -831,10 +844,10 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                         labelFor="paying_method"
                         label={payment_method.label[locale]}
                         error=""
-                        className={`w-full ${
+                        className={`w-full  ${
                           sidebarOpen
-                            ? "lg:w-[90px] xl:w-[120px] truncate"
-                            : "lg:w-[130px] xl:w-full"
+                            ? "lg:w-[94px] xl:w-[128px] truncate"
+                            : "lg:w-[134px] xl:w-full"
                         }`}
                       >
                         <Select
@@ -861,7 +874,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                         >
                           <SelectTrigger
                             id="paying_method"
-                            className={`w-full focus:ring-0 ${
+                            className={`w-full p-5 focus:ring-0 ${
                               sidebarOpen
                                 ? "lg:w-[90px] xl:w-[120px] truncate"
                                 : "lg:w-[130px] xl:w-full"

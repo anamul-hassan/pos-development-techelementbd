@@ -22,7 +22,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import { LuPlus, LuTrash } from "react-icons/lu";
-import { useSearchSupplierQuery } from "@/store/supplier/supplierApi";
+
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import {
   AlertDialog,
@@ -45,6 +45,7 @@ import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import uniqueIdGenerator from "@/utils/helpers/uniqueIdGenerator";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
+import { useGetSuppliersQuery } from "@/store/supplier/supplierApi";
 
 interface IAddPurchaseContainerProps {
   setValue: any;
@@ -94,7 +95,11 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
 
   // GET ALL SUPPLIER LIST AND QUERY
   const { data: supplierData, isLoading: isSupplierLoading } =
-    useSearchSupplierQuery(supplierSearch) as any;
+    useGetSuppliersQuery({
+      search: supplierSearch,
+      page: 1,
+      size: 10000000,
+    }) as any;
   // GET ALL THE BANK ACCOUNT QUERY
   const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
     "All"
@@ -529,7 +534,6 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                     >
                       <Select
                         value={watch("purchaseStatus")}
-                        // defaultValue={"Received"}
                         onValueChange={(value: string) =>
                           setValue("purchaseStatus", value)
                         }

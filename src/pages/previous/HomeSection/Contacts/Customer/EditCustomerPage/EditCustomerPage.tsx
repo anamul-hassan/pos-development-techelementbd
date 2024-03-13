@@ -2,7 +2,7 @@ import DataLoader from "@/components/common/loader/DataLoader";
 import InputField from "@/components/previous/all/InputField";
 import { Option, Select } from "@/components/previous/all/Select";
 import { useToast } from "@/components/ui/use-toast";
-import { customerSchema } from "@/schemas/customer/customer_schema";
+import { addEditCustomerSchema } from "@/schemas/customer/customer_schema";
 import {
   useGetSingleCustomerQuery,
   useUpdateCustomerMutation,
@@ -28,7 +28,7 @@ const EditCustomerPage = () => {
     handleSubmit,
     formState: { errors },
     setValue: setValue,
-  } = useForm({ resolver: yupResolver(customerSchema) });
+  } = useForm({ resolver: yupResolver(addEditCustomerSchema) });
   const handleEditCustomer = async (data: any) => {
     try {
       if (!data.branchId) {

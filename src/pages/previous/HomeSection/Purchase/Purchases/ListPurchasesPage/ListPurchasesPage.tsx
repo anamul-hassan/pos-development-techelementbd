@@ -22,8 +22,6 @@ import {
 } from "@/store/purchase/purchaseApi";
 import { useGetBrandsQuery } from "@/store/brand/brandApi";
 import { useGetUnitsQuery } from "@/store/unit/unitApi";
-import { useGetSubCategoryQuery } from "@/store/sub_category/subCategoryApi";
-import { useGetAllProductCategoriesQuery } from "@/store/product_category/productCategoryApi";
 import DataLoader from "@/components/common/loader/DataLoader";
 import InputField from "@/components/previous/all/InputField";
 import Input from "@/components/previous/all/Input";
@@ -42,6 +40,8 @@ import {
 import Pagination from "@/components/previous/all/Pagination";
 import { useToast } from "@/components/ui/use-toast";
 import { actionManager } from "@/utils/helpers/actionManager";
+import { useGetProductSubCategoriesQuery } from "@/store/product_sub_category/productSubCategoryApi";
+import { useGetProductCategoriesQuery } from "@/store/product_category/productCategoryApi";
 
 const ListPurchasesPage = () => {
   const { toast } = useToast();
@@ -53,8 +53,14 @@ const ListPurchasesPage = () => {
   ) as any;
   const { data: brands } = useGetBrandsQuery(undefined) as any;
   const { data: Units } = useGetUnitsQuery(undefined) as any;
-  const { data: subCategorys } = useGetSubCategoryQuery(undefined) as any;
-  const { data: categorys } = useGetAllProductCategoriesQuery(undefined) as any;
+  const { data: subCategories } = useGetProductSubCategoriesQuery({
+    page: 1,
+    size: 100000000,
+  }) as any;
+  const { data: categories } = useGetProductCategoriesQuery({
+    page: 1,
+    size: 100000000,
+  }) as any;
   const [
     deletePurchase,
     {
@@ -80,12 +86,12 @@ const ListPurchasesPage = () => {
       (unit: any) =>
         unit?.id === purchase?.PurchaseProducts[0]?.products?.unitsId
     ); //subCategoryId //categoryId
-    const findSubCategory = subCategorys?.data?.find(
+    const findSubCategory = subCategories?.data?.find(
       (sbCategory: any) =>
         sbCategory?.id ===
         purchase?.PurchaseProducts[0]?.products?.subCategoryId
     );
-    const findCategory = categorys?.data?.find(
+    const findCategory = categories?.data?.find(
       (category: any) =>
         category?.id === purchase?.PurchaseProducts[0]?.products?.categoryId
     );

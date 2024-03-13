@@ -152,7 +152,7 @@ const SizeList = () => {
     // UPDATE VARIATION,
     if (isUpdateVariationSize) {
       toast({
-        title: "Color Update Message",
+        title: "Size Update Message",
         description: updated?.message,
       });
       reset();

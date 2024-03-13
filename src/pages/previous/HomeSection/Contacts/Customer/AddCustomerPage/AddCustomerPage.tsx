@@ -2,7 +2,7 @@ import DataLoader from "@/components/common/loader/DataLoader";
 import InputField from "@/components/previous/all/InputField";
 import { Option, Select } from "@/components/previous/all/Select";
 import { useToast } from "@/components/ui/use-toast";
-import { customerSchema } from "@/schemas/customer/customer_schema";
+import { addEditCustomerSchema } from "@/schemas/customer/customer_schema";
 import { useAddCustomerMutation } from "@/store/customer/customerApi";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -20,7 +20,7 @@ const AddCustomerPage: FC<AddCustomerPageProps> = () => {
     formState: { errors },
     setValue,
     reset,
-  } = useForm({ resolver: yupResolver(customerSchema) });
+  } = useForm({ resolver: yupResolver(addEditCustomerSchema) });
   // const { data: branchData } = useGetBranchQuery();
   const [addCustomer, { isLoading: isLoadingCustomer }] =
     useAddCustomerMutation() as any;

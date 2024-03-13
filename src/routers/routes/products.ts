@@ -1,37 +1,25 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import AddProductPage from "@/pages/previous/HomeSection/Product/Product/AddProductPage/AddProductPage";
-import ListProductsPage from "@/pages/previous/HomeSection/Product/Product/ListProductsPage/ListProductsPage";
 import BrandPage from "@/pages/previous/HomeSection/Product/BrandPage/BrandPage";
-import CategoryPage from "@/pages/previous/HomeSection/Product/CategoryPage/CategoryPage";
-import SubCategoryPage from "@/pages/previous/HomeSection/Product/SubCategoryPage/SubCategoryPage";
 import UnitPage from "@/pages/previous/HomeSection/Product/UnitPage/UnitPage";
 import WarrantyPage from "@/pages/previous/HomeSection/Product/WarrantyPage/WarrantyPage";
 import QuotationPage from "@/pages/previous/HomeSection/Product/QuotationPage/QuotationPage";
 import ImportProductsPage from "@/pages/previous/HomeSection/Product/ImportProductsPage/ImportProductsPage";
 import ImportOpeningStockPage from "@/pages/previous/HomeSection/Product/ImportOpeningStockPage/ImportOpeningStockPage";
 import SellingPriceGroupPage from "@/pages/previous/HomeSection/Product/SellingPriceGroupPage/SellingPriceGroupPage";
-import EditProductPage from "@/pages/previous/HomeSection/Product/Product/EditProductPage/EditProductPage";
-import CategoryEdit from "@/pages/previous/HomeSection/Product/CategoryPage/CategoryEdit";
-import SubCategoryEdit from "@/pages/previous/HomeSection/Product/SubCategoryPage/SubCategoryEdit";
 import WarrantyEdit from "@/pages/previous/HomeSection/Product/WarrantyPage/WarrantyEdit";
 import BrandEdit from "@/pages/previous/HomeSection/Product/BrandPage/BrandEdit";
 import UnitEdit from "@/pages/previous/HomeSection/Product/UnitPage/UnitEdit";
 import PrintLabel from "@/pages/dashboard/product/PrintLabel";
 import Variation from "@/pages/dashboard/product/Variation";
+import ProductList from "@/pages/dashboard/product/ProductList";
+import ProductSubCategoryList from "@/pages/dashboard/product/ProductSubCategoryList";
+import ProductCategoryList from "@/pages/dashboard/product/ProductCategoryList";
 
 export const products_routes: IRouteProps[] = [
   {
-    path: "add_product",
-    element: React.createElement(AddProductPage),
-  },
-  {
     path: "products_list",
-    element: React.createElement(ListProductsPage),
-  },
-  {
-    path: "edit_product/:id",
-    element: React.createElement(EditProductPage),
+    element: React.createElement(ProductList),
   },
   {
     path: "brand_list",
@@ -43,20 +31,14 @@ export const products_routes: IRouteProps[] = [
   },
   {
     path: "category_list",
-    element: React.createElement(CategoryPage),
+    element: React.createElement(ProductCategoryList),
   },
-  {
-    path: "edit_category/:id",
-    element: React.createElement(CategoryEdit),
-  },
+
   {
     path: "sub_category_list",
-    element: React.createElement(SubCategoryPage),
+    element: React.createElement(ProductSubCategoryList),
   },
-  {
-    path: "edit_sub_category/:id",
-    element: React.createElement(SubCategoryEdit),
-  },
+
   {
     path: "unit_list",
     element: React.createElement(UnitPage),

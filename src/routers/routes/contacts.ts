@@ -1,35 +1,26 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import AddCustomerPage from "@/pages/previous/HomeSection/Contacts/Customer/AddCustomerPage/AddCustomerPage";
-import ListCustomersPage from "@/pages/previous/HomeSection/Contacts/Customer/ListCustomersPage/ListCustomersPage";
-import EditCustomerPage from "@/pages/previous/HomeSection/Contacts/Customer/EditCustomerPage/EditCustomerPage";
-import AddSupplierPage from "@/pages/previous/HomeSection/Contacts/Supplier/AddSupplierPage/AddSupplierPage";
-import ListSuppliersPage from "@/pages/previous/HomeSection/Contacts/Supplier/ListSuppliersPage/ListSuppliersPage";
-import EditSupplierPage from "@/pages/previous/HomeSection/Contacts/Supplier/EditSupplierPage/EditSupplierPage";
+import CustomerList from "../../pages/dashboard/contacts/customer/CustomerList";
+import SupplierList from "../../pages/dashboard/contacts/supplier/SupplierList";
+import EditCustomer from "../../pages/dashboard/contacts/customer/EditCustomer";
+import AddCustomer from "../../pages/dashboard/contacts/customer/AddCustomer";
 
 export const contacts_routes: IRouteProps[] = [
   {
     path: "add_customer",
-    element: React.createElement(AddCustomerPage),
+    element: React.createElement(AddCustomer),
   },
   {
     path: "customers_list",
-    element: React.createElement(ListCustomersPage),
+    element: React.createElement(CustomerList),
   },
   {
     path: "edit_customer/:id",
-    element: React.createElement(EditCustomerPage),
+    element: React.createElement(EditCustomer),
   },
-  {
-    path: "add_supplier",
-    element: React.createElement(AddSupplierPage),
-  },
+
   {
     path: "supplier_list",
-    element: React.createElement(ListSuppliersPage),
-  },
-  {
-    path: "edit_supplier/:id",
-    element: React.createElement(EditSupplierPage),
+    element: React.createElement(SupplierList),
   },
 ];

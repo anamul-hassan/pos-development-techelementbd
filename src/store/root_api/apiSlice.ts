@@ -26,7 +26,7 @@ export const apiSlice = createApi({
     "expense-sub-category",
     "account",
     "product-category",
-    "sub-category",
+    "product-sub-category",
     "unit",
     "brand",
     "pos",
@@ -39,5 +39,6 @@ export const apiSlice = createApi({
     "customer",
     "supplier",
     "variation",
+    "file",
   ],
 });

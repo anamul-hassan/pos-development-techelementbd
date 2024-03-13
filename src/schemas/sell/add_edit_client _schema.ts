@@ -3,10 +3,8 @@ import { englishOnly, phoneEng } from "../common/commonSchemas";
 // ADD NEW CLIENT SCHEMA
 
 export const addAndEditClientSchema = yup.object().shape({
-  name: yup
-    .string()
-    .max(100, "Client name limit 100 characters")
-    .required("Client name is required"),
+  name: englishOnly.max(100, "Customer name limit 100 characters").optional(),
   phone: phoneEng.required("Phone number is required"),
-  membershipId: englishOnly.max(100, "Membership ID limit 100 characters"),
+  memberShipId: englishOnly.max(100, "Membership number limit 100 characters"),
+  branchId: yup.number().required("Branch is required"),
 });

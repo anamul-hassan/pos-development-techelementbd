@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import DataLoader from "@/components/common/loader/DataLoader";
 import Pagination from "@/components/previous/all/Pagination";
-import { useSearchCustomerQuery } from "@/store/customer/customerApi";
 import {
   useDeleteUserMutation,
   useGetUserQuery,
@@ -126,13 +125,6 @@ const UserList = () => {
   ) as any;
 
   const [userList, setUserList] = useState([]);
-
-  const { data: searchUser, isLoading: isUserSearching } =
-    useSearchCustomerQuery({
-      // search: userSearch,
-      size: 5,
-      page: currentPage,
-    }) as any;
 
   useEffect(() => {
     if (userData?.data?.length > 0) {
@@ -296,11 +288,7 @@ const UserList = () => {
                       placeholder="Write user name for searching"
                     />
                   </div>
-                  {isUserSearching && (
-                    <div className="my-5 flex justify-center opacity-90">
-                      <ButtonLoader />
-                    </div>
-                  )}
+
                   {/* <CommandGroup className="max-h-52 overflow-y-auto">
                   {supplierList?.map((singleSupplier: any) => (
                     <CommandItem
@@ -343,22 +331,6 @@ const UserList = () => {
       {/* USER TABLE CONTAINER */}
       <h4 className="py-1 mt-4 mb-1 heading-secondary">User Information</h4>
       <DataTable columns={columns} data={userList} />
-
-      <div className="">
-        {/* table area */}
-        {userData?.meta?.total >= 5 && (
-          <div className="mt-5 mr-8 flex justify-end">
-            <Pagination
-              currPage={currentPage}
-              setCurrPage={setCurrentPage}
-              isLoading={isLoadingUserGet}
-              totalItems={searchUser?.meta?.total}
-              totalPage={searchUser?.meta?.totalPage}
-              pageLength={searchUser?.meta?.size}
-            />
-          </div>
-        )}
-      </div>
     </section>
   );
 };

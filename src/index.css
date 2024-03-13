@@ -203,3 +203,13 @@
     @apply bg-red-300 sm:bg-purple-500 md:bg-green-500 lg:bg-amber-400 xl:bg-blue-500 2xl:bg-pink-500;
   }
 }
+
+/* IMAGE LAZY LOAD CLASSES */
+.LazyLoad {
+  opacity: 0;
+  transition: all 1s ease-in-out;
+}
+
+.is-visible {
+  opacity: 1;
+}

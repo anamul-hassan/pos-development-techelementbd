@@ -13,31 +13,23 @@ const productCategoryApi = apiSlice.injectEndpoints({
     }),
 
     // GET ALL PRODUCT CATEGORIES
-    getAllProductCategories: builder.query({
-      query: () => ({
-        url: "/product-category/get-category",
+    getProductCategories: builder.query({
+      query: ({ search, page, size }) => ({
+        url: `/product-category/get-category?search=${search}&page=${page}&size=${size}`,
       }),
       providesTags: ["product-category"],
     }),
 
-    //  GET CATEGORY BY SEARCH
-    getProductBySearch: builder.query({
-      query: (search) => ({
-        url: `/product-category/get-category?search=${search}`,
-      }),
-      providesTags: ["product-category"],
-    }),
-
-    // GET SINGLE CATEGORY BY ID
-    getSingleCategory: builder.query({
+    // GET SINGLE PRODUCT CATEGORY
+    getSingleProductCategory: builder.query({
       query: (id) => ({
         url: `/product-category/get-category/${id}`,
       }),
       providesTags: ["product-category"],
     }),
 
-    // UPDATE CATEGORY
-    updateCategory: builder.mutation({
+    // UPDATE PRODUCT CATEGORY
+    updateProductCategory: builder.mutation({
       query: ({ id, data }) => ({
         url: `/product-category/update-category/${id}`,
         method: "PUT",
@@ -46,8 +38,8 @@ const productCategoryApi = apiSlice.injectEndpoints({
       invalidatesTags: ["product-category"],
     }),
 
-    // DELETE CATEGORY
-    deleteCategory: builder.mutation({
+    // DELETE PRODUCT CATEGORY
+    deleteProductCategory: builder.mutation({
       query: (id) => ({
         url: `/product-category/delete-category/${id}`,
         method: "DELETE",
@@ -59,9 +51,8 @@ const productCategoryApi = apiSlice.injectEndpoints({
 
 export const {
   useAddProductCategoryMutation,
-  useGetAllProductCategoriesQuery,
-  useGetProductBySearchQuery,
-  useGetSingleCategoryQuery,
-  useUpdateCategoryMutation,
-  useDeleteCategoryMutation,
+  useDeleteProductCategoryMutation,
+  useGetProductCategoriesQuery,
+  useGetSingleProductCategoryQuery,
+  useUpdateProductCategoryMutation,
 } = productCategoryApi;

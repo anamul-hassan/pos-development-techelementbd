@@ -224,7 +224,7 @@ const PrintLabel = () => {
                           <ul>
                             <li>{singleProduct?.productName}</li>
                             <li className="flex">
-                              <b>{singleProduct?.price}tk, </b>
+                              <b>{singleProduct?.price?.toFixed()}</b>
                               <span className="uppercase ml-1">
                                 {singleProduct?.sku}
                               </span>

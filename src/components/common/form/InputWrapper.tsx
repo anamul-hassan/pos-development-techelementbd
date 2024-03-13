@@ -17,7 +17,7 @@ const InputWrapper: FC<IInputWrapperProps> = ({
   className,
 }) => {
   return (
-    <div className={cn("w-full flex flex-col", className)}>
+    <div className={cn("w-full flex flex-col p-1", className)}>
       {label && (
         <label
           className="font-roboto text-sm max-w-none truncate inline-block leading-8"

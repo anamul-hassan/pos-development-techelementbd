@@ -2,7 +2,7 @@ import DataLoader from "@/components/common/loader/DataLoader";
 import InputField from "@/components/previous/all/InputField";
 import { Option, Select } from "@/components/previous/all/Select";
 import { useToast } from "@/components/ui/use-toast";
-import { supplierSchema } from "@/schemas/supplier/supplier_schema";
+import { addEditSupplierSchema } from "@/schemas/supplier/supplier_schema";
 import { useAddSupplierMutation } from "@/store/supplier/supplierApi";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,7 +18,7 @@ const AddSupplierPage = () => {
     formState: { errors },
     setValue: setValue,
     reset: reset,
-  } = useForm({ resolver: yupResolver(supplierSchema) });
+  } = useForm({ resolver: yupResolver(addEditSupplierSchema) });
   // const { data: branchData } = useGetBranchQuery();
   const [addSupplier, { isLoading: loadingSupplier }] = useAddSupplierMutation(
     {}

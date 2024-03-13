@@ -17,7 +17,8 @@ export const englishOnly = Yup.string().test(
   "Please write in English",
   (value: any) => {
     // CHECK IF THE STRING CONTAINS ONLY ENGLISH ALPHABET AND SPACE
-    const englishAlphabetRegex = /^[a-zA-Z0-9\s]+$/;
+    const englishAlphabetRegex =
+      /^[a-zA-Z0-9\s!@#$%^&*()-_=+`~[\]{}\\|;:'",<.>/?]+$/;
     return !value || englishAlphabetRegex.test(value);
   }
 );
@@ -46,10 +47,13 @@ export const englishNumPositiveOnly = Yup.number()
   .test("is-negative", "Must be a positive number", (value: any) => value > 0);
 
 // PHONE NUMBER ONLY ENGLISH
-export const phoneEng = Yup.string().matches(
-  /^\d{10,15}$/,
-  "Invalid phone number"
-);
+export const phoneEng = Yup.string()
+  .matches(/^\d{10,15}$/, "Invalid phone number")
+  .transform((value, originalValue) => {
+    if (!originalValue) return undefined;
+    return value;
+  })
+  .nullable();
 
 // ADDRESS SCHEMA
 export const addressInfoSchema = Yup.object().shape({

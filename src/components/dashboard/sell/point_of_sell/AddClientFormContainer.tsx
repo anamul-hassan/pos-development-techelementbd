@@ -6,30 +6,51 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { addAndEditClientSchema } from "@/schemas/sell/add_edit_client _schema";
+import { useGetBranchesQuery } from "@/store/branch/branchApi";
 import { useAddCustomerMutation } from "@/store/customer/customerApi";
+import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AlertCircle } from "lucide-react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { actionManager } from "@/utils/helpers/actionManager";
+import { ADD_EDIT_CLIENT_FORM } from "@/utils/constants/customer/add_customer_form";
+import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 
 interface IAddClientFormData {
-  name: string;
+  name?: string;
   phone: string;
-  membershipId?: string | undefined;
+  memberShipId?: string | undefined;
+  branchId: number;
 }
 
 interface IAddClientFormContainerProps {
   setClientAddOpen: (clientAddOpen: boolean) => void;
+  setSelectedClient: any;
 }
 
 const AddClientFormContainer: FC<IAddClientFormContainerProps> = ({
   setClientAddOpen,
+  setSelectedClient,
 }) => {
+  const locale = "en";
   // BRANCH ID
   const { branchId } = shareBranchAndUserInfo();
+  const [branch, setBranch] = useState<number>(branchId);
   // USE TOAST HOOK
   const { toast } = useToast();
+
+  // BRANCH LIST QUERY
+  const { data: branchList, isLoading: branchLoading } =
+    useGetBranchesQuery(undefined);
 
   // ADD NEW CUSTOMER MUTATION
   const [
@@ -44,8 +65,8 @@ const AddClientFormContainer: FC<IAddClientFormContainerProps> = ({
   // FORM HOOK TO ADD NEW CLIENT
   const {
     register,
-    // setValue,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<IAddClientFormData>({
@@ -53,46 +74,44 @@ const AddClientFormContainer: FC<IAddClientFormContainerProps> = ({
   });
 
   const onSubmit = handleSubmit(async (data: any) => {
-    let newClientData;
+    const updateData = removeEmptyStringOrZeroProperties(data, [
+      "name",
+      "memberShipId",
+    ]) as any;
 
     // CHECK MEMBERSHIP ID AVAILABLE OR NOT
-    if (data?.membershipId) {
-      newClientData = {
-        firstName: data?.name?.split(" ")[0],
-        lastName: data?.name?.split(" ")?.slice(1).join(" "),
-        phone: data.phone,
-        memberShipId: data.membershipId,
-        branchId,
-      };
-    } else {
-      newClientData = {
-        firstName: data?.name?.split(" ")[0],
-        lastName: data?.name?.split(" ")?.slice(1).join(" "),
-        phone: data.phone,
-        branchId,
-      };
+    if (updateData?.name) {
+      updateData.firstName = updateData?.name?.split(" ")[0];
+      updateData.lastName = updateData?.name?.split(" ")?.slice(1).join(" ");
+      delete updateData?.name;
     }
 
-    await addCustomer(newClientData);
+    const result = await addCustomer(updateData);
+    if (result?.data?.data) {
+      setSelectedClient(result?.data?.data);
+    }
   });
 
   useEffect(() => {
     if (addCustomerSuccess) {
       toast({
-        title: "Add Client Message",
-        description: "Client added successfully",
+        title: "Add Customer Message",
+        description: "Customer added successfully",
       });
       reset();
       setClientAddOpen(false);
     }
-  }, [addCustomerSuccess, toast, reset, setClientAddOpen]);
+    if (branch) {
+      setValue("branchId", branch);
+    }
+  }, [addCustomerSuccess, toast, reset, setClientAddOpen, branch, setValue]);
 
   return (
     <form onSubmit={onSubmit}>
-      <FormWrapper size="half" heading="Add New Customer">
+      <FormWrapper size="full" heading="Add New Customer">
         {/* CLIENT NAME */}
         <InputWrapper
-          label="Write Client Name ✽"
+          label={ADD_EDIT_CLIENT_FORM.name.label[locale]}
           labelFor="new_client_name"
           error={errors?.name?.message}
         >
@@ -100,12 +119,12 @@ const AddClientFormContainer: FC<IAddClientFormContainerProps> = ({
             {...register("name")}
             type="text"
             id="new_client_name"
-            placeholder="Write client name"
+            placeholder={ADD_EDIT_CLIENT_FORM.name.placeholder[locale]}
           />
         </InputWrapper>
         {/* CLIENT PHONE */}
         <InputWrapper
-          label="Write Client Phone Number ✽"
+          label={ADD_EDIT_CLIENT_FORM.phone.label[locale]}
           labelFor="new_client_phone"
           error={errors?.phone?.message}
         >
@@ -113,24 +132,61 @@ const AddClientFormContainer: FC<IAddClientFormContainerProps> = ({
             {...register("phone")}
             type="phone"
             id="new_client_phone"
-            placeholder="Write client phone number"
+            placeholder={ADD_EDIT_CLIENT_FORM.phone.placeholder[locale]}
           />
         </InputWrapper>
         {/* CLIENT MEMBERSHIP ID */}
         <InputWrapper
-          label="Write Client Membership ID"
+          label={ADD_EDIT_CLIENT_FORM.membershipId.label[locale]}
           labelFor="new_client_membership_id"
-          error={errors?.membershipId?.message}
+          error={errors?.memberShipId?.message}
         >
           <Input
-            {...register("membershipId")}
+            {...register("memberShipId")}
             type="text"
             id="new_client_membership_id"
-            placeholder="Write client membership id"
+            placeholder={ADD_EDIT_CLIENT_FORM.membershipId.placeholder[locale]}
           />
         </InputWrapper>
+        {/* BRANCH LIST */}
+        {actionManager(["admin"]) && (
+          <InputWrapper
+            label={ADD_EDIT_CLIENT_FORM.branchId.label[locale]}
+            labelFor="branch"
+            error={errors?.branchId?.message}
+          >
+            <Select
+              value={branch?.toString()}
+              onValueChange={(value: string) => setBranch(+value)}
+            >
+              <SelectTrigger id="branch" className="">
+                <SelectValue
+                  placeholder={
+                    ADD_EDIT_CLIENT_FORM.membershipId.placeholder[locale]
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {branchList?.data?.length > 0 &&
+                  branchList?.data?.map((singleBranch: any) => (
+                    <SelectItem
+                      key={singleBranch?.id}
+                      value={singleBranch?.id?.toString()}
+                    >
+                      {capitalizeEveryWord(singleBranch?.branchName)}
+                    </SelectItem>
+                  ))}
+                {!branchList?.data?.length && branchLoading && (
+                  <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
+                    <ButtonLoader />
+                  </div>
+                )}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+        )}
         <div className="flex justify-end w-full my-4">
-          <Button type="submit">
+          <Button disabled={isLoadingCustomer} type="submit">
             {isLoadingCustomer && <ButtonLoader />}
             Add Now
           </Button>

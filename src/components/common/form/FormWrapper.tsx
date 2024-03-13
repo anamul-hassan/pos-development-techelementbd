@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { FC, ReactNode } from "react";
 
 interface IFormWrapperProps {
@@ -5,6 +6,7 @@ interface IFormWrapperProps {
   children: ReactNode;
   heading: string;
   subheading?: string;
+  className?: string;
 }
 
 const FormWrapper: FC<IFormWrapperProps> = ({
@@ -12,6 +14,7 @@ const FormWrapper: FC<IFormWrapperProps> = ({
   children,
   heading,
   subheading,
+  className,
 }) => {
   const locate = "en";
   return (
@@ -34,7 +37,7 @@ const FormWrapper: FC<IFormWrapperProps> = ({
           )}
         </h2>
       </div>
-      <div>{children}</div>
+      <div className={cn("w-full", className)}>{children}</div>
     </section>
   );
 };

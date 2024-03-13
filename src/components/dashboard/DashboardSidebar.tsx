@@ -75,7 +75,7 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
       } relative h-screen duration-200 ease-linear transition-all flex flex-col z-20 border-opacity-60 overflow-hidden bg-tertiary border-tertiary`}
     >
       {/* SPACE FOR BRAND LOGO */}
-      {/* <div
+      <div
         className={`h-32 flex items-center gap-2 text-white ${
           sidebarOpen ? "px-4" : "px-3 lg:px-5"
         }`}
@@ -83,8 +83,8 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
         <Link to="/">
           <img
             className={`${sidebarOpen ? "size-10" : "size-7"} rounded-full`}
-            src="/rupushi_bangla_logo.jpg"
-            alt=""
+            src={CLIENT_DETAILS.sidebarLogo}
+            alt={CLIENT_DETAILS.companyName}
           />
         </Link>
         {sidebarOpen && (
@@ -95,8 +95,8 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
             </li>
           </ul>
         )}
-      </div> */}
-      <div
+      </div>
+      {/* <div
         className={`h-32 flex items-center gap-2 text-white ${
           sidebarOpen ? "px-4" : "px-6"
         }`}
@@ -116,7 +116,7 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
             </li>
           </ul>
         )}
-      </div>
+      </div> */}
 
       <div className="max-h-full overflow-y-auto scroll-hidden flex flex-col justify-between h-full">
         {/* NAVIGATION BAR */}

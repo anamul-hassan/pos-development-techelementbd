@@ -14,8 +14,8 @@ const supplierApi = apiSlice.injectEndpoints({
 
     //GET ALL SUPPLIERS
     getSuppliers: builder.query({
-      query: () => ({
-        url: "/supplier/get-supplier-all",
+      query: ({ search, page, size }) => ({
+        url: `/supplier/get-supplier-all?search=${search}&page=${page}&size=${size}`,
       }),
       providesTags: ["supplier"],
     }),
@@ -53,13 +53,6 @@ const supplierApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["supplier"],
     }),
-    // SEARCH SUPPLIER
-    searchSupplier: builder.query({
-      query: (search) => ({
-        url: `/supplier/get-supplier-all?search=${search}`,
-      }),
-      providesTags: ["supplier"],
-    }),
   }),
 });
 
@@ -69,6 +62,5 @@ export const {
   useGetPurchaseBySupplierQuery,
   useGetSingleSupplierQuery,
   useGetSuppliersQuery,
-  useSearchSupplierQuery,
   useUpdateSupplierMutation,
 } = supplierApi;

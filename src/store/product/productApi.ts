@@ -13,8 +13,8 @@ const productApi = apiSlice.injectEndpoints({
     }),
     // GET ALL PRODUCT
     getProducts: builder.query({
-      query: () => ({
-        url: "/product/get-products",
+      query: (data) => ({
+        url: `/product/get-products?page=${data?.page}&size=${data?.size}`,
       }),
       providesTags: ["product"],
     }),
