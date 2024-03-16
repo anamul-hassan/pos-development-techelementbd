@@ -13,16 +13,14 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { addEditCustomerSchema } from "@/schemas/customer/customer_schema";
-import { useGetBranchesQuery } from "@/store/branch/branchApi";
+import { useGetSingleBranchQuery } from "@/store/branch/branchApi";
 import { useUpdateCustomerMutation } from "@/store/customer/customerApi";
 import { ADD_EDIT_CUSTOMER_FORM } from "@/utils/constants/contacts/add_edit_customer_form";
 import { actionManager } from "@/utils/helpers/actionManager";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
-import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AlertCircle } from "lucide-react";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
 interface IEditCustomerProps {
   actionItem: any;
@@ -30,13 +28,12 @@ interface IEditCustomerProps {
 
 const EditCustomer: FC<IEditCustomerProps> = ({ actionItem }) => {
   const locale = "en";
-  const { branchId } = shareBranchAndUserInfo();
   const { toast } = useToast();
-  const [branch, setBranch] = useState<number>(branchId);
 
-  // BRANCH LIST QUERY
-  const { data: branchList, isLoading: branchLoading } =
-    useGetBranchesQuery(undefined);
+  // GET SINGLE BRANCH MUTATION
+  const { data: branchData } = useGetSingleBranchQuery(
+    actionItem?.branchId
+  ) as any;
 
   // ADD CUSTOMER MUTATION
   const [
@@ -104,11 +101,8 @@ const EditCustomer: FC<IEditCustomerProps> = ({ actionItem }) => {
     setValue("department", actionItem?.department || "");
     setValue("permanentAddress", actionItem?.permanentAddress || "");
     setValue("memberShipId", actionItem?.memberShipId || "");
-
-    if (branch) {
-      setValue("branchId", branch);
-    }
-  }, [actionItem, setValue, branch]);
+    setValue("branchId", actionItem?.branchId);
+  }, [actionItem, setValue]);
 
   return (
     <form onSubmit={handleSubmit(handleAddSupplier)}>
@@ -384,41 +378,21 @@ const EditCustomer: FC<IEditCustomerProps> = ({ actionItem }) => {
           />
         </InputWrapper>
 
-        {/* BRANCH LIST */}
+        {/* BRANCH  */}
         {actionManager(["admin"]) && (
           <InputWrapper
             label={ADD_EDIT_CUSTOMER_FORM.branchId.label[locale]}
             labelFor="branch"
             error={errors?.branchId?.message}
           >
-            <Select
-              value={branch?.toString()}
-              onValueChange={(value: string) => setBranch(+value)}
-            >
-              <SelectTrigger id="branch" className="">
-                <SelectValue
-                  placeholder={
-                    ADD_EDIT_CUSTOMER_FORM.branchId.placeholder[locale]
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {branchList?.data?.length > 0 &&
-                  branchList?.data?.map((singleBranch: any) => (
-                    <SelectItem
-                      key={singleBranch?.id}
-                      value={singleBranch?.id?.toString()}
-                    >
-                      {capitalizeEveryWord(singleBranch?.branchName)}
-                    </SelectItem>
-                  ))}
-                {!branchList?.data?.length && branchLoading && (
-                  <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
-                    <ButtonLoader />
-                  </div>
-                )}
-              </SelectContent>
-            </Select>
+            <Input
+              readOnly
+              type="text"
+              placeholder={
+                branchData?.data?.branchName ||
+                ADD_EDIT_CUSTOMER_FORM.branchId.placeholder[locale]
+              }
+            />
           </InputWrapper>
         )}
       </FormWrapper>

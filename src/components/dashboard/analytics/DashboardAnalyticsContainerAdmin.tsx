@@ -46,55 +46,6 @@ const branch_data = [
     totalExpense: 700,
     cashOnHand: 3100,
   },
-  {
-    branchName: "Branch F",
-    initialBalance: 900,
-    totalSell: 600,
-    totalExpense: 300,
-    cashOnHand: 1200,
-  },
-  {
-    branchName: "Branch G",
-    initialBalance: 1100,
-    totalSell: 800,
-    totalExpense: 400,
-    cashOnHand: 1500,
-  },
-  {
-    branchName: "Branch H",
-    initialBalance: 1300,
-    totalSell: 1000,
-    totalExpense: 600,
-    cashOnHand: 1700,
-  },
-  {
-    branchName: "Branch I",
-    initialBalance: 1700,
-    totalSell: 1400,
-    totalExpense: 800,
-    cashOnHand: 2300,
-  },
-  {
-    branchName: "Branch J",
-    initialBalance: 1800,
-    totalSell: 1600,
-    totalExpense: 900,
-    cashOnHand: 2500,
-  },
-  {
-    branchName: "Branch K",
-    initialBalance: 1500,
-    totalSell: 1200,
-    totalExpense: 700,
-    cashOnHand: 2000,
-  },
-  {
-    branchName: "Branch L",
-    initialBalance: 1900,
-    totalSell: 1700,
-    totalExpense: 1000,
-    cashOnHand: 2600,
-  },
 ];
 
 const DashboardAnalyticsContainerAdmin: FC<

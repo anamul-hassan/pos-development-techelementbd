@@ -213,3 +213,8 @@
 .is-visible {
   opacity: 1;
 }
+
+/* SHADCN DATA PICKER CUSTOM CLASS */
+.rdp-vhidden {
+  display: none;
+}

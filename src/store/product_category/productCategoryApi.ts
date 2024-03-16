@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const productCategoryApi = apiSlice.injectEndpoints({
@@ -14,8 +15,12 @@ const productCategoryApi = apiSlice.injectEndpoints({
 
     // GET ALL PRODUCT CATEGORIES
     getProductCategories: builder.query({
-      query: ({ search, page, size }) => ({
-        url: `/product-category/get-category?search=${search}&page=${page}&size=${size}`,
+      query: (data) => ({
+        url: `/product-category/get-category?search=${
+          data?.search || ""
+        }&page=${data?.page || 1}&size=${
+          data?.size || undefinedSize
+        }&sortOrder=${data?.sort || "asc"}`,
       }),
       providesTags: ["product-category"],
     }),

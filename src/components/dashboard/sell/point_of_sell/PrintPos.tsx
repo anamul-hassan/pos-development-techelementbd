@@ -38,39 +38,43 @@ const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
     return (
       <section ref={ref} className="p-5 w-[294px] mt-6 mx-auto">
         <section className="w-full mx-auto p-4 relative font-anek">
-          <div className="flex justify-center mb-4">
-            {/* INVOICE HEADER */}
-            <div>
-              <ul>
-                <li>
-                  <h3 className="text-xl text-center font-light uppercase tracking-wide text-black leading-5">
-                    Invoice
-                  </h3>
-                </li>
-                <li>
-                  <h4 className="text-lg text-center leading-5 font-[500]">
-                    {CLIENT_DETAILS?.companyName}
-                  </h4>
-                </li>
-                <li>
-                  <h5 className="text-sm text-center leading-5">
-                    {CLIENT_DETAILS?.address}
-                  </h5>
-                </li>
-              </ul>
+          {/* INVOICE HEADER */}
+          <h3 className="text-base font-light text-center uppercase tracking-wide text-black leading-3">
+            Invoice
+          </h3>
+          <div className="flex justify-start mb-2 relative">
+            <div className="-my-1 absolute">
+              <img
+                className="w-10 grayscale"
+                // src={CLIENT_DETAILS?.sidebarLogo}
+                src="/public/fantabulous_main.png"
+                alt={CLIENT_DETAILS?.companyName + "logo"}
+              />
             </div>
+            <ul className="flex flex-col items-center w-full">
+              <li>
+                <h4 className="text-lg text-start leading-5 font-[500] uppercase tracking-tighter">
+                  {CLIENT_DETAILS?.companyName}
+                </h4>
+              </li>
+              <li>
+                <p className="text-[8px] -mt-1 text-center leading-3 w-full ">
+                  {CLIENT_DETAILS?.address}
+                </p>
+              </li>
+            </ul>
           </div>
 
           <div>
-            <label className="text-sm leading-3">Date & Time</label>
-            <p className="text-xs leading-3">
+            <label className="text-xs leading-snug">Date & Time</label>
+            <p className="text-[10px] -mt-1.5">
               {moment().format("DD MMMM, YYYY, hh:mm A")}
             </p>
           </div>
 
           {/* CUSTOMER INFORMATION */}
           <div className="my-0.5">
-            <h3 className="text-base">Customer Information</h3>
+            <h3 className="text-sm">Customer Information</h3>
             <Table className="border border-black overflow-hidden">
               <TableBody>
                 <TableRow className="hover:bg-white">
@@ -115,7 +119,7 @@ const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
 
           {/* PRODUCT INFORMATION */}
           <div className="my-0.5">
-            <h3 className="text-base">Product Information</h3>
+            <h3 className="text-sm">Product Information</h3>
             <Table className="border border-black overflow-hidden">
               <TableHeader>
                 <TableRow className="hover:bg-white">
@@ -165,7 +169,7 @@ const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
           </div>
           {/* PAYMENT INFORMATION */}
           <div className="my-0.5">
-            <h3 className="text-base">Payment Information</h3>
+            <h3 className="text-sm">Payment Information</h3>
             <Table className="border border-black overflow-hidden">
               <TableBody>
                 {/* TOTAL */}
@@ -301,32 +305,33 @@ const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
             <div className="w-[130px]">
               <ul className="flex flex-col justify-center items-center py-1">
                 <li>
-                  <h5 className="text-[10px] leading-3 uppercase text-black/80">
+                  <h5 className="text-[8px] leading-3 uppercase text-black/80">
                     Invoice Number
                   </h5>
+                </li>
+
+                <li className="">
+                  <Barcode
+                    displayValue={false}
+                    value={POSData?.data?.sell?.autoInvoiceNo}
+                    width={0.5}
+                    height={15}
+                    marginTop={1.5}
+                    marginBottom={1.5}
+                  />
                 </li>
                 <li>
                   <p className="text-[10px]  leading-3 uppercase text-black">
                     {POSData?.data?.sell?.autoInvoiceNo}
                   </p>
                 </li>
-                <li className="">
-                  <Barcode
-                    displayValue={false}
-                    value={POSData?.data?.sell?.autoInvoiceNo}
-                    width={0.5}
-                    height={25}
-                    marginTop={1.5}
-                    marginBottom={1.5}
-                  />
-                </li>
               </ul>
             </div>
             <div>
-              <p className="text-[8px] text-black leading-3">
-                Thank you for choosing our services. Your satisfaction is our
-                priority. If you have any questions or concerns, please don't
-                hesitate to contact us.
+              <p className="text-[8px] text-black leading-snug">
+                Thank you for choosing {CLIENT_DETAILS?.companyName}. Your
+                satisfaction is our priority. If you have any questions or
+                concerns, please don't hesitate to contact us.
               </p>
             </div>
           </div>

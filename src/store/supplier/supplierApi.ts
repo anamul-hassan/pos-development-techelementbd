@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const supplierApi = apiSlice.injectEndpoints({
@@ -14,8 +15,10 @@ const supplierApi = apiSlice.injectEndpoints({
 
     //GET ALL SUPPLIERS
     getSuppliers: builder.query({
-      query: ({ search, page, size }) => ({
-        url: `/supplier/get-supplier-all?search=${search}&page=${page}&size=${size}`,
+      query: (data) => ({
+        url: `/supplier/get-supplier-all?search=${data?.search || ""}&page=${
+          data?.page
+        }&size=${data?.size || undefinedSize}&sortOrder=${data?.sort || "asc"}`,
       }),
       providesTags: ["supplier"],
     }),

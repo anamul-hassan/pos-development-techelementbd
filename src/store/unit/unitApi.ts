@@ -13,8 +13,8 @@ const unitApi = apiSlice.injectEndpoints({
     }),
     // GET ALL UNITS
     getUnits: builder.query({
-      query: () => ({
-        url: "/unit/get-unit/",
+      query: (data) => ({
+        url: `/unit/get-unit?search=${data?.search || ""}`,
       }),
       providesTags: ["unit"],
     }),
@@ -22,13 +22,6 @@ const unitApi = apiSlice.injectEndpoints({
     getSingleUnit: builder.query({
       query: (id) => ({
         url: `/unit/get-unit/${id}`,
-      }),
-      providesTags: ["unit"],
-    }),
-    // SEARCH UNIT
-    searchUnit: builder.query({
-      query: (search) => ({
-        url: `/unit/get-unit?search=${search}`,
       }),
       providesTags: ["unit"],
     }),
@@ -56,7 +49,6 @@ export const {
   useAddUnitMutation,
   useGetUnitsQuery,
   useGetSingleUnitQuery,
-  useSearchUnitQuery,
   useUpdateUnitMutation,
   useDeleteUnitMutation,
 } = unitApi;

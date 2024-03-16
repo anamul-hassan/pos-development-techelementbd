@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const userApi = apiSlice.injectEndpoints({
@@ -14,8 +15,10 @@ const userApi = apiSlice.injectEndpoints({
 
     //GET ALL USERS
     getUser: builder.query({
-      query: () => ({
-        url: "/user/get-user-all",
+      query: (data) => ({
+        url: `/user/get-user-all?search=${data?.search || ""}&size=${
+          data?.size || undefinedSize
+        }&page=${data?.page || 1}&sortOrder=${data?.sort}`,
       }),
       providesTags: ["user"],
     }),

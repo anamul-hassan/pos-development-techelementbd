@@ -64,6 +64,7 @@ const AddSupplier: FC<IAddSupplierProps> = ({ setAddSupplierOpen }) => {
       "zipCode",
       "paidStatus",
       "peyTerm",
+      "email",
     ]);
 
     const result = await addSupplier(updateData);

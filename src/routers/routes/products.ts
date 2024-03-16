@@ -1,20 +1,17 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import BrandPage from "@/pages/previous/HomeSection/Product/BrandPage/BrandPage";
-import UnitPage from "@/pages/previous/HomeSection/Product/UnitPage/UnitPage";
-import WarrantyPage from "@/pages/previous/HomeSection/Product/WarrantyPage/WarrantyPage";
 import QuotationPage from "@/pages/previous/HomeSection/Product/QuotationPage/QuotationPage";
 import ImportProductsPage from "@/pages/previous/HomeSection/Product/ImportProductsPage/ImportProductsPage";
 import ImportOpeningStockPage from "@/pages/previous/HomeSection/Product/ImportOpeningStockPage/ImportOpeningStockPage";
 import SellingPriceGroupPage from "@/pages/previous/HomeSection/Product/SellingPriceGroupPage/SellingPriceGroupPage";
-import WarrantyEdit from "@/pages/previous/HomeSection/Product/WarrantyPage/WarrantyEdit";
-import BrandEdit from "@/pages/previous/HomeSection/Product/BrandPage/BrandEdit";
-import UnitEdit from "@/pages/previous/HomeSection/Product/UnitPage/UnitEdit";
 import PrintLabel from "@/pages/dashboard/product/PrintLabel";
 import Variation from "@/pages/dashboard/product/Variation";
 import ProductList from "@/pages/dashboard/product/ProductList";
 import ProductSubCategoryList from "@/pages/dashboard/product/ProductSubCategoryList";
 import ProductCategoryList from "@/pages/dashboard/product/ProductCategoryList";
+import BrandList from "@/pages/dashboard/product/BrandList";
+import ProductUnitList from "@/pages/dashboard/product/ProductUnitList";
+import WarrantyList from "@/pages/dashboard/product/WarrantyList";
 
 export const products_routes: IRouteProps[] = [
   {
@@ -23,12 +20,9 @@ export const products_routes: IRouteProps[] = [
   },
   {
     path: "brand_list",
-    element: React.createElement(BrandPage),
+    element: React.createElement(BrandList),
   },
-  {
-    path: "edit_brand/:id",
-    element: React.createElement(BrandEdit),
-  },
+
   {
     path: "category_list",
     element: React.createElement(ProductCategoryList),
@@ -41,24 +35,18 @@ export const products_routes: IRouteProps[] = [
 
   {
     path: "unit_list",
-    element: React.createElement(UnitPage),
+    element: React.createElement(ProductUnitList),
   },
-  {
-    path: "edit_unit/:id",
-    element: React.createElement(UnitEdit),
-  },
+
   {
     path: "variation_list",
     element: React.createElement(Variation),
   },
   {
     path: "warranty_list",
-    element: React.createElement(WarrantyPage),
+    element: React.createElement(WarrantyList),
   },
-  {
-    path: "edit_warranty/:id",
-    element: React.createElement(WarrantyEdit),
-  },
+
   {
     path: "quotation_list",
     element: React.createElement(QuotationPage),

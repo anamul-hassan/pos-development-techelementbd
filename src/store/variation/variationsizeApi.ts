@@ -1,6 +1,6 @@
 import { apiSlice } from "../root_api/apiSlice";
 
-const userApi = apiSlice.injectEndpoints({
+const variationSizeApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     //ADD VARIATION SIZE
     addVariationSize: builder.mutation({
@@ -14,8 +14,8 @@ const userApi = apiSlice.injectEndpoints({
 
     //GET ALL VARIATION SIZE
     getVariationSize: builder.query({
-      query: () => ({
-        url: "/size/get-size-all",
+      query: (data) => ({
+        url: `/size/get-size-all?search=${data?.search || ""}`,
       }),
       providesTags: ["variation"],
     }),
@@ -55,4 +55,4 @@ export const {
   useGetSingleVariationSizeQuery,
   useUpdateVariationSizeMutation,
   useDeleteVariationSizeMutation,
-} = userApi;
+} = variationSizeApi;

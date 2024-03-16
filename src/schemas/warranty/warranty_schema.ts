@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const addWarrantySchema = yup.object().shape({
-  warrantyType: yup.string().required(),
-  warranty: yup.string().required(),
+export const addEditWarrantySchema = yup.object().shape({
+  warrantyType: yup.string().required("Warranty type is required"),
+  warranty: yup.string().required("Warranty is required"),
 });

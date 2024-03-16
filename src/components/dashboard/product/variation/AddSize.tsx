@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { addAndEditVariationSizeSchema } from "@/schemas/variation/add_edit_size_variation_schema";
-import { useAddVariationSizeMutation } from "@/store/variation/variationsizeApi";
+import { useAddVariationSizeMutation } from "@/store/variation/variationSizeApi";
 
 interface IAddVariationFormData {
   size: string;
@@ -64,7 +64,7 @@ const AddSize: FC<IAddSizeProps> = ({ setAddSizeOpen }) => {
   }, [toast, reset, addVariationSuccess, setAddSizeOpen]);
   return (
     <form onSubmit={onSubmit}>
-      <FormWrapper size="half" heading="Add New Size">
+      <FormWrapper size="full" heading="Add New Size">
         {/* SIZE NAME */}
         <InputWrapper
           label="Write Variation Size"

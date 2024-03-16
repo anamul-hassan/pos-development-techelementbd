@@ -10,7 +10,7 @@ import { FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addAndEditVariationColorSchema } from "@/schemas/variation/add_edit_color_variation_schema";
-import { useAddVariationColorMutation } from "@/store/variation/variationcolorApi";
+import { useAddVariationColorMutation } from "@/store/variation/variationColorApi";
 
 interface IAddVariationFormData {
   color: string;
@@ -54,8 +54,8 @@ const AddColor: FC<IAddColorProps> = ({ setAddColorOpen }) => {
   useEffect(() => {
     if (addVariationSuccess) {
       toast({
-        title: "Add Variation Message",
-        description: "Variation color added successfully",
+        title: "Add Color Message",
+        description: "Color added successfully",
       });
       reset();
       setAddColorOpen(false);
@@ -63,7 +63,7 @@ const AddColor: FC<IAddColorProps> = ({ setAddColorOpen }) => {
   }, [toast, reset, addVariationSuccess, setAddColorOpen]);
   return (
     <form onSubmit={onAddColorSubmit}>
-      <FormWrapper size="half" heading="Add New Color">
+      <FormWrapper size="full" heading="Add New Color">
         {/* COLOR NAME */}
         <InputWrapper
           label="Write Variation Color"

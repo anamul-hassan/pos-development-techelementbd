@@ -1,8 +1,5 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import AddAccountPage from "@/pages/previous/HomeSection/PaymentAccounts/Account/AddAccountPage/AddAccountPage";
-import ListAccountsPage from "@/pages/previous/HomeSection/PaymentAccounts/Account/ListAccountsPage/ListAccountsPage";
-import EditAccountPage from "@/pages/previous/HomeSection/PaymentAccounts/Account/EditAccountPage/EditAccountPage";
 import PaymentReceivedPage from "@/pages/previous/HomeSection/PaymentAccounts/PaymentReceivedPage/PaymentReceivedPage";
 import BalanceSheetPage from "@/pages/previous/HomeSection/PaymentAccounts/BalanceSheetPage/BalanceSheetPage";
 import TrailBalancePage from "@/pages/previous/HomeSection/PaymentAccounts/TrailBalancePage/TrailBalancePage";
@@ -15,19 +12,12 @@ import AddInvestingPage from "@/pages/previous/HomeSection/PaymentAccounts/Inves
 import EditInvestingPage from "@/pages/previous/HomeSection/PaymentAccounts/Investing/EditInvestingPage/EditInvestingPage";
 import LIstInvestingPage from "@/pages/previous/HomeSection/PaymentAccounts/Investing/LIstInvestingPage/LIstInvestingPage";
 import CashFlow from "@/pages/dashboard/payment/CashFlow";
+import AccountList from "@/pages/dashboard/payment/AccountList";
 
 export const payment_accounts: IRouteProps[] = [
   {
-    path: "add_account",
-    element: React.createElement(AddAccountPage),
-  },
-  {
     path: "account_list",
-    element: React.createElement(ListAccountsPage),
-  },
-  {
-    path: "edit_account/:id",
-    element: React.createElement(EditAccountPage),
+    element: React.createElement(AccountList),
   },
 
   {

@@ -50,27 +50,23 @@ const EditProduct: FC<IEditProductProps> = ({
 
   // GET ALL BRANDS QUERY
   const { data: brandList, isLoading: brandLoading } = useGetBrandsQuery(
-    undefined
+    {}
   ) as any;
   // GET ALL CATEGORIES QUERY
   const { data: categoryList, isLoading: categoryLoading } =
-    useGetProductCategoriesQuery({
-      page: 1,
-      size: 10000000000,
-    }) as any;
+    useGetProductCategoriesQuery({}) as any;
   // GET ALL SUB CATEGORY QUERY
   const { data: subCategoryList, isLoading: subCategoryLoading } =
-    useGetProductSubCategoriesQuery({
-      page: 1,
-      size: 10000000000,
-    }) as any;
+    useGetProductSubCategoriesQuery({}) as any;
   // UNIT LIST QUERY
   const { data: unitList, isLoading: unitLoading } = useGetUnitsQuery(
-    undefined
+    {}
   ) as any;
+
   // BRANCH LIST QUERY
-  const { data: branchList, isLoading: branchLoading } =
-    useGetBranchesQuery(undefined);
+  const { data: branchList, isLoading: branchLoading } = useGetBranchesQuery(
+    {}
+  );
   // ADD PRODUCT MUTATION
   const [
     updateProduct,
@@ -322,43 +318,43 @@ const EditProduct: FC<IEditProductProps> = ({
             </SelectContent>
           </Select>
         </InputWrapper>
-      </FormWrapper>
 
-      {/* BRANCH LIST */}
-      {actionManager(["admin"]) && (
-        <InputWrapper
-          label={ADD_EDIT_PRODUCT_FORM.branch.label[locale]}
-          labelFor="branch"
-          error={errors?.branchId?.message}
-        >
-          <Select
-            value={branch?.toString()}
-            onValueChange={(value: string) => setBranch(+value)}
+        {/* BRANCH LIST */}
+        {actionManager(["admin"]) && (
+          <InputWrapper
+            label={ADD_EDIT_PRODUCT_FORM.branch.label[locale]}
+            labelFor="branch"
+            error={errors?.branchId?.message}
           >
-            <SelectTrigger id="branch">
-              <SelectValue
-                placeholder={ADD_EDIT_PRODUCT_FORM.branch.placeholder[locale]}
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {branchList?.data?.length > 0 &&
-                branchList?.data?.map((singleBranch: any) => (
-                  <SelectItem
-                    key={singleBranch?.id}
-                    value={singleBranch?.id?.toString()}
-                  >
-                    {capitalizeEveryWord(singleBranch?.branchName)}
-                  </SelectItem>
-                ))}
-              {!branchList?.data?.length && branchLoading && (
-                <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
-                  <ButtonLoader />
-                </div>
-              )}
-            </SelectContent>
-          </Select>
-        </InputWrapper>
-      )}
+            <Select
+              value={branch?.toString()}
+              onValueChange={(value: string) => setBranch(+value)}
+            >
+              <SelectTrigger id="branch">
+                <SelectValue
+                  placeholder={ADD_EDIT_PRODUCT_FORM.branch.placeholder[locale]}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {branchList?.data?.length > 0 &&
+                  branchList?.data?.map((singleBranch: any) => (
+                    <SelectItem
+                      key={singleBranch?.id}
+                      value={singleBranch?.id?.toString()}
+                    >
+                      {capitalizeEveryWord(singleBranch?.branchName)}
+                    </SelectItem>
+                  ))}
+                {!branchList?.data?.length && branchLoading && (
+                  <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
+                    <ButtonLoader />
+                  </div>
+                )}
+              </SelectContent>
+            </Select>
+          </InputWrapper>
+        )}
+      </FormWrapper>
 
       {/* ERROR MESSAGE */}
       <div className="flex justify-between items-center my-2 w-full">

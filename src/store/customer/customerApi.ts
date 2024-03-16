@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const customerApi = apiSlice.injectEndpoints({
@@ -13,8 +14,10 @@ const customerApi = apiSlice.injectEndpoints({
     }),
     // GET ALL CUSTOMER DATA
     getCustomers: builder.query({
-      query: ({ search, page, size }) => ({
-        url: `/customer/get-customer-all?search=${search}&page=${page}&size=${size}`,
+      query: (data) => ({
+        url: `/customer/get-customer-all?search=${data?.search || ""}&page=${
+          data?.page || 1
+        }&size=${data?.size || undefinedSize}`,
         method: "GET",
       }),
 

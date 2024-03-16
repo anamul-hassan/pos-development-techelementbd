@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const productSubCategoryApi = apiSlice.injectEndpoints({
@@ -13,8 +14,10 @@ const productSubCategoryApi = apiSlice.injectEndpoints({
     }),
     // GET PRODUCT SUB CATEGORIES
     getProductSubCategories: builder.query({
-      query: ({ search, page, size }) => ({
-        url: `/subcategory/get-subcategory?search=${search}&page=${page}&size=${size}`,
+      query: (data) => ({
+        url: `/subcategory/get-subcategory?search=${data?.search || ""}&page=${
+          data?.page || 1
+        }&size=${data?.size || undefinedSize}`,
       }),
       providesTags: ["product-sub-category"],
     }),

@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const expenseApi = apiSlice.injectEndpoints({
@@ -12,9 +13,11 @@ const expenseApi = apiSlice.injectEndpoints({
       invalidatesTags: ["expense"],
     }),
     // GET EXPENSE
-    getExpense: builder.query({
-      query: () => ({
-        url: `/expense/get-expense-all/`,
+    getExpenses: builder.query({
+      query: (data) => ({
+        url: `/expense/get-expense-all?search=${data?.search || ""}&size=${
+          data?.size || undefinedSize
+        }&page=${data?.page || 1}`,
       }),
       providesTags: ["expense"],
     }),
@@ -25,13 +28,7 @@ const expenseApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["expense"],
     }),
-    // SEARCH EXPENSE
-    searchExpense: builder.query({
-      query: (search) => ({
-        url: `/expense/get-expense-all?search=${search}`,
-      }),
-      providesTags: ["expense"],
-    }),
+
     // UPDATE EXPENSE
     updateExpense: builder.mutation({
       query: ({ id, data }) => ({
@@ -49,30 +46,13 @@ const expenseApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["expense"],
     }),
-    // GET SUB-CATEGORY EXPENSES
-    getSubCategoryExpenses: builder.query({
-      query: () => ({
-        url: "/expense-subcategory/get-expense-subcategory-all",
-      }),
-      providesTags: ["expense"],
-    }),
-    // GET EXPENSE CATEGORIES
-    getCategoryExpenses: builder.query({
-      query: () => ({
-        url: "/expense-category/get-expense-category-all",
-      }),
-      providesTags: ["expense"],
-    }),
   }),
 });
 
 export const {
   useAddExpenseMutation,
-  useGetExpenseQuery,
+  useGetExpensesQuery,
   useGetSingleExpenseQuery,
-  useSearchExpenseQuery,
   useUpdateExpenseMutation,
   useDeleteExpenseMutation,
-  useGetCategoryExpensesQuery,
-  useGetSubCategoryExpensesQuery,
 } = expenseApi;

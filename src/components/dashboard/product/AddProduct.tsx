@@ -46,27 +46,22 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
 
   // GET ALL BRANDS QUERY
   const { data: brandList, isLoading: brandLoading } = useGetBrandsQuery(
-    undefined
+    {}
   ) as any;
   // GET ALL CATEGORIES QUERY
   const { data: categoryList, isLoading: categoryLoading } =
-    useGetProductCategoriesQuery({
-      page: 1,
-      size: 1000000000,
-    }) as any;
+    useGetProductCategoriesQuery({}) as any;
   // GET ALL SUB CATEGORY QUERY
   const { data: subCategoryList, isLoading: subCategoryLoading } =
-    useGetProductSubCategoriesQuery({
-      page: 1,
-      size: 1000000000,
-    }) as any;
+    useGetProductSubCategoriesQuery({}) as any;
   // UNIT LIST QUERY
   const { data: unitList, isLoading: unitLoading } = useGetUnitsQuery(
-    undefined
+    {}
   ) as any;
   // BRANCH LIST QUERY
-  const { data: branchList, isLoading: branchLoading } =
-    useGetBranchesQuery(undefined);
+  const { data: branchList, isLoading: branchLoading } = useGetBranchesQuery(
+    {}
+  );
 
   // ADD PRODUCT MUTATION
   const [addProduct, { isLoading: loadingAddProduct, error: addProductError }] =
@@ -84,6 +79,7 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
     formState: { errors },
     setValue,
     reset,
+    setError,
     watch,
   } = useForm({ resolver: yupResolver(addAndEditProductSchema) });
 
@@ -171,7 +167,10 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
         >
           <Select
             value={watch("categoryId")?.toString()}
-            onValueChange={(value: string) => setValue("categoryId", +value)}
+            onValueChange={(value: string) => {
+              setValue("categoryId", +value);
+              setError("categoryId", { type: "custom", message: "" });
+            }}
           >
             <SelectTrigger id="product_category" className="">
               <SelectValue
@@ -204,7 +203,10 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
         >
           <Select
             value={watch("subCategoryId")?.toString()}
-            onValueChange={(value: string) => setValue("subCategoryId", +value)}
+            onValueChange={(value: string) => {
+              setValue("subCategoryId", +value);
+              setError("subCategoryId", { type: "custom", message: "" });
+            }}
           >
             <SelectTrigger id="product_sub_category">
               <SelectValue
@@ -239,7 +241,10 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
         >
           <Select
             value={watch("brandId")?.toString()}
-            onValueChange={(value: string) => setValue("brandId", +value)}
+            onValueChange={(value: string) => {
+              setValue("brandId", +value);
+              setError("brandId", { type: "custom", message: "" });
+            }}
           >
             <SelectTrigger id="product_brand">
               <SelectValue
@@ -272,7 +277,10 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
         >
           <Select
             value={watch("unitsId")?.toString()}
-            onValueChange={(value: string) => setValue("unitsId", +value)}
+            onValueChange={(value: string) => {
+              setValue("unitsId", +value);
+              setError("unitsId", { type: "custom", message: "" });
+            }}
           >
             <SelectTrigger id="product_unit" className="">
               <SelectValue
@@ -306,7 +314,10 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
           >
             <Select
               value={branch?.toString()}
-              onValueChange={(value: string) => setBranch(+value)}
+              onValueChange={(value: string) => {
+                setBranch(+value);
+                setError("branchId", { type: "custom", message: "" });
+              }}
             >
               <SelectTrigger id="branch" className="">
                 <SelectValue

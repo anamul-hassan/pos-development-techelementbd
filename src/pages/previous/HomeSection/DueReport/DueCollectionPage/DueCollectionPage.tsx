@@ -15,7 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useGetAccountsQuery } from "@/store/account/accountApi";
 import {
   useDeleteCustomerMutation,
-  useSearchCustomerQuery,
+  useGetCustomersQuery,
 } from "@/store/customer/customerApi";
 import Input from "@/components/previous/all/Input";
 import {
@@ -42,7 +42,9 @@ const DueCollectionPage = () => {
   // const { data: branchData } = useGetBranchesQuery(undefined);
   const { data: accounts } = useGetAccountsQuery("All") as any;
 
-  const { data: customerSearch } = useSearchCustomerQuery(search) as any;
+  const { data: customerSearch } = useGetCustomersQuery({
+    search,
+  }) as any;
 
   const {
     register,

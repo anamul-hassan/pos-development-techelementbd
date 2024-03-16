@@ -1,5 +1,7 @@
 import { apiSlice } from "../root_api/apiSlice";
 
+export const undefinedSize = 1000000000000;
+
 const branchApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // ADD BRANCH
@@ -13,8 +15,12 @@ const branchApi = apiSlice.injectEndpoints({
     }),
     // GET BRANCHES
     getBranches: builder.query({
-      query: () => ({
-        url: "/branch/get-branch-all/",
+      query: (data) => ({
+        url: `/branch/get-branch-all?search=${data?.search || ""}&page=${
+          data?.page || 1
+        }&size=${data?.size || undefinedSize}&sortOrder=${
+          data?.sortOrder || "asc"
+        }`,
       }),
       providesTags: ["branch"],
     }),

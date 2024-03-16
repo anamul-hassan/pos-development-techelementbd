@@ -31,8 +31,8 @@ import InputWrapper from "@/components/common/form/InputWrapper";
 import { ADD_PURCHASE_FORM } from "@/utils/constants/purchase/add_purchase_form";
 import { useGetWarrantiesQuery } from "@/store/warranty/warrantyApi";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import { useGetVariationSizeQuery } from "@/store/variation/variationsizeApi";
-import { useGetVariationColorQuery } from "@/store/variation/variationcolorApi";
+import { useGetVariationSizeQuery } from "@/store/variation/variationSizeApi";
+import { useGetVariationColorQuery } from "@/store/variation/variationColorApi";
 interface IPurchaseProductDetailsFormProps {
   setSelectedProduct: any;
   addProductTableHandler: (productName: string, productId: string) => void;
@@ -445,7 +445,7 @@ const PurchaseProductDetailsForm: FC<IPurchaseProductDetailsFormProps> = ({
               />
             </InputWrapper>
             {/* PRODUCT SELLING PRICE INPUT */}
-            <InputWrapper
+            {/* <InputWrapper
               label={productInfo.selling_price.label[locale]}
               labelFor={`product_selling_price${productIndex}`}
               error={
@@ -471,7 +471,43 @@ const PurchaseProductDetailsForm: FC<IPurchaseProductDetailsFormProps> = ({
                 value={
                   productDetails?.sellingPrice === 0
                     ? ""
-                    : productDetails?.profitMargin * +productDetails?.price
+                    : Math.ceil(
+                        productDetails?.profitMargin * +productDetails?.price
+                      )
+                }
+                type="number"
+                id={`product_selling_price${productIndex}`}
+                placeholder={productInfo.selling_price.placeholder[locale]}
+              />
+            </InputWrapper> */}
+
+            <InputWrapper
+              label={productInfo.selling_price.label[locale]}
+              labelFor={`product_selling_price${productIndex}`}
+              error={
+                error?.products?.length > 0 &&
+                error?.products[productIndex]?.sellingPrice?.message
+              }
+            >
+              <Input
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const newValue = +e.target.value;
+                  const updatedTable = selectedProduct.map((item: any) =>
+                    item.index === productIndex
+                      ? {
+                          ...item,
+                          sellingPrice: newValue,
+                          profitMargin: newValue / +productDetails?.price,
+                        }
+                      : item
+                  );
+                  setSelectedProduct(updatedTable);
+                }}
+                onWheel={(event) => event.currentTarget.blur()}
+                value={
+                  productDetails?.sellingPrice === 0
+                    ? ""
+                    : productDetails?.sellingPrice
                 }
                 type="number"
                 id={`product_selling_price${productIndex}`}

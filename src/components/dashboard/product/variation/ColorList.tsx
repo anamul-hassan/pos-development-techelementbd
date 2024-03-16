@@ -1,19 +1,9 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import DataLoader from "@/components/common/loader/DataLoader";
-import Pagination from "@/components/previous/all/Pagination";
-
 import { Button } from "@/components/ui/button";
 import InputWrapper from "@/components/common/form/InputWrapper";
-import { Command } from "@/components/ui/command";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useAppContext } from "@/context/hook/useAppContext";
-import { AlertCircle, ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { AlertCircle, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import {
@@ -26,11 +16,7 @@ import { DataTable } from "@/components/common/table/DataTable";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import { LuPlus } from "react-icons/lu";
-import {
-  useDeleteVariationColorMutation,
-  useGetVariationColorQuery,
-  useUpdateVariationColorMutation,
-} from "@/store/variation/variationcolorApi";
+
 import AddColor from "./AddColor";
 import FormWrapper from "@/components/common/form/FormWrapper";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -50,35 +36,33 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { addAndEditVariationColorSchema } from "@/schemas/variation/add_edit_color_variation_schema";
 import { ColumnDef } from "@tanstack/react-table";
 import InfoWrapper from "@/components/common/InfoWrapper";
+import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
+import {
+  useDeleteVariationColorMutation,
+  useGetVariationColorQuery,
+  useUpdateVariationColorMutation,
+} from "@/store/variation/variationColorApi";
 
 interface IUpdateVariationFormData {
   color: string;
 }
 
 const ColorList = () => {
-  // APP CONTEXT
-  const { sidebarOpen } = useAppContext();
-
   const { toast } = useToast() as any;
-
   // ADD COLOR DIALOG STATE
   const [addColorOpen, setAddColorOpen] = useState(false);
-
-  // POPOVER STATES
-  const [variationOpen, setVariationOpen] = useState(false);
-
   // VARIATION COLOR UPDATE STATE
   const [actionItem, setActionItem] = useState<any>();
-
-  // PAGINATION STATE
-  const [currentPage, setCurrentPage] = useState(1);
-
   // VARIATION LIST STATE
   const [colorList, setColorList] = useState([]);
 
+  const [searchColor, setSearchColor] = useState("");
+
   // GET VARIATION COLOR, SEARCH, SORTING, PAGE
   const { data: variationColorData, isLoading: isLoadingVariationGet } =
-    useGetVariationColorQuery(undefined) as any;
+    useGetVariationColorQuery({
+      search: searchColor,
+    }) as any;
 
   // DELETE VARIATION COLOR MUTATION
   const [
@@ -134,7 +118,7 @@ const ColorList = () => {
           return {
             index: colorIndex + 1,
             id: color?.id,
-            color: color?.color,
+            color: capitalizeEveryWord(color?.color),
           };
         }
       );
@@ -217,7 +201,7 @@ const ColorList = () => {
                 </DialogTrigger>
                 <DialogContent>
                   <form onSubmit={onEditColorSubmit}>
-                    <FormWrapper size="half" heading="Update Variation Color">
+                    <FormWrapper size="full" heading="Update Variation Color">
                       {/* COLOR NAME */}
                       <InputWrapper
                         label="Write Variation Color"
@@ -314,60 +298,18 @@ const ColorList = () => {
         {/* SEARCH COLOR FILED */}
         <div className="flex justify-end items-center space-x-2">
           <InputWrapper
-            label="Write Color Name For Searching"
+            label="Write Color Name"
             labelFor="search_color"
             error=""
           >
-            <Popover open={variationOpen} onOpenChange={setVariationOpen}>
-              <PopoverTrigger
-                id="search_color"
-                asChild
-                className={`w-full
-
-                ${
-                  sidebarOpen
-                    ? "md:w-[197px] lg:w-[178px] xl:w-[254px] truncate"
-                    : "md:w-[324px] lg:w-[247px] xl:w-[313px] 2xl:!w-[321px]"
-                }
-
-                `}
-              >
-                <Button
-                  variant="outline"
-                  role="search_supplier"
-                  aria-expanded={variationOpen}
-                  className="w-full justify-between"
-                >
-                  Write variation color
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                className={`w-full  ${
-                  sidebarOpen
-                    ? "md:w-[197px] lg:w-[178px] xl:w-[254px] truncate"
-                    : "md:w-[324px] lg:w-[247px] xl:w-[313px] 2xl:!w-[321px]"
-                }`}
-              >
-                <Command>
-                  <div className="flex justify-center p-2">
-                    {/* SUPPLIER SEARCH INPUT */}
-                    <Input
-                      // onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      //   setSupplierSearch(e.target.value)
-                      // }
-                      placeholder="Write variation color for searching"
-                    />
-                  </div>
-                  {/* {isVariationSearching && (
-                    <div className="my-5 flex justify-center opacity-90">
-                      <ButtonLoader />
-                    </div>
-                  )} */}
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <Input
+              id="search_color"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setSearchColor(e.target.value)
+              }
+              className="w-full md:w-[250px]"
+              placeholder="Write variation color for searching"
+            />
           </InputWrapper>
           <InputWrapper label="#" error="" labelFor="add_new_method">
             <Dialog open={addColorOpen} onOpenChange={setAddColorOpen}>
@@ -391,25 +333,9 @@ const ColorList = () => {
         </div>
       </div>
       {/*  VARIATION COLOR TABLE CONTAINER */}
-      <InfoWrapper heading="Color Information">
+      <InfoWrapper className="my-2" heading="Color Information">
         <DataTable columns={columns} data={colorList} />
       </InfoWrapper>
-
-      <div className="">
-        {/* table area */}
-        {variationColorData?.meta?.total >= 5 && (
-          <div className="mt-5 mr-8 flex justify-end">
-            <Pagination
-              currPage={currentPage}
-              setCurrPage={setCurrentPage}
-              isLoading={isLoadingVariationGet}
-              // totalItems={searchVariation?.meta?.total}
-              // totalPage={searchVariation?.meta?.totalPage}
-              // pageLength={searchVariation?.meta?.color}
-            />
-          </div>
-        )}
-      </div>
     </section>
   );
 };

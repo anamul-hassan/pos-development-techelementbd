@@ -8,11 +8,11 @@ import PageLoader from "@/components/common/loader/PageLoader";
 import { user_management_routes } from "./routes/user_management";
 import { contacts_routes } from "./routes/contacts";
 import { products_routes } from "./routes/products";
-// import { human_resource_management_routes } from "./routes/human_resource_management";
-// import { stock_transfer_routes } from "./routes/stock_transfer";
-// import { stock_adjustment_routes } from "./routes/stock_adjustment";
+import { human_resource_management_routes } from "./routes/human_resource_management";
+import { stock_transfer_routes } from "./routes/stock_transfer";
+import { stock_adjustment_routes } from "./routes/stock_adjustment";
 import { settings_routes } from "./routes/settings";
-// import { due_report_routes } from "./routes/due_report";
+import { due_report_routes } from "./routes/due_report";
 import { expense_routes } from "./routes/expense";
 import { details_reports_routes } from "./routes/details_reports";
 import { payment_accounts } from "./routes/payment";
@@ -20,7 +20,7 @@ import { sell_routes } from "./routes/sell";
 import { purchase_routes } from "./routes/purchase";
 import DashboardAnalytics from "@/pages/dashboard/analytics/DashboardAnalytics";
 import ErrorPage from "@/pages/public/ErrorPage";
-// import { payment_report_routes } from "./routes/payment_report";
+import { payment_report_routes } from "./routes/payment_report";
 
 const router = createBrowserRouter([
   {
@@ -66,19 +66,19 @@ const router = createBrowserRouter([
       ...settings_routes,
 
       // // HUMAN RESOURCE MANAGEMENT ROUTES
-      // ...human_resource_management_routes,
+      ...human_resource_management_routes,
 
       // // STOCK TRANSFER ROUTES
-      // ...stock_transfer_routes,
+      ...stock_transfer_routes,
 
       // // STOCK ADJUSTMENT ROUTES
-      // ...stock_adjustment_routes,
+      ...stock_adjustment_routes,
 
       // // DUE REPORTS ROUTES
-      // ...due_report_routes,
+      ...due_report_routes,
 
       // // PAYMENT REPORTS ROUTES
-      // ...payment_report_routes,
+      ...payment_report_routes,
     ],
   },
   // Authentication

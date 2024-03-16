@@ -44,7 +44,7 @@ const AddCustomer: FC<IAddCustomerProps> = ({ setAddCustomerOpen }) => {
     addCustomer,
     { isLoading: addCustomerLoading, error: addCustomerError },
   ] = useAddCustomerMutation({}) as any;
-  // REACT HOOK FORM TO ADD SUPPLIER
+  // REACT HOOK FORM TO ADD CUSTOMER
   const {
     register,
     handleSubmit,
@@ -401,7 +401,7 @@ const AddCustomer: FC<IAddCustomerProps> = ({ setAddCustomerOpen }) => {
             "data" in addCustomerError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Add Supplier Error</AlertTitle>
+                <AlertTitle>Add Customer Error</AlertTitle>
                 <AlertDescription>
                   {addCustomerError?.data?.message ||
                     "Something went wrong! try again"}

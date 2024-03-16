@@ -21,7 +21,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   useDeleteProductMutation,
   useGetProductsQuery,
-  useSearchProductQuery,
 } from "@/store/product/productApi";
 import InputWrapper from "@/components/common/form/InputWrapper";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -48,6 +47,7 @@ const ProductList = () => {
   const { toast } = useToast();
   // PAGINATION STATE
   const [pagination, setPagination] = useState<IPagination>({
+    sort: "asc",
     page: 1,
     size: 10,
     meta: {
@@ -63,31 +63,26 @@ const ProductList = () => {
   // ACTION STATE
   const [actionItem, setActionItem] = useState<any>();
 
-  const [deleteDone, setDeleteDone] = useState(false);
-
   // PRODUCT SEARCH INPUT STATE
   const [productSearch, setProductSearch] = useState("");
   //  GET PRODUCTS QUERY
   const { data: productsData, isLoading: loadingProducts } =
     useGetProductsQuery({
+      sort: pagination?.sort,
+      search: productSearch,
       page: pagination?.page,
       size: pagination?.size,
     }) as any;
 
-  // PRODUCT SEARCH QUERY
-  const { data: productsBySearch } = useSearchProductQuery(
-    productSearch
-  ) as any;
-
   // PRODUCT DELETE MUTATION
-  const [deleteProduct, { isLoading: deleteProductLoading }] =
+  const [deleteProduct, { isSuccess: deleteProductSuccess }] =
     useDeleteProductMutation({}) as any;
 
   // PRODUCT TABLE DATA
   useEffect(() => {
-    if (!productSearch?.length && productsData?.data?.length > 0) {
-      const products = productsData?.data?.map((singleProduct: any) => {
-        return {
+    if (productsData?.data?.length > 0) {
+      const customizeProducts = productsData?.data?.map(
+        (singleProduct: any) => ({
           ...singleProduct,
           productName: capitalizeEveryWord(singleProduct?.productName),
           category: {
@@ -102,64 +97,34 @@ const ProductList = () => {
               singleProduct?.subCategory?.subCategoryName
             ),
           },
+          brand: {
+            ...singleProduct?.brand,
+            dummyBrand:
+              capitalizeEveryWord(singleProduct?.brand?.brand) || "Not Found",
+          },
           unit: {
             ...singleProduct?.unit,
-            name: capitalizeEveryWord(singleProduct?.unit?.name),
+            dummyName:
+              capitalizeEveryWord(singleProduct?.unit?.name) || "Not Found",
           },
-        };
-      });
-      setProductList(products);
+        })
+      );
+      setProductList(customizeProducts);
       setPagination((previousData) => ({
         ...previousData,
         meta: productsData?.meta,
       }));
     }
-    if (productSearch?.length && productsBySearch?.data?.length > 0) {
-      const products = productsBySearch?.data?.map((singleProduct: any) => {
-        return {
-          ...singleProduct,
-          productName: capitalizeEveryWord(singleProduct?.productName),
-          category: {
-            ...singleProduct?.category,
-            categoryName: capitalizeEveryWord(
-              singleProduct?.category?.categoryName
-            ),
-          },
-          subCategory: {
-            ...singleProduct?.subCategory,
-            subCategoryName: capitalizeEveryWord(
-              singleProduct?.subCategory?.subCategoryName
-            ),
-          },
-          unit: {
-            ...singleProduct?.unit,
-            name: capitalizeEveryWord(singleProduct?.unit?.name),
-          },
-        };
-      });
-      setProductList(products);
-      setPagination((previousData) => ({
-        ...previousData,
-        meta: productsBySearch?.meta,
-      }));
-    }
-    if (deleteDone) {
+  }, [productsData?.data, pagination?.size, productsData?.meta]);
+
+  useEffect(() => {
+    if (deleteProductSuccess) {
       toast({
         title: "Product Delete Message",
         description: "Product deleted successfully",
       });
-      setDeleteDone(false);
     }
-  }, [
-    productsData?.data,
-    productSearch,
-    productsBySearch?.data,
-    deleteDone,
-    toast,
-    pagination?.size,
-    productsBySearch?.meta,
-    productsData?.meta,
-  ]);
+  }, [deleteProductSuccess, toast]);
 
   if (loadingProducts) {
     return <DataLoader />;
@@ -229,7 +194,7 @@ const ProductList = () => {
     },
 
     {
-      accessorKey: "brand.brand",
+      accessorKey: "brand.dummyBrand",
       header: ({ column }) => {
         return (
           <button
@@ -243,7 +208,7 @@ const ProductList = () => {
       },
     },
     {
-      accessorKey: "unit.name",
+      accessorKey: "unit.dummyName",
       header: ({ column }) => {
         return (
           <button
@@ -310,7 +275,7 @@ const ProductList = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[800px] max-h-[90%] overflow-y-auto">
-                  {/* ADD NEW PRODUCT FORM CONTAINER */}
+                  {/* PRODUCT DETAILS FORM CONTAINER */}
                   <ProductDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
@@ -342,14 +307,7 @@ const ProductList = () => {
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      disabled={deleteProductLoading}
-                      onClick={async () => {
-                        const result = await deleteProduct(product?.id);
-
-                        if (result?.data?.success) {
-                          setDeleteDone(true);
-                        }
-                      }}
+                      onClick={() => deleteProduct(product?.id)}
                     >
                       Confirm
                     </AlertDialogAction>
@@ -370,7 +328,7 @@ const ProductList = () => {
         <div className="flex justify-end items-center space-x-2">
           <InputWrapper
             label="Write product name"
-            labelFor="search_product"
+            labelFor="search_brand"
             error=""
           >
             <Input
@@ -378,13 +336,13 @@ const ProductList = () => {
                 setProductSearch(e.target.value)
               }
               className="w-full md:w-[250px]"
-              id="search_product"
+              id="search_brand"
               placeholder="Write product name for searching"
             />
           </InputWrapper>
 
           {/* ADD NEW PRODUCT */}
-          <InputWrapper label="#" error="" labelFor="add_new_method">
+          <InputWrapper label="#" error="" labelFor="">
             <Dialog open={addProductOpen} onOpenChange={setAddProductOpen}>
               <DialogTrigger asChild>
                 <Button

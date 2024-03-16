@@ -29,11 +29,10 @@ const InternationalizeToggle: FC<IInternationalizeToggleProps> = () => {
         <DropdownMenuItem
           disabled
           className="font-anek"
-
           // PLEASE DO NOT UNMASK THE BELOW LINE
-          // onClick={() => i18n.changeLanguage("bn")}
+          onClick={() => i18n.changeLanguage("bn")}
         >
-          বাংলা pending
+          বাংলা developing
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

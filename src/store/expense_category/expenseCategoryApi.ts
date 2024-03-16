@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const expenseCategoryApi = apiSlice.injectEndpoints({
@@ -14,8 +15,12 @@ const expenseCategoryApi = apiSlice.injectEndpoints({
 
     // GET ALL CATEGORIES
     getAllExpenseCategory: builder.query({
-      query: () => ({
-        url: "/expense-category/get-expense-category-all",
+      query: (data) => ({
+        url: `/expense-category/get-expense-category-all?search=${
+          data?.search || ""
+        }&page=${data?.page || 1}&size=${
+          data?.size || undefinedSize
+        }&sortOrder=${data?.sort || "asc"} `,
       }),
       providesTags: ["expense-category"],
     }),

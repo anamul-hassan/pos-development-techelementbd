@@ -1,5 +1,5 @@
+import HeadingParagraph from "@/components/common/HeadingParagraph";
 import PhotoLazyLoadWrapper from "@/components/common/photo/PhotoLazyLoadWrapper";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { FC } from "react";
 
 interface IProductDetailsProps {
@@ -7,65 +7,76 @@ interface IProductDetailsProps {
 }
 
 const ProductDetails: FC<IProductDetailsProps> = ({ actionItem }) => {
+  console.log(actionItem);
   return (
-    <section className="flex items-center  gap-4 my-4">
-      <div className="w-1/2">
-        <PhotoLazyLoadWrapper className="rounded-md" src="" alt="" />
-      </div>
-      <div className="w-1/2 flex flex-col">
-        <h3 className="text-2xl font-semibold">Product Information</h3>
-        {/* PRODUCT NAME */}
-        <ul className="text-lg mb-2">
-          <li className="flex items-center space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Product Name</label>
-            <p>{capitalizeEveryWord(actionItem?.productName) || "N/A"}</p>
+    <section className="space-y-4">
+      {/* PERSONAL INFORMATION */}
+      <div className="">
+        <div>
+          <PhotoLazyLoadWrapper
+            className="size-20 border-[0.5px] border-tertiary/40 rounded-md"
+            src={actionItem?.image}
+            alt={actionItem?.productName}
+          />
+          <h3 className="text-2xl font-semibold mb-2">Product Information</h3>
+        </div>
+
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
+          <li>
+            <HeadingParagraph
+              heading="Product Name"
+              paragraph={actionItem?.productName || "Not Found"}
+            />
           </li>
-        </ul>
-        {/* BRAND INFORMATION */}
-        <h3 className="text-base font-semibold">Brand Information</h3>
-        <ul className="text-sm mb-2 space-y-1">
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Name</label>
-            <p>{capitalizeEveryWord(actionItem?.brand?.brand) || "N/A"}</p>
+          <li>
+            <HeadingParagraph
+              heading="Brand Name"
+              paragraph={actionItem?.brand?.dummyBrand || "Not found"}
+            />
           </li>
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Description</label>
-            <p>{capitalizeEveryWord(actionItem?.brand?.note) || "N/A"}</p>
+          <li>
+            <HeadingParagraph
+              heading="Brand Note"
+              paragraph={actionItem?.brand?.note || "Not Found"}
+            />
           </li>
-        </ul>
-        {/* CATEGORY INFORMATION */}
-        <h3 className="text-base font-semibold">Category Information</h3>
-        <ul className="text-sm mb-2 space-y-1">
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Name</label>
-            <p>
-              {capitalizeEveryWord(actionItem?.category?.categoryName) || "N/A"}
-            </p>
+          <li>
+            <HeadingParagraph
+              heading="Category Name"
+              paragraph={actionItem?.category?.categoryName || "Not Found"}
+            />
           </li>
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Description</label>
-            <p>
-              {capitalizeEveryWord(actionItem?.category?.description) || "N/A"}
-            </p>
+          <li>
+            <HeadingParagraph
+              heading="Category Code"
+              paragraph={actionItem?.category?.categoryCode || "Not Found"}
+            />
           </li>
-        </ul>
-        {/* SUB CATEGORY INFORMATION */}
-        <h3 className="text-base font-semibold">Sub-category Information</h3>
-        <ul className="text-sm mb-2">
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Name</label>
-            <p>
-              {capitalizeEveryWord(actionItem?.subCategory?.subCategoryName) ||
-                "N/A"}
-            </p>
+          <li>
+            <HeadingParagraph
+              heading="Sub-category Name"
+              paragraph={
+                actionItem?.subCategory?.subCategoryName || "Not Found"
+              }
+            />
           </li>
-        </ul>
-        {/* UNIT INFORMATION */}
-        <h3 className="text-base font-semibold">Unit Information</h3>
-        <ul className="text-sm mb-2">
-          <li className="flex space-x-1 border bg-accent px-2 rounded-full">
-            <label className="font-semibold">Unit</label>
-            <p>{capitalizeEveryWord(actionItem?.unit?.name) || "N/A"}</p>
+          <li>
+            <HeadingParagraph
+              heading="Unit Name"
+              paragraph={actionItem?.unit?.dummyName || "Not Found"}
+            />
+          </li>
+          <li>
+            <HeadingParagraph
+              heading="Unit Short-name"
+              paragraph={actionItem?.unit?.shortName || "Not Found"}
+            />
+          </li>
+          <li>
+            <HeadingParagraph
+              heading="Unit Decimal Status"
+              paragraph={actionItem?.unit?.allowDecimal || "Not Found"}
+            />
           </li>
         </ul>
       </div>

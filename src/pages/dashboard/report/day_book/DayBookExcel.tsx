@@ -3,7 +3,11 @@ import { CSVLink } from "react-csv";
 
 const DayBookExcel = ({ data }: any) => {
   if (!data || !data.stocks || !data.payments || !data.total) {
-    return <p>No data available to download.</p>;
+    return (
+      <Button disabled variant="tertiary" size="sm">
+        EXCEL
+      </Button>
+    );
   }
   const combinedData = [];
 

@@ -1,6 +1,6 @@
 import { apiSlice } from "../root_api/apiSlice";
 
-const userApi = apiSlice.injectEndpoints({
+const variationColorApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     //ADD VARIATION COLOR
     addVariationColor: builder.mutation({
@@ -55,4 +55,4 @@ export const {
   useGetSingleVariationColorQuery,
   useDeleteVariationColorMutation,
   useUpdateVariationColorMutation,
-} = userApi;
+} = variationColorApi;

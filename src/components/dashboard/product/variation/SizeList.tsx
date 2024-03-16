@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import DataLoader from "@/components/common/loader/DataLoader";
-import Pagination from "@/components/previous/all/Pagination";
 import { Button } from "@/components/ui/button";
 import InputWrapper from "@/components/common/form/InputWrapper";
-import { Command } from "@/components/ui/command";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,13 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useAppContext } from "@/context/hook/useAppContext";
-import { AlertCircle, ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { AlertCircle, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 
@@ -42,33 +34,25 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addAndEditVariationSizeSchema } from "@/schemas/variation/add_edit_size_variation_schema";
 import FormWrapper from "@/components/common/form/FormWrapper";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import InfoWrapper from "@/components/common/InfoWrapper";
+import AddSize from "./AddSize";
 import {
   useDeleteVariationSizeMutation,
   useGetVariationSizeQuery,
   useUpdateVariationSizeMutation,
-} from "@/store/variation/variationsizeApi";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import InfoWrapper from "@/components/common/InfoWrapper";
-import AddSize from "./AddSize";
+} from "@/store/variation/variationSizeApi";
 
 interface IUpdateVariationFormData {
   size: string;
 }
 
 const SizeList = () => {
-  // APP CONTEXT
-  const { sidebarOpen } = useAppContext();
-
   const { toast } = useToast() as any;
-
-  // POPOVER STATES
-  const [variationOpen, setVariationOpen] = useState(false);
-
   // ADD COLOR DIALOG STATE
   const [addSizeOpen, setAddSizeOpen] = useState(false);
-
-  // PAGINATION STATE
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchSize, setSearchSize] = useState("");
 
   // VARIATION SIZE UPDATE STATE
   const [actionItem, setActionItem] = useState<any>();
@@ -77,24 +61,23 @@ const SizeList = () => {
   const [sizeList, setSizeList] = useState([]);
 
   // GET VARIATION SIZE, SEARCH, SORTING, PAGE
-  const { data: variationData, isLoading: isLoadingVariationGet } =
-    useGetVariationSizeQuery(undefined) as any;
+  const { data: sizeData, isLoading: sizeLoading } = useGetVariationSizeQuery({
+    search: searchSize,
+  }) as any;
 
   // VARIATION SIZE DATA FETCHING TO SHOW IN THE DATA TABLE
   useEffect(() => {
-    if (variationData?.data?.length > 0) {
-      const customizeVariationSize = variationData?.data?.map(
-        (size: any, index: number) => {
-          return {
-            index: index + 1,
-            id: size?.id,
-            size: size?.size,
-          };
-        }
-      );
-      setSizeList(customizeVariationSize);
+    if (sizeData?.data?.length > 0) {
+      const customizeSize = sizeData?.data?.map((size: any, index: number) => {
+        return {
+          index: index + 1,
+          id: size?.id,
+          size: size?.size,
+        };
+      });
+      setSizeList(customizeSize);
     }
-  }, [variationData?.data]);
+  }, [sizeData?.data]);
 
   // DELETE VARIATION SIZE
   const [
@@ -109,7 +92,6 @@ const SizeList = () => {
       data: updated,
       isSuccess: isUpdateVariationSize,
       isLoading: isUpdateVariationSizeLoading,
-
       error: updateVariationSizeError,
     },
   ] = useUpdateVariationSizeMutation();
@@ -216,7 +198,7 @@ const SizeList = () => {
                 </DialogTrigger>
                 <DialogContent>
                   <form onSubmit={onEditSizeSubmit}>
-                    <FormWrapper size="half" heading="Update Variation Size">
+                    <FormWrapper size="full" heading="Update Variation Size">
                       {/* SIZE NAME */}
                       <InputWrapper
                         label="Write Variation Size"
@@ -273,7 +255,7 @@ const SizeList = () => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle className={``}>
+                    <AlertDialogTitle>
                       Are you absolutely sure?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
@@ -300,7 +282,7 @@ const SizeList = () => {
     },
   ];
   // VARIATION SIZE GET LOADING
-  if (isLoadingVariationGet) {
+  if (sizeLoading) {
     return <DataLoader />;
   }
 
@@ -308,68 +290,20 @@ const SizeList = () => {
     <section className="my-6">
       {/* SEARCH VARIATION FIELD */}
       <div className="flex justify-end items-end w-full">
-        {/* SEARCH VARIATION SIZE FILED */}
+        {/* SEARCH BRAND FILED */}
         <div className="flex justify-end items-center space-x-2">
           <InputWrapper
             label="Write Variation Size"
             labelFor="search_size"
             error=""
           >
-            <Popover open={variationOpen} onOpenChange={setVariationOpen}>
-              <PopoverTrigger
-                id="search_size"
-                asChild
-                className={`w-full
-
-                ${
-                  sidebarOpen
-                    ? "md:w-[197px] lg:w-[178px] xl:w-[254px] truncate"
-                    : "md:w-[324px] lg:w-[247px] xl:w-[313px] 2xl:!w-[321px]"
-                }
-
-                `}
-              >
-                <Button
-                  variant="outline"
-                  role="search_size"
-                  aria-expanded={variationOpen}
-                  className="w-full justify-between"
-                >
-                  {/* {selectedSupplier?.firstName
-                  ? selectedSupplier?.firstName +
-                    " " +
-                    selectedSupplier?.lastName
-                  : generalInfo?.search_supplier.placeholder[locale]} */}
-                  Write variation size for searching
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="start"
-                className={`w-full  ${
-                  sidebarOpen
-                    ? "md:w-[197px] lg:w-[178px] xl:w-[254px] truncate"
-                    : "md:w-[324px] lg:w-[247px] xl:w-[313px] 2xl:!w-[321px]"
-                }`}
-              >
-                <Command>
-                  <div className="flex justify-center p-2">
-                    {/* SUPPLIER SEARCH INPUT */}
-                    <Input
-                      // onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      //   setSupplierSearch(e.target.value)
-                      // }
-                      placeholder="Write variation size for searching"
-                    />
-                  </div>
-                  {/* {isVariationSearching && (
-                    <div className="my-5 flex justify-center opacity-90">
-                      <ButtonLoader />
-                    </div>
-                  )} */}
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <Input
+              className="w-full md:w-[250px]"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setSearchSize(e.target.value)
+              }
+              placeholder="Write variation size for searching"
+            />
           </InputWrapper>
           <InputWrapper label="#" error="" labelFor="add_new_method">
             <Dialog open={addSizeOpen} onOpenChange={setAddSizeOpen}>
@@ -392,25 +326,11 @@ const SizeList = () => {
           </InputWrapper>
         </div>
       </div>
+
       {/*  VARIATION SIZE TABLE CONTAINER */}
-      <InfoWrapper heading="Size Information">
+      <InfoWrapper className="my-2" heading="Size Information">
         <DataTable columns={columns} data={sizeList} />
       </InfoWrapper>
-
-      <div className="">
-        {variationData?.meta?.total >= 5 && (
-          <div className="mt-5 mr-8 flex justify-end">
-            <Pagination
-              currPage={currentPage}
-              setCurrPage={setCurrentPage}
-              isLoading={isLoadingVariationGet}
-              // totalItems={searchVariation?.meta?.total}
-              // totalPage={searchVariation?.meta?.totalPage}
-              // pageLength={searchVariation?.meta?.size}
-            />
-          </div>
-        )}
-      </div>
     </section>
   );
 };

@@ -5,6 +5,9 @@ import PaginationWrapper, {
 import InputWrapper from "@/components/common/form/InputWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { DataTable } from "@/components/common/table/DataTable";
+import AddProductCategory from "@/components/dashboard/product/product_category/AddProductCategory";
+import EditProductCategory from "@/components/dashboard/product/product_category/EditProductCategory";
+import ProductCategoryDetails from "@/components/dashboard/product/product_category/ProductCategoryDetails";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +29,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useGetProductCategoriesQuery } from "@/store/product_category/productCategoryApi";
-import { useDeleteProductSubCategoryMutation } from "@/store/product_sub_category/productSubCategoryApi";
+import {
+  useDeleteProductCategoryMutation,
+  useGetProductCategoriesQuery,
+} from "@/store/product_category/productCategoryApi";
+
 import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -42,6 +48,7 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
   const [actionItem, setActionItem] = useState<any>();
   // PAGINATION STATE
   const [pagination, setPagination] = useState<IPagination>({
+    sort: "asc",
     page: 1,
     size: 10,
     meta: {
@@ -71,8 +78,8 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
         (singleCategory: any) => ({
           ...singleCategory,
           categoryName: capitalizeEveryWord(singleCategory?.categoryName),
-          categoryCode: singleCategory?.categoryCode?.toLowerCase(),
-          description: capitalizeEveryWord(singleCategory?.description),
+          dummyCategoryCode:
+            singleCategory?.categoryCode?.toLowerCase() || "Not found",
         })
       );
       setCategoryList(customizeSubCategory);
@@ -83,21 +90,22 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
     }
   }, [categoriesData?.data, categoriesData?.meta]);
 
-  const [deleteSubCategory, { isSuccess: isDeleteSubCategorySuccess }] =
-    useDeleteProductSubCategoryMutation({}) as any;
+  const [deleteCategory, { isSuccess: isDeleteCategorySuccess }] =
+    useDeleteProductCategoryMutation({}) as any;
 
   useEffect(() => {
-    if (isDeleteSubCategorySuccess) {
+    if (isDeleteCategorySuccess) {
       toast({
         title: "Category Delete Message",
         description: "Category deleted successfully",
       });
     }
-  }, [isDeleteSubCategorySuccess, toast]);
+  }, [isDeleteCategorySuccess, toast]);
 
   // CATEGORY ACTIONS AND CATEGORY TABLE COLUMNS
   const columns: ColumnDef<any>[] = [
     {
+      size: 20,
       accessorKey: "categoryName",
       header: ({ column }) => {
         return (
@@ -112,15 +120,12 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
       },
     },
     {
-      accessorKey: "categoryCode",
+      accessorKey: "dummyCategoryCode",
       header: " Code",
+      size: 20,
     },
     {
-      accessorKey: "description",
-      header: "Description",
-    },
-
-    {
+      size: 5,
       header: "Action",
       id: "actions",
       enableHiding: false,
@@ -155,9 +160,25 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
                     Edit
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto">
+                <DialogContent>
                   {/* EDIT CATEGORY FORM CONTAINER */}
-                  {/* <EditSupplier actionItem={actionItem} /> */}
+                  <EditProductCategory actionItem={actionItem} />
+                </DialogContent>
+              </Dialog>
+              {/* CATEGORY DETAILS CONTAINER */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    Details
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  {/* EDIT CATEGORY FORM CONTAINER */}
+                  <ProductCategoryDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
 
@@ -187,7 +208,7 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => deleteSubCategory(category?.id)}
+                      onClick={() => deleteCategory(category?.id)}
                     >
                       Confirm
                     </AlertDialogAction>
@@ -240,7 +261,7 @@ const ProductCategoryList: FC<IProductCategoryListProps> = () => {
               </DialogTrigger>
               <DialogContent>
                 {/* ADD NEW CATEGORY FORM CONTAINER */}
-                {/* <AddSubCategory setAddSubCategoryOpen={setAddCategoryOpen} /> */}
+                <AddProductCategory setAddCategoryOpen={setAddCategoryOpen} />
               </DialogContent>
             </Dialog>
           </InputWrapper>

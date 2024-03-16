@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 
 export interface IPagination {
+  sort: string;
   size: number;
   page: number;
   meta: {
@@ -48,6 +49,25 @@ const PaginationWrapper: FC<IPaginationWrapperProps> = ({
       </div>
       <Pagination className="w-full md:w-1/2 flex justify-center md:justify-end">
         <PaginationContent>
+          <PaginationItem>
+            <Select
+              value={pagination?.sort}
+              onValueChange={(value: string) =>
+                setPagination({
+                  ...pagination,
+                  sort: value,
+                })
+              }
+            >
+              <SelectTrigger className="w-[120px] border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 rounded-md px-2">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="asc">Ascending</SelectItem>
+                <SelectItem value="desc">Descending</SelectItem>
+              </SelectContent>
+            </Select>
+          </PaginationItem>
           <PaginationItem>
             <Button
               onClick={() =>

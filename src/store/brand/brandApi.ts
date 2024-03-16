@@ -14,8 +14,8 @@ const brandApi = apiSlice.injectEndpoints({
 
     //GET ALL BRAND
     getBrands: builder.query({
-      query: () => ({
-        url: "/brand/get-brand",
+      query: (data) => ({
+        url: `/brand/get-brand?search=${data?.search || ""}`,
       }),
       providesTags: ["brand"],
     }),

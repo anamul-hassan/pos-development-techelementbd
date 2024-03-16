@@ -15,7 +15,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 // import { useGetAccountsQuery } from "@/store/account/accountApi";
 import {
   useDeleteCustomerMutation,
-  useSearchCustomerQuery,
+  useGetCustomersQuery,
 } from "@/store/customer/customerApi";
 import { useToast } from "@/components/ui/use-toast";
 import Input from "@/components/previous/all/Input";
@@ -43,7 +43,9 @@ const ListDueCollectionsPage = () => {
   //   "All"
   // ) as any;
 
-  const { data: customerSearch } = useSearchCustomerQuery(search) as any;
+  const { data: customerSearch } = useGetCustomersQuery({
+    search,
+  }) as any;
 
   // const {
   //   // register,

@@ -5,7 +5,8 @@ import PaginationWrapper, {
 import InputWrapper from "@/components/common/form/InputWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { DataTable } from "@/components/common/table/DataTable";
-import AddSubCategory from "@/components/dashboard/product/sub_category/AddSubCategory";
+import AddProductSubCategory from "@/components/dashboard/product/product_sub_category/AddProductSubCategory";
+import EditProductSubCategory from "@/components/dashboard/product/product_sub_category/EditProductSubCategory";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,6 +46,7 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
   const [actionItem, setActionItem] = useState<any>();
   // PAGINATION STATE
   const [pagination, setPagination] = useState<IPagination>({
+    sort: "asc",
     page: 1,
     size: 10,
     meta: {
@@ -77,6 +79,12 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
           subCategoryName: capitalizeEveryWord(
             singleSubCategory?.subCategoryName
           ),
+          category: {
+            ...singleSubCategory?.category,
+            categoryName: capitalizeEveryWord(
+              singleSubCategory?.category?.categoryName
+            ),
+          },
         })
       );
       setSubCategoryList(customizeSubCategory);
@@ -109,7 +117,21 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
             className="flex items-center"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Name
+            Sub-category Name
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+    {
+      accessorKey: "category.categoryName",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Category Name
             <ArrowUpDown className="ml-1 size-3" />
           </button>
         );
@@ -151,9 +173,9 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
                     Edit
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto">
+                <DialogContent>
                   {/* EDIT SUB-CATEGORY FORM CONTAINER */}
-                  {/* <EditSupplier actionItem={actionItem} /> */}
+                  <EditProductSubCategory actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
 
@@ -216,7 +238,7 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
               }
               className="w-full md:w-[250px]"
               id="search_sub_category"
-              placeholder="Write supplier name for searching"
+              placeholder="Write sub-category name for searching"
             />
           </InputWrapper>
 
@@ -241,7 +263,9 @@ const ProductSubCategoryList: FC<IProductSupCategoryListProps> = () => {
               </DialogTrigger>
               <DialogContent>
                 {/* ADD NEW SUB-CATEGORY FORM CONTAINER */}
-                <AddSubCategory setAddSubCategoryOpen={setAddSubCategoryOpen} />
+                <AddProductSubCategory
+                  setAddSubCategoryOpen={setAddSubCategoryOpen}
+                />
               </DialogContent>
             </Dialog>
           </InputWrapper>

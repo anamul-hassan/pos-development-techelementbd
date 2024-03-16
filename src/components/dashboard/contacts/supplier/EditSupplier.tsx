@@ -46,6 +46,7 @@ const EditSupplier: FC<IEditSupplierProps> = ({ actionItem }) => {
     watch,
   } = useForm({ resolver: yupResolver(addEditSupplierSchema) });
 
+  // UPDATE SUPPLIER MUTATION
   const [
     updateSupplier,
     { isLoading: updateSupplierLoading, error: updateSupplierError },
@@ -64,6 +65,7 @@ const EditSupplier: FC<IEditSupplierProps> = ({ actionItem }) => {
       "zipCode",
       "paidStatus",
       "peyTerm",
+      "email",
     ]);
 
     delete updateData.branchId;
@@ -338,7 +340,7 @@ const EditSupplier: FC<IEditSupplierProps> = ({ actionItem }) => {
           </Select>
         </InputWrapper>
 
-        {/* BRANCH LIST */}
+        {/* BRANCH  */}
         {actionManager(["admin"]) && (
           <InputWrapper
             label={ADD_EDIT_SUPPLIER_FORM.branchId.label[locale]}
@@ -365,7 +367,7 @@ const EditSupplier: FC<IEditSupplierProps> = ({ actionItem }) => {
             "data" in updateSupplierError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Add Supplier Error</AlertTitle>
+                <AlertTitle>Update Supplier Error</AlertTitle>
                 <AlertDescription>
                   {updateSupplierError?.data?.message ||
                     "Something went wrong! try again"}
@@ -373,7 +375,7 @@ const EditSupplier: FC<IEditSupplierProps> = ({ actionItem }) => {
               </Alert>
             )}
         </div>
-        {/* ADD SUPPLIER BUTTON */}
+        {/* UPDATE SUPPLIER BUTTON */}
         <div className="flex justify-end w-1/2">
           <Button disabled={updateSupplierLoading} type="submit">
             {updateSupplierLoading && <ButtonLoader />}

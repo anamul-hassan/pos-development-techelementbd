@@ -46,7 +46,8 @@ const BarCode: FC<IBarCodeProps> = ({ companyName, singleProduct }) => {
             TK.{" "}
             {(singleProduct?.sellingPrice || singleProduct?.sellPrice)?.toFixed(
               2
-            )}
+            )}{" "}
+            + VAT
           </b>
         </li>
       </ul>

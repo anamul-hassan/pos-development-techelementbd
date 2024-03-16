@@ -26,7 +26,7 @@ interface IClientDetails {
 //   companyCode: "__safwans__",
 //   baseUrl: "https://pos-software-with-mysql-safwans.vercel.app/api/v1",
 //   favicon: "/safwans_favicon.png",
-//   sidebarLogo: "/safwans.png",
+//   sidebarLogo: "/safwans_favicon.png",
 //   progressMessage:
 //     "Thank you for your interest! 🚀 We're currently working on implementing this feature. Stay tuned, as we'll be activating it very soon!",
 // };
@@ -35,7 +35,7 @@ interface IClientDetails {
  */
 
 export const CLIENT_DETAILS: IClientDetails = {
-  companyName: "Development",
+  companyName: "Tech Element BD",
   companyPlace: "",
   address: "Address Development, Development",
   email: "example@mail.com",

@@ -46,6 +46,8 @@ import uniqueIdGenerator from "@/utils/helpers/uniqueIdGenerator";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
 import { useGetSuppliersQuery } from "@/store/supplier/supplierApi";
+import { DISCOUNT_TYPES } from "@/utils/constants/common/discount_type";
+import { PURCHASE_STATUS } from "@/utils/constants/common/purchase_status";
 
 interface IAddPurchaseContainerProps {
   setValue: any;
@@ -115,33 +117,8 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
 
   // PURCHASE STATUS OPTIONS STATE
 
-  const purchaseStatus = [
-    {
-      label: "Received",
-      key: "Received",
-    },
-    {
-      label: "Pending",
-      key: "Pending",
-    },
-    {
-      label: "Ordered",
-      key: "Ordered",
-    },
-  ];
   // DISCOUNT TYPE STATE
   // const [discountType, setDiscountType] = useState(
-
-  const discountType = [
-    {
-      label: "Fixed",
-      key: "Fixed",
-    },
-    {
-      label: "Percentage",
-      key: "Persent",
-    },
-  ];
 
   // STATE FOR ADDING NEW PAYMENT OPTION
   const [paymentMethodTable, setPaymentMethodTable] = useState<any>([
@@ -406,9 +383,9 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {discountType &&
-                          discountType?.length > 0 &&
-                          discountType?.map(
+                        {DISCOUNT_TYPES &&
+                          DISCOUNT_TYPES?.length > 0 &&
+                          DISCOUNT_TYPES?.map(
                             (singleOption: any, optionIndex: number) => (
                               <SelectItem
                                 key={optionIndex + singleOption.key}
@@ -546,8 +523,8 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {purchaseStatus.length > 0 &&
-                            purchaseStatus.map((singleStatus: any) => (
+                          {PURCHASE_STATUS.length > 0 &&
+                            PURCHASE_STATUS.map((singleStatus: any) => (
                               <SelectItem
                                 key={singleStatus?.key}
                                 value={singleStatus?.key}

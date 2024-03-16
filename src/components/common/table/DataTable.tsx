@@ -47,8 +47,7 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
-                    className="h-10 px-2 leading-6 truncate max-w-[200px]"
-                    style={{ width: `${header.getSize()}px` }}
+                    className={`h-10 px-2 leading-6 truncate w-[${header.getSize()}px]`}
                     key={header.id}
                   >
                     {header.isPlaceholder

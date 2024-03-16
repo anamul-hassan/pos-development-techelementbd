@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const expenseSubCategoryApi = apiSlice.injectEndpoints({
@@ -12,10 +13,14 @@ const expenseSubCategoryApi = apiSlice.injectEndpoints({
       invalidatesTags: ["expense-sub-category"],
     }),
 
-    // GET ALL CATEGORY
-    getAllExpenseSubCategory: builder.query({
-      query: () => ({
-        url: "/expense-subcategory/get-expense-subcategory-all",
+    // GET ALL EXPENSE SUB CATEGORY
+    getExpenseSubCategories: builder.query({
+      query: (data) => ({
+        url: `/expense-subcategory/get-expense-subcategory-all?search=${
+          data?.search || ""
+        }&page=${data?.page || 1}&size=${
+          data?.size || undefinedSize
+        }&sortOrder=${data?.sort || "asc"}`,
       }),
       providesTags: ["expense-sub-category"],
     }),
@@ -51,7 +56,7 @@ const expenseSubCategoryApi = apiSlice.injectEndpoints({
 
 export const {
   useAddExpenseSubCategoryMutation,
-  useGetAllExpenseSubCategoryQuery,
+  useGetExpenseSubCategoriesQuery,
   useGetSingleExpenseSubCategoryQuery,
   useUpdateExpenseSubCategoryMutation,
   useDeleteExpenseSubCategoryMutation,

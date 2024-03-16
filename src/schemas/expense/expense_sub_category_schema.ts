@@ -1,5 +1,5 @@
 import * as yup from "yup";
-export const ExpenseSubCategorySchema = yup.object().shape({
-  name: yup.string().required("Sub-Category Name is required"),
-  expenseCategoryId: yup.number().required("Sub-Category Id is required"),
+export const addEditExpenseSubCategorySchema = yup.object().shape({
+  name: yup.string().required("Sub-category name is required"),
+  expenseCategoryId: yup.number().required("Category is required"),
 });

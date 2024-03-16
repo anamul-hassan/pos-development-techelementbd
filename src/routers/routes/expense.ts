@@ -1,34 +1,20 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import ListExpensePage from "@/pages/previous/HomeSection/Expense/ListExpensePage/ListExpensePage";
-import EditExpensePage from "@/pages/previous/HomeSection/Expense/EditExpensePage/EditExpensePage";
-import ExpenseCategoryPage from "@/pages/previous/HomeSection/Expense/ExpenseCategoryPage/ExpenseCategoryPage";
-import SubExpenseCategoryEdit from "@/pages/previous/HomeSection/Expense/ExpenseSubCategoryPage/SubExpenseCategoryEdit";
-import ExpenseSubCategoryPage from "@/pages/previous/HomeSection/Expense/ExpenseSubCategoryPage/ExpenseSubCategoryPage";
+import ExpenseList from "@/pages/dashboard/expense/ExpenseList";
+import ExpenseCategoryList from "@/pages/dashboard/expense/ExpenseCategoryList";
+import ExpenseSubCategoryList from "@/pages/dashboard/expense/ExpenseSubCategoryList";
 
 export const expense_routes: IRouteProps[] = [
   {
     path: "expenses_list",
-    element: React.createElement(ListExpensePage),
-  },
-  {
-    path: "edit_expense/:id",
-    element: React.createElement(EditExpensePage),
+    element: React.createElement(ExpenseList),
   },
   {
     path: "expense_category",
-    element: React.createElement(ExpenseCategoryPage),
+    element: React.createElement(ExpenseCategoryList),
   },
   {
     path: "expense_sub_category",
-    element: React.createElement(ExpenseSubCategoryPage),
-  },
-  {
-    path: "sub_expense_category",
-    element: React.createElement(ExpenseSubCategoryPage),
-  },
-  {
-    path: "edit_expense_sub_category/:id",
-    element: React.createElement(SubExpenseCategoryEdit),
+    element: React.createElement(ExpenseSubCategoryList),
   },
 ];

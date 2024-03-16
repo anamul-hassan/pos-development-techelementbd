@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const productApi = apiSlice.injectEndpoints({
@@ -14,7 +15,9 @@ const productApi = apiSlice.injectEndpoints({
     // GET ALL PRODUCT
     getProducts: builder.query({
       query: (data) => ({
-        url: `/product/get-products?page=${data?.page}&size=${data?.size}`,
+        url: `/product/get-products?page=${data?.page || 1}&size=${
+          data?.size || undefinedSize
+        }&search=${data.search || ""}&sortOrder=${data?.sort || "asc"}`,
       }),
       providesTags: ["product"],
     }),
@@ -22,13 +25,6 @@ const productApi = apiSlice.injectEndpoints({
     getSingleProduct: builder.query({
       query: (id) => ({
         url: `/product/get-product-by-id/${id}`,
-      }),
-      providesTags: ["product"],
-    }),
-    // SEARCH PRODUCT
-    searchProduct: builder.query({
-      query: (search) => ({
-        url: `/product/get-products?search=${search}`,
       }),
       providesTags: ["product"],
     }),
@@ -63,7 +59,6 @@ export const {
   useAddProductMutation,
   useGetProductsQuery,
   useGetSingleProductQuery,
-  useSearchProductQuery,
   useSearchSingleProductQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,

@@ -55,7 +55,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { useGetCustomersQuery } from "@/store/customer/customerApi";
 
 interface IAddPointOfSellContainerProps {
@@ -154,7 +153,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
     {
       search: clientSearch,
       page: 1,
-      size: 100000000,
+      size: 10,
     }
   );
 
@@ -188,7 +187,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
     }
     // LOGIC FOR ADD CLIENT DATA
     if (clientSearch) {
-      setClientList([clientData?.data]);
+      setClientList(clientData?.data);
     } else {
       setClientList([]);
     }
@@ -457,19 +456,19 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                         className="w-full justify-between"
                       >
                         {selectedClient?.firstName
-                          ? capitalizeEveryWord(
-                              fullNameConverter(
+                          ? selectedClient?.firstName?.toLowerCase() === "n/a"
+                            ? selectedClient?.phone
+                            : fullNameConverter(
                                 selectedClient?.firstName,
                                 selectedClient?.lastName
                               )
-                            )
                           : search_client.placeholder[locale]}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0  opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
                       align="start"
-                      className={`w-full  ${
+                      className={`w-full max-h-[250px] overflow-y-auto  ${
                         sidebarOpen
                           ? "md:w-[250px] lg:w-[151px] xl:w-[206px]  2xl:!w-[272px] truncate"
                           : "md:w-[250px] lg:w-[196px] xl:w-[266px] 2xl:!w-[313px]"
@@ -514,14 +513,21 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
                                       : "opacity-0"
                                   )}
                                 />
-                                {singleClient?.firstName
-                                  ? capitalizeEveryWord(
-                                      fullNameConverter(
-                                        singleClient?.firstName,
-                                        singleClient?.lastName
-                                      )
-                                    )
-                                  : "Not found"}
+                                <ul>
+                                  <li>
+                                    <b>{singleClient?.phone}</b>
+                                  </li>
+                                  <li className="text-sm">
+                                    {singleClient?.firstName &&
+                                    singleClient?.firstName?.toLowerCase() !==
+                                      "n/a"
+                                      ? fullNameConverter(
+                                          singleClient?.firstName,
+                                          singleClient?.lastName
+                                        )
+                                      : "Not Found"}
+                                  </li>
+                                </ul>
                               </CommandItem>
                             )
                           )}
@@ -639,23 +645,27 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
               {/* CLIENT PHONE NUMBER */}
               <HeadingParagraph
-                heading="Client's Phone Number"
+                heading="Phone"
                 paragraph={selectedClient?.phone || "N/A"}
               />
               {/* CLIENT MEMBERSHIP ID */}
               <HeadingParagraph
-                heading="Client's Membership ID"
+                heading="Membership ID"
                 paragraph={selectedClient?.memberShipId || "N/A"}
               />
               {/* CLIENT COLLECTED POINT */}
               <HeadingParagraph
-                heading="Client's Collected Point"
+                heading="Point"
                 paragraph={selectedClient?.point || "00"}
               />
               {/* CLIENT AMOUNT BY POINT */}
               <HeadingParagraph
-                heading="Converted Amount By Point"
-                paragraph={selectedClient?.pointAmount || "00"}
+                heading="Point Amount"
+                paragraph={
+                  selectedClient?.pointAmount
+                    ? selectedClient?.pointAmount?.toFixed(2) + "৳"
+                    : "0.00৳"
+                }
               />
             </div>
           </InfoWrapper>

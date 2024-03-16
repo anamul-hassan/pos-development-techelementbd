@@ -138,7 +138,8 @@ const AddPointOfSell: FC<IAddPointOfSellProps> = () => {
           setClear={setClear}
         />
       </form>
-      <div className="invisible hidden -left-full">
+      {/* className="invisible hidden -left-full" */}
+      <div>
         {addPOSSuccess && (
           <PrintPos
             discountAmount={discountAmount}
