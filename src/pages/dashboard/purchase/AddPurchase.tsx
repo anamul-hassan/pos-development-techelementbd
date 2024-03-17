@@ -1,16 +1,13 @@
 import BarCode from "@/components/common/BarCode";
-import ButtonLoader from "@/components/common/loader/ButtonLoader";
+import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
 import AddPurchaseContainer from "@/components/dashboard/purchase/AddPurchaseContainer";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { addPurchaseSchema } from "@/schemas/purchase/purchase_schema";
+import { addEditPurchaseSchema } from "@/schemas/purchase/purchase_schema";
 import { useAddPurchaseMutation } from "@/store/purchase/purchaseApi";
 import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
 import { objectCopier } from "@/utils/helpers/objectCopier";
 import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AlertCircle } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
@@ -29,8 +26,10 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
   const [clear, setClear] = useState(false);
 
   // ADD PURCHASE MUTATION
-  const [addPurchase, { isLoading: purchaseLoading, error: purchaseError }] =
-    useAddPurchaseMutation({});
+  const [
+    addPurchase,
+    { isLoading: addPurchaseLoading, error: addPurchaseError },
+  ] = useAddPurchaseMutation({}) as any;
 
   // REACT HOOK FORM
   const {
@@ -41,7 +40,7 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(addPurchaseSchema),
+    resolver: yupResolver(addEditPurchaseSchema),
     defaultValues: {
       discount: 0,
       referenceNo: "",
@@ -168,22 +167,14 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
           error={errors}
           clear={clear}
         />
-        <div className="flex justify-between">
-          {purchaseError && "data" in purchaseError && (
-            <Alert className="w-3/4 md:w-1/4" variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Purchase Error</AlertTitle>
-              <AlertDescription>
-                Something went wrong! try again
-              </AlertDescription>
-            </Alert>
-          )}
-          <div></div>
-          <Button disabled={purchaseLoading} type="submit">
-            {purchaseLoading && <ButtonLoader />}
-            Add Purchase
-          </Button>
-        </div>
+
+        {/* ERROR MESSAGE */}
+        <SubmitErrorWrapper
+          error={addPurchaseError}
+          loading={addPurchaseLoading}
+          errorTitle="Add Expense Error"
+          buttonLabel="Add Purchase"
+        />
       </form>
 
       <div className="hidden">

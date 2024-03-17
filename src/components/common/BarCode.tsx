@@ -7,6 +7,7 @@ interface IBarCodeProps {
 }
 
 const BarCode: FC<IBarCodeProps> = ({ companyName, singleProduct }) => {
+  console.log(singleProduct, "singlepor");
   return (
     <div className="font-anek break-after-page bg-white text-black rounded-lg">
       <ul>

@@ -16,12 +16,12 @@ import moment from "moment";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 
 interface PrintPosProps {
-  POSData: any;
+  saleData: any;
   vatAmount: number | string;
   discountAmount: number | string;
 }
-const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
-  ({ POSData, vatAmount, discountAmount }, ref) => {
+const PrintSale = React.forwardRef<HTMLDivElement, PrintPosProps>(
+  ({ saleData: POSData, vatAmount, discountAmount }, ref) => {
     const { data: accountData } = useGetAccountsQuery("All") as any;
 
     const paymentsInfo = POSData?.data?.payments.map((singleAccount1: any) => {
@@ -341,4 +341,4 @@ const PrintPos = React.forwardRef<HTMLDivElement, PrintPosProps>(
   }
 );
 
-export default PrintPos;
+export default PrintSale;

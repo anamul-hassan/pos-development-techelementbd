@@ -18,7 +18,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        roboto: ["var(--font-roboto)"],
+        roboto: ["var(-- )"],
         anek: ["var(--font-anek_bangla)"],
       },
       colors: {

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 
 export interface IPagination {
-  sort: string;
+  sort: "asc" | "desc";
   size: number;
   page: number;
   meta: {

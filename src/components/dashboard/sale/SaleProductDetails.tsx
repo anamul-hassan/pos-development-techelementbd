@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 
-interface IPOSProductDetailsProps {
+interface ISaleProductDetailsProps {
   productDetails: any;
   selectedProduct: any;
   setSelectedProduct: any;
@@ -23,7 +23,7 @@ interface IPOSProductDetailsProps {
   setValue: any;
 }
 
-const POSProductDetails: FC<IPOSProductDetailsProps> = ({
+const SaleProductDetails: FC<ISaleProductDetailsProps> = ({
   productDetails,
   selectedProduct,
   setSelectedProduct,
@@ -287,4 +287,4 @@ const POSProductDetails: FC<IPOSProductDetailsProps> = ({
   );
 };
 
-export default POSProductDetails;
+export default SaleProductDetails;

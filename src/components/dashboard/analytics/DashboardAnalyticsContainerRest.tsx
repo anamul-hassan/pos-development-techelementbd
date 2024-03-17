@@ -183,7 +183,7 @@ const DashboardAnalyticsContainerRest: FC<
       <section className="pt-4">
         <InfoWrapper heading="Today's Available Amount">
           <div className="-mx-2">
-            <Table className="border">
+            <Table className="border  overflow-hidden">
               <TableCaption>
                 A list of your recent accounts transition
               </TableCaption>

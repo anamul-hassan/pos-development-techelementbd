@@ -14,7 +14,7 @@ const warrantyApi = apiSlice.injectEndpoints({
     // GET ALL WARRANTIES
     getWarranties: builder.query({
       query: (data) => ({
-        url: `/warranty/get-warranty-all?search=${data.search || ""}`,
+        url: `/warranty/get-warranty-all?search=${data?.search || ""}`,
       }),
       providesTags: ["warranty"],
     }),

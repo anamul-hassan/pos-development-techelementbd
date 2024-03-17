@@ -1,8 +1,8 @@
-import AddPointOfSellContainer from "@/components/dashboard/sell/point_of_sell/AddPointOfSellContainer";
-import PrintPos from "@/components/dashboard/sell/point_of_sell/PrintPos";
+import AddSaleContainer from "@/components/dashboard/sale/AddSaleContainer";
+import PrintSale from "@/components/dashboard/sale/PrintSale";
 import { useToast } from "@/components/ui/use-toast";
-import { addPOSSchema } from "@/schemas/pos/pos_schema";
-import { useAddPOSMutation } from "@/store/point_of_sell/posApi";
+import { addEditSaleSchema } from "@/schemas/sale/add_edit_sale_schema";
+import { useAddSaleMutation } from "@/store/sale/saleApi";
 import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
@@ -14,7 +14,7 @@ import { useReactToPrint } from "react-to-print";
 
 interface IAddPointOfSellProps {}
 
-const AddPointOfSell: FC<IAddPointOfSellProps> = () => {
+const AddSale: FC<IAddPointOfSellProps> = () => {
   // TOAST HOOK
   const { toast } = useToast();
   const [clear, setClear] = useState(false);
@@ -23,28 +23,28 @@ const AddPointOfSell: FC<IAddPointOfSellProps> = () => {
   const { branchId } = shareBranchAndUserInfo();
 
   // REFERENCE FOR PRINT SELECTED COMPONENT
-  const printPOSRef = useRef(null);
+  const printSaleRef = useRef(null);
   const [isPrinting, setIsPrinting] = useState(false);
 
   // STORE PROMISE RESOLVE REFERENCE
   const promiseResolveRef = useRef<any>(null);
 
-  // ADD NEW POS MUTATION
+  // ADD NEW SALE MUTATION
   const [
-    addPOS,
-    { data: posData, isLoading: addPOSLoading, isSuccess: addPOSSuccess },
-  ] = useAddPOSMutation({}) as any;
+    addSale,
+    { data: saleData, isLoading: addSaleLoading, isSuccess: addSaleSuccess },
+  ] = useAddSaleMutation({}) as any;
 
-  // FORM FOR ADD NEW POS
+  // FORM FOR ADD NEW SALE
   const {
-    register: addPOSRegister,
-    handleSubmit: addPOSHandleSubmit,
+    register: addSaleRegister,
+    handleSubmit: addSaleHandleSubmit,
     setValue,
     watch,
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver<any>(addPOSSchema),
+    resolver: yupResolver<any>(addEditSaleSchema),
     defaultValues: {
       branchId: branchId,
       customerId: "",
@@ -85,7 +85,7 @@ const AddPointOfSell: FC<IAddPointOfSellProps> = () => {
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    content: () => printPOSRef.current,
+    content: () => printSaleRef.current,
     onBeforeGetContent: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
@@ -101,55 +101,55 @@ const AddPointOfSell: FC<IAddPointOfSellProps> = () => {
       setDiscountAmount("");
     },
   });
-  // ADDING NEW POS
+  // ADDING NEW SALE
   const onSubmit = async (data: any) => {
-    const result = await addPOS(data);
+    const result = await addSale(data);
     if (result?.data?.success) {
-      // AFTER COMPLETE THE ADDING POS CALL TO PRINT
+      // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
       handlePrint();
       // RESET PREVIOUS FORM DATA
       reset();
       // GIVE PERMISSION TO CLEAR ALL PREVIOUS DATA
       setClear(true);
-      // SHOW TOAST FOR ADDING NEW POS
+      // SHOW TOAST FOR ADDING NEW SALE
       toast({
-        title: "POS Message",
-        description: "POS added successfully",
+        title: "Sale Message",
+        description: "Sale added successfully",
       });
     }
   };
 
   return (
     <section>
-      <form onSubmit={addPOSHandleSubmit(onSubmit)}>
-        <AddPointOfSellContainer
+      <form onSubmit={addSaleHandleSubmit(onSubmit)}>
+        <AddSaleContainer
           totalVat={totalVat}
           totalPrice={totalPrice}
           vatAmount={vatAmount}
           setVatAmount={setVatAmount}
           discountAmount={discountAmount}
           setDiscountAmount={setDiscountAmount}
-          loading={addPOSLoading}
+          loading={addSaleLoading}
           watch={watch}
           setValue={setValue}
           error={errors}
-          register={addPOSRegister}
+          register={addSaleRegister}
           clear={clear}
           setClear={setClear}
         />
       </form>
       {/* className="invisible hidden -left-full" */}
       <div>
-        {addPOSSuccess && (
-          <PrintPos
+        {addSaleSuccess && (
+          <PrintSale
             discountAmount={discountAmount}
             vatAmount={vatAmount}
-            ref={printPOSRef}
-            POSData={posData}
+            ref={printSaleRef}
+            saleData={saleData}
           />
         )}
       </div>
     </section>
   );
 };
-export default AddPointOfSell;
+export default AddSale;

@@ -57,16 +57,16 @@ const PurchaseProductDetailsForm: FC<IPurchaseProductDetailsFormProps> = ({
 
   // GET ALL WARRANTY QUERY
   const { data: warrantyData, isLoading: warrantyLoading } =
-    useGetWarrantiesQuery(undefined) as any;
+    useGetWarrantiesQuery({}) as any;
 
   // GET VARIATION SIZE, SEARCH, SORTING, PAGE
   const { data: sizeData, isLoading: sizeLoading } = useGetVariationSizeQuery(
-    undefined
+    {}
   ) as any;
 
   // GET VARIATION COLOR, SEARCH, SORTING, PAGE
   const { data: colorData, isLoading: colorLoading } =
-    useGetVariationColorQuery(undefined) as any;
+    useGetVariationColorQuery({}) as any;
 
   return (
     <Accordion
@@ -148,8 +148,8 @@ const PurchaseProductDetailsForm: FC<IPurchaseProductDetailsFormProps> = ({
                     Product Removal Confirmation
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to remove this product from the Point
-                    of Sale &#40;POS&#41; screen? This action cannot be undone.
+                    Are you sure you want to remove this product from the
+                    purchase &#40;POS&#41; screen? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

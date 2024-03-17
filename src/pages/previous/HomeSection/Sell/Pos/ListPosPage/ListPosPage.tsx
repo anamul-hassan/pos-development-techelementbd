@@ -14,10 +14,7 @@ import { useEffect, useState } from "react";
 import { SiGoogledocs } from "react-icons/si";
 import { IoIosPrint } from "react-icons/io";
 import { MdOutlinePayment } from "react-icons/md";
-import {
-  useDeletePOSMutation,
-  useGetAllPOSQuery,
-} from "@/store/point_of_sell/posApi";
+import { useDeletePOSMutation, useGetAllPOSQuery } from "@/store/sale/saleApi";
 import { useGetCustomersQuery } from "@/store/customer/customerApi";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { useToast } from "@/components/ui/use-toast";

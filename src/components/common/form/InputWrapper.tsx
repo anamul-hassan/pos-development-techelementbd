@@ -20,7 +20,7 @@ const InputWrapper: FC<IInputWrapperProps> = ({
     <div className={cn("w-full flex flex-col p-1", className)}>
       {label && (
         <label
-          className="font-roboto text-sm max-w-none truncate inline-block leading-8"
+          className="  text-sm max-w-none truncate inline-block leading-8"
           htmlFor={labelFor || ""}
         >
           {(label.trim() === "#" && (
@@ -33,7 +33,7 @@ const InputWrapper: FC<IInputWrapperProps> = ({
       {children}
       {error && (
         <label
-          className="font-roboto text-sm text-destructive max-w-none block mt-1"
+          className="  text-sm text-destructive max-w-none block mt-1"
           htmlFor={labelFor || ""}
         >
           {error || ""}

@@ -9,14 +9,9 @@ interface IDashboardLayoutProps {}
 const DashboardLayout: FC<IDashboardLayoutProps> = () => {
   const { sidebarOpen, setSidebarOpen } = useAppContext();
   const [mouseEnter, setMouseEnter] = useState(false);
-  const lang = "en";
 
   return (
-    <section
-      className={`w-full h-screen flex overflow-hidden ${
-        lang === "en" ? "font-poppins" : "font-anek"
-      } `}
-    >
+    <section className="w-full h-screen flex overflow-hidden">
       <DashboardSidebar setMouseEnter={setMouseEnter} mouseEnter={mouseEnter} />
       <section
         className={` ${

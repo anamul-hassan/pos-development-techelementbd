@@ -4,9 +4,8 @@
 
 @layer base {
   :root {
-    --font-roboto: "Roboto", ui-sans-serif, system-ui, sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-      "Noto Color Emoji";
+    --: "Roboto", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-anek_bangla: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
       "Noto Color Emoji";
@@ -106,7 +105,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground font-roboto;
+    @apply bg-background text-foreground;
   }
 
   /* CUSTOMIZE SCROLLBAR */
@@ -201,6 +200,12 @@
   }
   .test-breakpoint {
     @apply bg-red-300 sm:bg-purple-500 md:bg-green-500 lg:bg-amber-400 xl:bg-blue-500 2xl:bg-pink-500;
+  }
+
+  /* CUSTOMIZE TABLE CLASSES */
+  /* TABLE  */
+  .custom-table {
+    @apply leading-8 h-1 py-1 px-2;
   }
 }
 

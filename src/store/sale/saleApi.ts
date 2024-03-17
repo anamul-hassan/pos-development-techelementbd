@@ -1,9 +1,9 @@
 import { apiSlice } from "../root_api/apiSlice";
 
-const PosApi = apiSlice.injectEndpoints({
+const saleApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    //  ADD POINT OF SELL
-    addPOS: builder.mutation({
+    //  ADD SALE
+    addSale: builder.mutation({
       query: (data) => ({
         url: "/sell/create-sell",
         method: "POST",
@@ -11,24 +11,24 @@ const PosApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["pos"],
     }),
-    //  GET ALL POINT OF SELL
-    getAllPOS: builder.query({
+    //  GET ALL SALE
+    getSales: builder.query({
       query: () => ({
         url: "/sell/get-sell-all",
       }),
       providesTags: ["pos"],
     }),
 
-    // GET SINGLE POINT OF SELL
-    getSinglePOS: builder.query({
+    // GET SINGLE SALE
+    getSingleSale: builder.query({
       query: (id) => ({
         url: `/sell/get-sell-by-id/${id}`,
       }),
       providesTags: ["pos"],
     }),
 
-    // DELETE POINT OF SELL
-    deletePOS: builder.mutation({
+    // DELETE SALE
+    deleteSale: builder.mutation({
       query: (id) => ({
         url: `/sell/delete-sell/${id}`,
         method: "DELETE",
@@ -39,8 +39,8 @@ const PosApi = apiSlice.injectEndpoints({
 });
 
 export const {
-  useAddPOSMutation,
-  useGetAllPOSQuery,
-  useGetSinglePOSQuery,
-  useDeletePOSMutation,
-} = PosApi;
+  useAddSaleMutation,
+  useGetSalesQuery,
+  useDeleteSaleMutation,
+  useGetSingleSaleQuery,
+} = saleApi;

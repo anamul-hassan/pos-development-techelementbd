@@ -14,8 +14,8 @@ const variationColorApi = apiSlice.injectEndpoints({
 
     //GET ALL VARIATION COLOR
     getVariationColor: builder.query({
-      query: () => ({
-        url: "/color/get-color-all",
+      query: (data) => ({
+        url: `/color/get-color-all?search=${data?.search || ""}`,
       }),
       providesTags: ["variation"],
     }),

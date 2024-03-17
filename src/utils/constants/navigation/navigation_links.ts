@@ -207,21 +207,21 @@ const product_purchase_links = {
 // SELL LINKS
 const product_sell_links = {
   icon: LuArrowUpCircle,
-  label: { bn: "পণ্য বিক্রয়", en: "Product Sells" },
-  key: "product_sell",
-  href: "product_sell",
+  label: { bn: "পণ্য বিক্রয়", en: "Product Sale" },
+  key: "product_sale",
+  href: "product_sale",
   sublinks: [
     {
       icon: LuListOrdered,
-      label: { bn: "পণ্য বিক্রয় তালিকা", en: "Pos List" },
-      key: "pos_list",
-      href: "pos_list",
+      label: { bn: "পণ্য বিক্রয় তালিকা", en: "Sale List" },
+      key: "sale_list",
+      href: "sale_list",
     },
     {
       icon: LuListOrdered,
       label: { bn: "বিক্রয় ফেরত তালিকা", en: "Return & Exchange List" },
-      key: "sell_return_list",
-      href: "sell_return_list",
+      key: "sale_return_list",
+      href: "sale_return_list",
     },
   ],
 };

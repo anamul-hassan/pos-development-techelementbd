@@ -152,7 +152,7 @@ const DayBook: React.FC = () => {
         {/* SALE & POS PRODUCTS REPORT */}
         <InfoWrapper heading="Daily Sales Report">
           <section className="-mx-2">
-            <Table className="border">
+            <Table className="border overflow-hidden">
               <TableCaption>
                 Sales Report for{" "}
                 {date?.from && date?.to
@@ -204,7 +204,7 @@ const DayBook: React.FC = () => {
         {/* PAYEABLE PAYMENT TO VENDOR */}
         <InfoWrapper heading="Daily Payment Report">
           <section className="-mx-2">
-            <Table className="border">
+            <Table className="border overflow-hidden">
               <TableCaption>
                 Sales Report for{" "}
                 {date?.from && date?.to
@@ -248,7 +248,7 @@ const DayBook: React.FC = () => {
         {/* CASH ON HAND */}
         <InfoWrapper heading="Cash On Hand">
           <section className="-mx-2">
-            <Table className="border">
+            <Table className="border overflow-hidden">
               <TableCaption>
                 Sales Report for{" "}
                 {date?.from && date?.to

@@ -16,7 +16,7 @@ import { due_report_routes } from "./routes/due_report";
 import { expense_routes } from "./routes/expense";
 import { details_reports_routes } from "./routes/details_reports";
 import { payment_accounts } from "./routes/payment";
-import { sell_routes } from "./routes/sell";
+import { sale_routes } from "./routes/sale";
 import { purchase_routes } from "./routes/purchase";
 import DashboardAnalytics from "@/pages/dashboard/analytics/DashboardAnalytics";
 import ErrorPage from "@/pages/public/ErrorPage";
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
       ...purchase_routes,
 
       // SELL ROUTES
-      ...sell_routes,
+      ...sale_routes,
 
       // EXPENSE ROUTES
       ...expense_routes,

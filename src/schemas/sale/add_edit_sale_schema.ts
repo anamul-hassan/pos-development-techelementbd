@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const addPOSSchema = yup.object().shape({
+export const addEditSaleSchema = yup.object().shape({
   branchId: yup.number().required("Branch ID is required"),
   customerId: yup.number().required("Client info is required"),
   discount: yup.number(),

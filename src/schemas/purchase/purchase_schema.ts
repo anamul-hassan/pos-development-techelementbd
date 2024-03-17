@@ -24,7 +24,7 @@ const productSchema = yup.object({
   sku: englishOnly.optional(),
 });
 
-export const addPurchaseSchema = yup.object().shape({
+export const addEditPurchaseSchema = yup.object().shape({
   supplierId: yup.number(),
   referenceNo: englishOnly.optional(),
   purchaseDate: yup.string().optional(),

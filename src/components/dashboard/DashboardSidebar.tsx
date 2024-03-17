@@ -97,6 +97,7 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
         )}
       </div>
       {/* <div
+      
         className={`h-32 flex items-center gap-2 text-white ${
           sidebarOpen ? "px-4" : "px-6"
         }`}
@@ -219,9 +220,7 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
               <Button
                 variant="destructive"
                 size="sm"
-                className={`cursor-pointer ${
-                  locale === "en" ? "font-poppins" : "font-anek"
-                } flex items-center justify-center  ${
+                className={`cursor-pointer font-anek flex items-center justify-center  ${
                   sidebarOpen
                     ? "w-3/4 my-4 h-8 mx-auto"
                     : " rounded-none md:w-[65%] lg:w-[85%] h-12"
@@ -231,46 +230,24 @@ const DashboardSidebar: FC<IDashboardSidebarProps> = ({
                 <label
                   className={`cursor-pointer ${sidebarOpen || "md:hidden"}`}
                 >
-                  {locale === "en" ? "Logout" : "লগআউট"}
+                  Logout
                 </label>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle
-                  className={`${
-                    locale === "en" ? "font-poppins" : "font-anek"
-                  }`}
-                >
-                  {locale === "en"
-                    ? "  Are you absolutely sure?"
-                    : "আপনি কি পুরোপুরিভাবে নিশ্চিত ?"}
-                </AlertDialogTitle>
-                <AlertDialogDescription
-                  className={`${
-                    locale === "en" ? "font-poppins" : "font-anek"
-                  }`}
-                >
-                  {locale === "en"
-                    ? "Are you sure you want to log out? Logging out will end your current session."
-                    : "আপনি কি নিশ্চিত যে আপনি লগ আউট করতে চান? লগ আউট করলে আপনার চলমান সেশন শেষ হয়ে যাবে।"}
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to log out? Logging out will end your
+                  current session.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel
-                  className={`btn-destructive-fill ${
-                    locale === "en" ? "font-poppins" : "font-anek"
-                  }`}
-                >
-                  {locale === "en" ? "Cancel" : "বাতিল করুন"}
+                <AlertDialogCancel className="btn-destructive-fill">
+                  Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleLogout()}
-                  className={`${
-                    locale === "en" ? "font-poppins" : "font-anek"
-                  }`}
-                >
-                  {locale === "en" ? "Confirm" : "নিশ্চিত করুন"}
+                <AlertDialogAction onClick={() => handleLogout()}>
+                  Confirm
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

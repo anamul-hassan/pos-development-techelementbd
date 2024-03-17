@@ -17,9 +17,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  ADD_POS_FORM,
-  IAddPOSForm,
-} from "@/utils/constants/point_of_sell/add_point_of_sell_form";
+  ADD_EDIT_SALE_FORM,
+  IAddEditSaleForm,
+} from "@/utils/constants/sale/add_point_of_sell_form";
 import FormWrapper from "@/components/common/form/FormWrapper";
 import { Input } from "@/components/ui/input";
 import InfoWrapper from "@/components/common/InfoWrapper";
@@ -33,7 +33,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAppContext } from "@/context/hook/useAppContext";
-import POSProductDetails from "./POSProductDetails";
+import SaleProductDetails from "./SaleProductDetails";
 import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
 import { useGetAccountsQuery } from "@/store/account/accountApi";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
@@ -57,7 +57,7 @@ import {
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { useGetCustomersQuery } from "@/store/customer/customerApi";
 
-interface IAddPointOfSellContainerProps {
+interface IAddSaleProps {
   register: any;
   error: any;
   setValue: any;
@@ -73,7 +73,7 @@ interface IAddPointOfSellContainerProps {
   totalPrice: number | string;
 }
 
-const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
+const AddSaleContainer: FC<IAddSaleProps> = ({
   // register,
   error,
   setValue,
@@ -98,7 +98,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
     payment_method,
     payable_amount,
     vat_amount,
-  } = ADD_POS_FORM as IAddPOSForm;
+  } = ADD_EDIT_SALE_FORM as IAddEditSaleForm;
 
   // CLIENT ADD DIALOG STATE
   const [clientAddOpen, setClientAddOpen] = useState<boolean>(false);
@@ -701,7 +701,7 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
               {selectedProduct?.length > 0 ? (
                 selectedProduct.map((singleProduct: any) => (
                   <div key={singleProduct?.id}>
-                    <POSProductDetails
+                    <SaleProductDetails
                       setValue={setValue}
                       watch={watch}
                       selectedProduct={selectedProduct}
@@ -988,18 +988,18 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
             {/* PAYMENT ACTION BUTTON */}
             <div className="my-8 flex justify-around">
               <Button type="button" variant="destructive">
-                Cancel
+                Cancel & Clear
               </Button>
               <Button disabled={loading} type="submit" variant="success">
                 {loading && <ButtonLoader />}
-                Create POS
+                Add Sale
               </Button>
             </div>
             <div>
               {Object.keys(error)?.length > 0 && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Add POS Error</AlertTitle>
+                  <AlertTitle>Add Sale Error</AlertTitle>
                   <AlertDescription>
                     {error[Object.keys(error)[0]].message ||
                       "Something went wrong! try again"}
@@ -1034,4 +1034,4 @@ const AddPointOfSellContainer: FC<IAddPointOfSellContainerProps> = ({
   );
 };
 
-export default AddPointOfSellContainer;
+export default AddSaleContainer;

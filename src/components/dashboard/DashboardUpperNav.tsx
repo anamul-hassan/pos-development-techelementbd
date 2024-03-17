@@ -57,33 +57,26 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
         <ul className="hidden items-center max-w-full gap-x-2 md:flex">
           <li>
             <Link to="/">
-              <Button variant="success" size="rounded">
-                Sell
-              </Button>
-            </Link>
-          </li>
-          <li>
-            <Link to="/">
-              <Button variant="warning" size="rounded">
+              <Button variant="warning" size="xs">
                 Due
               </Button>
             </Link>
           </li>
           <li>
-            <Link to="/">
-              <Button variant="tertiary" size="rounded">
+            <Link to="/customers_list">
+              <Button variant="tertiary" size="xs">
                 Customer
               </Button>
             </Link>
           </li>
           <li>
-            <Link to="/pos_list">
-              <Button size="rounded">POS</Button>
+            <Link to="/add_sale">
+              <Button size="xs">Sale</Button>
             </Link>
           </li>
           <li>
             <Link to="/day_book_report">
-              <Button size="rounded">Day-book</Button>
+              <Button size="xs">Day-book</Button>
             </Link>
           </li>
         </ul>
@@ -101,29 +94,22 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
                   <Link className="w-full" to="/">
-                    <Button className="w-full" variant="success" size="xs">
-                      Sell
-                    </Button>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link className="w-full" to="/">
                     <Button className="w-full" variant="warning" size="xs">
                       Due
                     </Button>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link className="w-full" to="/">
+                  <Link className="w-full" to="/customers_list">
                     <Button className="w-full" variant="tertiary" size="xs">
                       Customer
                     </Button>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link className="w-full" to="/pos_list">
+                  <Link className="w-full" to="/add_sale">
                     <Button className="w-full" size="xs">
-                      POS
+                      Sale
                     </Button>
                   </Link>
                 </DropdownMenuItem>

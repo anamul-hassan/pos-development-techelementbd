@@ -22,9 +22,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  ADD_POS_FORM,
-  IAddPOSForm,
-} from "@/utils/constants/point_of_sell/add_point_of_sell_form";
+  ADD_EDIT_SALE_FORM,
+  IAddEditSaleForm,
+} from "@/utils/constants/sale/add_point_of_sell_form";
 import FormWrapper from "@/components/common/form/FormWrapper";
 import { Input } from "@/components/ui/input";
 import { useAppContext } from "@/context/hook/useAppContext";
@@ -85,7 +85,7 @@ const PrintLabel = () => {
   const { companyName } = CLIENT_DETAILS;
   const { sidebarOpen } = useAppContext();
   const locale = "en";
-  const { search_product } = ADD_POS_FORM as IAddPOSForm;
+  const { search_product } = ADD_EDIT_SALE_FORM as IAddEditSaleForm;
 
   // STATE FOR POPOVER COMBOBOX
   const [productOpen, setProductOpen] = useState<boolean>(false);
@@ -243,7 +243,7 @@ const PrintLabel = () => {
       <section className="w-full flex flex-col lg:flex-row gap-6 items-center">
         {/* PRODUCT LIST TABLE FOR LABEL PRINT */}
         <div className="w-full border rounded-xl bg-accent/5">
-          <Table>
+          <Table className="overflow-hidden">
             <TableCaption className="border-t">
               {selectedProduct && !selectedProduct.length ? (
                 <p className="text-center">

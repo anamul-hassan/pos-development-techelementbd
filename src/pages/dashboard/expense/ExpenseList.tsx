@@ -4,6 +4,7 @@ import PaginationWrapper, {
 } from "@/components/common/PaginationWrapper";
 import InputWrapper from "@/components/common/form/InputWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
+import PhotoViewer from "@/components/common/photo/PhotoViewer";
 import { DataTable } from "@/components/common/table/DataTable";
 import AddExpense from "@/components/dashboard/expense/AddExpense";
 import EditExpense from "@/components/dashboard/expense/EditExpense";
@@ -32,9 +33,9 @@ import {
   useDeleteExpenseMutation,
   useGetExpensesQuery,
 } from "@/store/expense/expenseApi";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { format } from "date-fns";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
 
@@ -79,7 +80,11 @@ const ExpenseList: FC<IExpenseListProps> = () => {
       const customizeExpense = expensesData?.data?.map((singleExpense: any) => {
         return {
           ...singleExpense,
-          dummyCategoryName: capitalizeEveryWord(singleExpense?.name),
+          dummyCategory: "Not Found",
+          dummySubCategory: "Not Found",
+          formedData: format(singleExpense?.date, "PPP"),
+          dummyTotalAmount:
+            `${singleExpense?.totalAmount?.toFixed(2)}৳` || "0.00৳",
         };
       });
       setExpenseList(customizeExpense);
@@ -101,10 +106,54 @@ const ExpenseList: FC<IExpenseListProps> = () => {
 
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "dummyCategoryName",
+      accessorKey: "image",
+      header: "Thumb",
+      size: 20,
+      cell: ({ row }) => {
+        const expense = row.original as any;
+        return (
+          <div className="size-8 rounded-md overflow-hidden">
+            <PhotoViewer
+              className="scale-[2]"
+              src={expense?.image}
+              alt={`Image ${expense.name}`}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Expense Name
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+    {
+      accessorKey: "dummyCategory",
       header: "Category Name",
     },
     {
+      accessorKey: "dummySubCategory",
+      header: "Sub-category Name",
+    },
+    {
+      accessorKey: "dummyTotalAmount",
+      header: "Total Amount",
+    },
+    {
+      accessorKey: "formedData",
+      header: "Date",
+    },
+    {
+      size: 20,
       header: "Action",
       id: "actions",
       enableHiding: false,
@@ -140,6 +189,22 @@ const ExpenseList: FC<IExpenseListProps> = () => {
                 <DialogContent className="sm:max-w-[800px] max-h-[90%] overflow-y-auto">
                   {/* EDIT EXPENSE FORM CONTAINER */}
                   <EditExpense actionItem={actionItem} />
+                </DialogContent>
+              </Dialog>
+              {/* EXPENSE DETAILS BUTTON */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    Details
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[800px] max-h-[90%] overflow-y-auto">
+                  {/* EDIT EXPENSE FORM CONTAINER */}
+                  {/* <EditExpense actionItem={actionItem} /> */}
                 </DialogContent>
               </Dialog>
 

@@ -16,18 +16,15 @@ const FormWrapper: FC<IFormWrapperProps> = ({
   subheading,
   className,
 }) => {
-  const locate = "en";
   return (
     <section
       className={`${size === "half" && "w-10/12 md:max-w-[400px] mx-auto"}`}
     >
       <div className={`flex flex-col ${size === "half" && "items-center"}`}>
         <h2
-          className={`heading-secondary relative  ${
-            locate === "en" ? "font-roboto" : "font-anek"
-          } ${subheading && size === "half" && "!w-36 !text-center"} ${
-            !subheading && size === "full" && "!w-full !text-left"
-          }`}
+          className={`heading-secondary relative ${
+            subheading && size === "half" && "!w-36 !text-center"
+          } ${!subheading && size === "full" && "!w-full !text-left"}`}
         >
           {heading}
           {subheading && (

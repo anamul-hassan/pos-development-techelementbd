@@ -1,6 +1,6 @@
 import { ILabelPlaceholder } from "../common/form_type";
 
-export interface IAddPOSForm {
+export interface IAddEditSaleForm {
   search_product: ILabelPlaceholder;
   search_client: ILabelPlaceholder;
   discount_type: ILabelPlaceholder;
@@ -10,7 +10,7 @@ export interface IAddPOSForm {
   vat_amount: ILabelPlaceholder;
 }
 
-export const ADD_POS_FORM: IAddPOSForm = {
+export const ADD_EDIT_SALE_FORM: IAddEditSaleForm = {
   search_product: {
     label: {
       en: "Search Product Name/ ID/ IMEI/ Barcode ✽",
