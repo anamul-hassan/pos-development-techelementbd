@@ -7,9 +7,8 @@ interface IProductDetailsProps {
 }
 
 const ProductDetails: FC<IProductDetailsProps> = ({ actionItem }) => {
-  console.log(actionItem);
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 font-anek">
       {/* PERSONAL INFORMATION */}
       <div className="">
         <div>

@@ -84,7 +84,6 @@ const ProductList = () => {
       const customizeProducts = productsData?.data?.map(
         (singleProduct: any) => ({
           ...singleProduct,
-          productName: capitalizeEveryWord(singleProduct?.productName),
           category: {
             ...singleProduct?.category,
             categoryName: capitalizeEveryWord(

@@ -15,13 +15,13 @@ const HeadingParagraph: FC<IHeadingParagraphProps> = ({
   return (
     <div
       className={cn(
-        "flex space-x-1 items-center border-[0.5px] border-tertiary/40 rounded-md overflow-hidden",
+        "flex space-x-1 items-center border rounded-md overflow-hidden",
         className
       )}
     >
       {/* HEADING */}
       {heading && (
-        <label className="font-[500] bg-tertiary/10 px-2 py-0.5">
+        <label className="font-[500] bg-tertiary/10 dark:bg-foreground/10 px-2 py-0.5">
           {heading || "Data not found"}
         </label>
       )}

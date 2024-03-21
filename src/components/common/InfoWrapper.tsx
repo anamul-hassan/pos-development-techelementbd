@@ -13,13 +13,8 @@ const InfoWrapper: FC<IInfoWrapperProps> = ({
   className,
 }) => {
   return (
-    <div
-      className={cn(
-        "bg-accent/5 border-[1px] border-tertiary rounded-xl my-8",
-        className
-      )}
-    >
-      <div className="border-b-[1px] border-tertiary bg-tertiary/5">
+    <div className={cn("bg-accent/5 border rounded-xl my-8", className)}>
+      <div className="border-b bg-tertiary/5">
         <h4 className="py-1 px-4 heading-secondary">{heading}</h4>
       </div>
       <div className="px-4 py-2">{children}</div>

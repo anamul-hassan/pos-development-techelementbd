@@ -138,8 +138,7 @@ const AddSale: FC<IAddPointOfSellProps> = () => {
           setClear={setClear}
         />
       </form>
-      {/* className="invisible hidden -left-full" */}
-      <div>
+      <div className="invisible hidden -left-full">
         {addSaleSuccess && (
           <PrintSale
             discountAmount={discountAmount}

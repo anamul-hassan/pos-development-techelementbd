@@ -9,14 +9,14 @@ const saleApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["pos"],
+      invalidatesTags: ["sale"],
     }),
     //  GET ALL SALE
     getSales: builder.query({
       query: () => ({
         url: "/sell/get-sell-all",
       }),
-      providesTags: ["pos"],
+      providesTags: ["sale"],
     }),
 
     // GET SINGLE SALE
@@ -24,7 +24,7 @@ const saleApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `/sell/get-sell-by-id/${id}`,
       }),
-      providesTags: ["pos"],
+      providesTags: ["sale"],
     }),
 
     // DELETE SALE
@@ -33,7 +33,15 @@ const saleApi = apiSlice.injectEndpoints({
         url: `/sell/delete-sell/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["pos"],
+      invalidatesTags: ["sale"],
+    }),
+    //
+    addSaleReturnExchange: builder.mutation({
+      query: () => ({
+        url: "/return/create-sell-return",
+        method: "POST",
+      }),
+      invalidatesTags: ["sale"],
     }),
   }),
 });

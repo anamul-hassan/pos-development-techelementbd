@@ -18,7 +18,9 @@ const FormWrapper: FC<IFormWrapperProps> = ({
 }) => {
   return (
     <section
-      className={`${size === "half" && "w-10/12 md:max-w-[400px] mx-auto"}`}
+      className={`${
+        size === "half" && "w-10/12 md:max-w-[400px] mx-auto"
+      } font-anek`}
     >
       <div className={`flex flex-col ${size === "half" && "items-center"}`}>
         <h2

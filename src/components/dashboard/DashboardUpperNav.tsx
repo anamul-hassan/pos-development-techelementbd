@@ -32,7 +32,7 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
 }) => {
   return (
     <nav
-      className={`w-screen md:w-full overflow-hidden py-1 md:py-1.5 border-b-[1px] absolute left-0 top-0 z-50 transition-all duration-500 backdrop-blur-sm border-tertiary px-2 md:px-8 bg-tertiary/5`}
+      className={`w-screen md:w-full overflow-hidden py-1 md:py-1.5 absolute left-0 top-0 z-50 transition-all duration-500 backdrop-blur-sm border-b px-2 md:px-8 bg-tertiary/5`}
     >
       <div className="flex justify-between items-center">
         {/* SIDEBAR BUTTON FOR CLOSING OR OPENING */}
@@ -144,13 +144,15 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
           <li>
             <ModeToggle />
           </li>
-          <li>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn. png" />
-              <AvatarFallback>
-                <LucideUser2 />
-              </AvatarFallback>
-            </Avatar>
+          <li className="-mb-2 p-0 dark:grayscale dark:brightness-50">
+            <Button size="icon" variant="outline">
+              <Avatar className="rounded-md scale-[0.97]">
+                <AvatarImage src="https://static.zooniverse.org/www.zooniverse.org/assets/simple-avatar.png" />
+                <AvatarFallback>
+                  <LucideUser2 />
+                </AvatarFallback>
+              </Avatar>
+            </Button>
           </li>
         </ul>
       </div>

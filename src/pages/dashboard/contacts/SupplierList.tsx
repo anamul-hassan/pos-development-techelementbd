@@ -35,7 +35,6 @@ import {
   useDeleteSupplierMutation,
   useGetSuppliersQuery,
 } from "@/store/supplier/supplierApi";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -80,11 +79,9 @@ const SupplierList = () => {
         (singleSupplier: any) => {
           return {
             ...singleSupplier,
-            dummyName: capitalizeEveryWord(
-              fullNameConverter(
-                singleSupplier?.firstName,
-                singleSupplier?.lastName
-              )
+            dummyName: fullNameConverter(
+              singleSupplier?.firstName,
+              singleSupplier?.lastName
             ),
             dummyEmail: singleSupplier?.email || "Not Found",
           };

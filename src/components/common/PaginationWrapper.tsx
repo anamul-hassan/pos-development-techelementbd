@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 
 export interface IPagination {
-  sort: "asc" | "desc";
+  sort?: "asc" | "desc";
   size: number;
   page: number;
   meta: {
@@ -40,7 +40,7 @@ const PaginationWrapper: FC<IPaginationWrapperProps> = ({
     <div className="w-full  pb-12 flex justify-between items-center flex-col md:flex-row">
       <div className="w-full md:w-1/2 text-center md:text-start">
         <p className="text-sm text-muted-foreground">
-          {pagination?.meta?.total} of{" "}
+          {pagination?.meta?.total} of
           {pagination?.size?.toString() === "1000000"
             ? "all"
             : pagination?.size}{" "}
@@ -55,7 +55,7 @@ const PaginationWrapper: FC<IPaginationWrapperProps> = ({
               onValueChange={(value: string) =>
                 setPagination({
                   ...pagination,
-                  sort: value,
+                  sort: value === "asc" || value === "desc" ? value : undefined,
                 })
               }
             >

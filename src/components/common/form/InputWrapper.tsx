@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 
 interface IInputWrapperProps {
   children: ReactNode;
-  error: string | undefined;
+  error?: string | undefined;
   label: string;
   labelFor: string;
   className?: string;

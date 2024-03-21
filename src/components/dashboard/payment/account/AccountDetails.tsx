@@ -13,7 +13,7 @@ const AccountDetails: FC<IAccountDetailsProps> = ({ actionItem }) => {
   ) as any;
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 font-anek">
       {/* ACCOUNT INFORMATION */}
       <div>
         <h3 className="text-2xl font-semibold mb-2">Account Information</h3>

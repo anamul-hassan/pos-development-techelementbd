@@ -224,7 +224,7 @@ const SaleList = () => {
                   className="w-full flex justify-start"
                   size="xs"
                 >
-                  Exchange & Return
+                  Exchange/ Return
                 </Button>
               </Link>
 

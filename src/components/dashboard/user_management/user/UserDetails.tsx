@@ -10,7 +10,7 @@ interface IUserDetailsProps {
 
 const UserDetails: FC<IUserDetailsProps> = ({ actionItem }) => {
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 font-anek">
       {/* PERSONAL INFORMATION */}
       <div className="">
         <div>
@@ -92,7 +92,7 @@ const UserDetails: FC<IUserDetailsProps> = ({ actionItem }) => {
           <li>
             <HeadingParagraph
               heading="Blood Group"
-              paragraph={actionItem?.bloodGroup || "Not Found"}
+              paragraph={actionItem?.bloodGroup?.toUpperCase() || "Not Found"}
             />
           </li>
           <li>

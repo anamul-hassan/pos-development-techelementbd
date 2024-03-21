@@ -8,7 +8,7 @@ interface ISupplierDetailsProps {
 
 const SupplierDetails: FC<ISupplierDetailsProps> = ({ actionItem }) => {
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 font-anek">
       {/* PERSONAL INFORMATION */}
       <div>
         <h3 className="text-2xl font-semibold mb-2">Personal Information</h3>

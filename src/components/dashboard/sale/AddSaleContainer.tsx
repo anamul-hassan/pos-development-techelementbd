@@ -180,7 +180,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
       ) as any;
       const availableProduct = productData?.data
         ?.filter((product: any) => !idsToRemove.includes(product.id))
-        .filter((singleProduct: any) => singleProduct?.products?.stock !== 0);
+        .filter((singleProduct: any) => singleProduct?.stock !== 0);
       setProductList(availableProduct);
     } else {
       setProductList([]);
@@ -257,6 +257,8 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
       setClear(false);
     }
   }, [clear, setClear, setValue]);
+
+  // console.log(selectedProduct, "pro list");
 
   // REMOVE PAYMENT TABLE HANDLER
   const removePaymentTableHandler = (index: number) => {
@@ -642,7 +644,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
         {/* CLIENT INFORMATION CONTAINER */}
         <aside className="w-full lg:w-5/12 xl:6/12">
           <InfoWrapper heading="Client's Information">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-5">
               {/* CLIENT PHONE NUMBER */}
               <HeadingParagraph
                 heading="Phone"
@@ -678,22 +680,32 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
           <InfoWrapper heading="Products Information" className="mt-0">
             <div
               className={`flex flex-col gap-3 overflow-y-auto 
+               ${
+                 !Object.keys(error)?.length &&
+                 paymentMethodTable?.length > 0 &&
+                 "h-[545px]"
+               }
               ${
                 Object.keys(error)?.length > 0 &&
                 paymentMethodTable?.length > 0 &&
-                "h-[730px]"
+                "h-[650px]"
               } ${
                 (Object.keys(error)?.length > 0 &&
                   paymentMethodTable?.length === 1) ||
-                "h-[555px] "
+                "h-[731px] "
               }${
                 Object.keys(error)?.length > 0 &&
                 paymentMethodTable?.length > 2 &&
-                "h-[805px]"
+                "h-[810px]"
               } ${
                 Object.keys(error)?.length > 0 &&
                 paymentMethodTable?.length > 3 &&
-                "h-[875px]"
+                "h-[895px]"
+              }
+              } ${
+                Object.keys(error)?.length > 0 &&
+                paymentMethodTable?.length > 4 &&
+                "h-[980px]"
               }
                
               `}
@@ -987,10 +999,15 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
             </div>
             {/* PAYMENT ACTION BUTTON */}
             <div className="my-8 flex justify-around">
-              <Button type="button" variant="destructive">
+              <Button size="sm" type="button" variant="destructive">
                 Cancel & Clear
               </Button>
-              <Button disabled={loading} type="submit" variant="success">
+              <Button
+                size="sm"
+                disabled={loading}
+                type="submit"
+                variant="success"
+              >
                 {loading && <ButtonLoader />}
                 Add Sale
               </Button>
@@ -1009,22 +1026,22 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3 mt-16">
-            <Button type="button" variant="default" size="lg">
+            <Button type="button" variant="default" size="sm">
               Draft
             </Button>
-            <Button type="button" variant="tertiary" size="lg">
+            <Button type="button" variant="tertiary" size="sm">
               Quotation
             </Button>
-            <Button type="button" variant="destructive" size="lg">
+            <Button type="button" variant="destructive" size="sm">
               Suspend
             </Button>
-            <Button type="button" variant="warning" size="lg">
+            <Button type="button" variant="warning" size="sm">
               Reattempt
             </Button>
-            <Button type="button" variant="success" size="lg">
+            <Button type="button" variant="success" size="sm">
               SMS
             </Button>
-            <Button type="button" variant="default" size="lg">
+            <Button type="button" variant="default" size="sm">
               Reprint
             </Button>
           </div>

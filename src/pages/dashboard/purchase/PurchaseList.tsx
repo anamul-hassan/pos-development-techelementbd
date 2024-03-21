@@ -63,15 +63,16 @@ const PurchaseList = () => {
   const [purchaseList, setPurchaseList] = useState([]);
   const [actionItem, setActionItem] = useState<any>();
 
-  //   GET PURCHASE QUERY
+  // GET PURCHASE QUERY
   const { data: purchaseData, isLoading: isPurchaseDataLoading } =
     useGetPurchasesQuery({
+      sort: pagination?.sort,
       page: pagination?.page,
       size: pagination?.size,
       search: purchaseSearch,
     }) as any;
 
-  //   DELETE PURCHASE MUTATION
+  // DELETE PURCHASE MUTATION
   const [deletePurchase, { isSuccess: deletePurchaseSuccess }] =
     useDeletePurchaseMutation({}) as any;
 
@@ -92,8 +93,7 @@ const PurchaseList = () => {
               `${singlePurchase?.totalAmount?.toFixed(2)}৳` || "0.00৳",
             dummyTotalPayment:
               `${singlePurchase?.totalPaymentAmount?.toFixed(2)}৳` || "0.00৳",
-            dummyDueAmount:
-              `${singlePurchase?.supplier?.dueAmount?.toFixed(2)}৳` || "0.00৳",
+            dummyDueAmount: `${singlePurchase?.due?.toFixed(2)}৳` || "0.00৳",
             dummyAdvancedAmount:
               singlePurchase?.supplier?.advanceAmount?.toFixed(2),
             date: format(singlePurchase?.purchaseDate, "PPP"),
@@ -221,11 +221,22 @@ const PurchaseList = () => {
                     Details
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[1000px]">
+                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto scroll-hidden">
                   {/* PURCHASE DETAILS FORM CONTAINER */}
                   <PurchaseDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
+              {/* EXCHANGE AND RETURN  */}
+              {/* <Link to={`/purchase_return/${actionItem?.id?.toString()}`}> */}
+              <Link to={`/sale_exchange_return/${actionItem?.id?.toString()}`}>
+                <Button
+                  variant="outline"
+                  className="w-full flex justify-start"
+                  size="xs"
+                >
+                  Return
+                </Button>
+              </Link>
 
               {/* PURCHASE DELETE */}
               <AlertDialog>

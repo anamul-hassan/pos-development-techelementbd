@@ -31,16 +31,42 @@ import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import { cn } from "@/lib/utils";
 import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { totalCalculator } from "@/utils/helpers/totalCalculator";
+import CopyButton from "@/components/common/button/CopyButton";
+import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 
 interface IAddSaleExchangeReturnContainerProps {
   watch: any;
   setValue: any;
+  setError: any;
+  register: any;
 }
 
 const AddSaleExchangeReturnContainer: FC<
   IAddSaleExchangeReturnContainerProps
-> = ({ watch, setValue }) => {
+> = ({ watch, setValue, setError, register }) => {
+  const { branchId } = shareBranchAndUserInfo();
+
+  // PRODUCT POPOVER STATE
+  const [productOpen, setProductOpen] = useState<boolean>(false);
+  const [productValue, setProductValue] = useState<string>("");
   const { id: saleId } = useParams();
+
+  // PERMISSION FOR EXCHANGE COMPONENT
+  const [exchange, setExchange] = useState(false);
+
+  // PAYMENT TABLE STATE
   const [paymentTable, setPaymentTable] = useState<IPaymentTable[]>([
     {
       index: 0,
@@ -49,34 +75,47 @@ const AddSaleExchangeReturnContainer: FC<
     },
   ]);
 
+  // PRODUCT SEARCH INPUT STATE
+  const [productSearch, setProductSearch] = useState<string>("");
+
+  // GET SINGLE PRODUCT INFORMATION QUERY
+  const { data: productData, isLoading: isProductLoading } =
+    useSearchSinglePurchaseQuery(productSearch) as any;
+
+  // GET PREVIOUS DATA MUTATION
   const { data: saleData, isLoading: saleLoading } = useGetSingleSaleQuery(
     saleId
   ) as any;
 
-  // console.log(saleData);
-
-  // INITIAL PRODUCT & CLIENT LIST STATE
+  // INITIAL PRODUCT FOR POPOVER
   const [productList, setProductList] = useState<object[]>([]);
 
-  const [productOpen, setProductOpen] = useState<boolean>(false);
-  const [productValue, setProductValue] = useState<string>("");
-  const [discountType, setDiscountType] = useState([
-    {
-      label: "Fixed",
-      key: "Fixed",
-    },
-    {
-      label: "Percentage",
-      key: "Persent",
-    },
-  ]);
-  // SELECTED PRODUCT & CLIENT LIST
+  // SELECTED PRODUCT STATE FOR EXCHANGING
   const [selectedProduct, setSelectedProduct] = useState<any>([]);
-  // PRODUCT SEARCH INPUT STATE
-  const [productSearch, setProductSearch] = useState<string>("");
-  // GET SINGLE PRODUCT INFORMATION QUERY
-  const { data: productData, isLoading: isProductLoading } =
-    useSearchSinglePurchaseQuery(productSearch) as any;
+
+  // TOTAL RETURN PRICE CALCULATION
+  const totalReturn = totalCalculator(
+    saleData?.data?.products?.map((product: any) => ({
+      id: product.id,
+      price:
+        product.unitPrice *
+        watch()?.returnProduct?.find(
+          (singleProduct: any) => singleProduct?.sellProductId === product?.id
+        )?.quantity,
+    })),
+    "price"
+  );
+
+  // CALCULATION CUSTOMER PAY AMOUNT
+  const productSubTotal = totalCalculator(watch("products"), "subTotal");
+  const customerPayAmount =
+    totalReturn - productSubTotal > 0 ? 0 : Math.abs(productSubTotal);
+
+  // CALCULATION SELLER PAY AMOUNT
+  const sellerPayAmount = Math.max(totalReturn - productSubTotal, 0);
+
+  // CALCULATION TOTAL PAYMENTS
+  const totalPaymentAmount = totalCalculator(watch().payments, "paymentAmount");
 
   useEffect(() => {
     // LOGIC FOR ADD PRODUCT DATA
@@ -86,12 +125,51 @@ const AddSaleExchangeReturnContainer: FC<
       ) as any;
       const availableProduct = productData?.data
         ?.filter((product: any) => !idsToRemove.includes(product.id))
-        .filter((singleProduct: any) => singleProduct?.products?.stock !== 0);
+        .filter((singleProduct: any) => singleProduct?.stock !== 0);
       setProductList(availableProduct);
     } else {
       setProductList([]);
     }
-  }, [productData?.data, productSearch, selectedProduct]);
+
+    // DON'T MOVE THIS LINE OF CODE FROM HERE
+    // SET THE SELLER PAY AMOUNT
+    setValue("sellerPay", sellerPayAmount);
+  }, [
+    productData?.data,
+    productSearch,
+    selectedProduct,
+    setValue,
+    sellerPayAmount,
+  ]);
+
+  useEffect(() => {
+    // SET THE PREVIOUS PRODUCTS AS RETURN PRODUCTS
+    setValue(
+      "returnProduct",
+      saleData?.data?.products?.map((singleProduct: any) => ({
+        sellProductId: singleProduct?.id,
+        quantity: singleProduct?.quantity,
+      }))
+    );
+    // SET THE PAYMENT DATA ON THE FORM
+    setValue(
+      "payments",
+      paymentTable.map((account: any) => {
+        return {
+          accountId: account.accountId,
+          paymentAmount: +account.paymentAmount,
+        };
+      })
+    );
+    // SET CUSTOMER ID TO THE FORM
+    setValue("customerId", saleData?.data?.customerId);
+    // SET THE SELL ID TO THE FORM
+    setValue("sellId", saleData?.data?.id);
+    // SET THE CUSTOMER PAY AMOUNT
+    setValue("customerPay", customerPayAmount);
+    // SET BRANCH ID TO THE FORM
+    setValue("branchId", branchId);
+  }, [saleData?.data, setValue, paymentTable, customerPayAmount, branchId]);
 
   if (saleLoading) {
     return <DataLoader />;
@@ -99,7 +177,7 @@ const AddSaleExchangeReturnContainer: FC<
   return (
     <section>
       {/* PREVIOUS SALE INFORMATION */}
-      <InfoWrapper heading="Previous Product Information">
+      <InfoWrapper className="mb-4" heading="Previous Product Information">
         <ul className="grid grid-cols-1 md:grid-cols-3 gap-y-2 gap-x-3 md:gap-x-6 -mx-2">
           <li>
             <HeadingParagraph
@@ -121,6 +199,12 @@ const AddSaleExchangeReturnContainer: FC<
           </li>
           <li>
             <HeadingParagraph
+              heading="Sell Type"
+              paragraph={saleData?.data?.sellType || "Not Found"}
+            />
+          </li>
+          <li>
+            <HeadingParagraph
               heading="Customer Name"
               paragraph={saleData?.data?.customer?.name || "Not Found"}
             />
@@ -131,83 +215,183 @@ const AddSaleExchangeReturnContainer: FC<
               paragraph={saleData?.data?.customer?.phone || "Not Found"}
             />
           </li>
+
+          <li>
+            <HeadingParagraph
+              heading="Discount Types"
+              paragraph={saleData?.data?.discountType || "Not Found"}
+            />
+          </li>
+          <li>
+            <HeadingParagraph
+              heading="Discount"
+              paragraph={saleData?.data?.discount || "Not Found"}
+            />
+          </li>
           <li>
             <HeadingParagraph
               heading="Total Payment Amount"
-              paragraph={
-                `${saleData?.data?.totalPaymentAmount?.toFixed(2)}৳` || "0.00৳"
-              }
+              paragraph={`${
+                saleData?.data?.totalPaymentAmount?.toFixed(2) || "0.00"
+              }৳`}
             />
           </li>
           <li>
             <HeadingParagraph
               heading="Total Price"
-              paragraph={
-                `${saleData?.data?.totalPrice?.toFixed(2)}৳` || "0.00৳"
-              }
+              paragraph={`${saleData?.data?.totalPrice?.toFixed(2) || "0.00"}৳`}
             />
           </li>
         </ul>
       </InfoWrapper>
       {/* PREVIOUS PRODUCT LIST */}
-      <div className="w-full border rounded-xl bg-accent/5">
+      <div className="w-full border rounded-xl bg-accent/5 overflow-hidden">
         <Table className="overflow-hidden">
-          <TableCaption className="border-t">
-            {selectedProduct && !selectedProduct.length ? (
+          <TableCaption className="mt-0 bg-tertiary/5 text-base">
+            {saleData?.data?.products && !saleData?.data?.products.length ? (
               <p className="text-center">
-                Product hasn't selected yet. You can add new product for
-                printing label.
+                Unfortunately, it appears that there has been a
+                misunderstanding; there has been no product sold by your
+                company.
               </p>
             ) : (
-              <p> A list of your products label</p>
+              <p> A list of your sale products</p>
             )}
           </TableCaption>
           <TableHeader className="bg-tertiary/5">
             <TableRow>
+              <TableHead className="custom-table">Index</TableHead>
               <TableHead className="custom-table">Product Name</TableHead>
               <TableHead className="custom-table">Unit Price</TableHead>
+              <TableHead className="custom-table">Size</TableHead>
               <TableHead className="custom-table">Sale Quantity</TableHead>
               <TableHead className="custom-table">Return Quantity</TableHead>
               <TableHead className="custom-table">Return Subtotal</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {selectedProduct &&
-              selectedProduct.length > 0 &&
-              selectedProduct?.map((labelProduct: any, index: any) => (
-                <TableRow className="divide-[0.5px]" key={index}>
-                  <TableCell className="custom-table">
-                    {labelProduct?.productName}
-                  </TableCell>
-                  <TableCell className="custom-table"></TableCell>
-                  <TableCell className="custom-table"></TableCell>
-                  <TableCell className="custom-table">
-                    <Input
-                      className="max-w-[150px] h-8"
-                      type="text"
-                      name="discount"
-                      placeholder="Enter return quantity"
-                    />
-                  </TableCell>
-                  <TableCell className="custom-table"></TableCell>
-                </TableRow>
-              ))}
+            {saleData?.data?.products &&
+              saleData?.data?.products?.length > 0 &&
+              saleData?.data?.products?.map(
+                (singleProduct: any, productIndex: any) => (
+                  <TableRow className="divide-[0.5px]" key={productIndex}>
+                    <TableCell className="custom-table">
+                      {productIndex + 1}
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      <label htmlFor={productIndex}>
+                        {singleProduct?.variation?.productName || "Not found"}
+                      </label>
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      <label htmlFor={productIndex}>
+                        {`${singleProduct?.unitPrice?.toFixed(2) || "0.00"}৳`}
+                      </label>
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      {`${
+                        singleProduct?.variation?.size?.toUpperCase() ||
+                        "Not found"
+                      }`}
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      <label htmlFor={productIndex}>
+                        {singleProduct?.quantity || "0"}
+                      </label>
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      <Input
+                        id={productIndex}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                          const returnQuantity = +e.target.value;
+                          if (returnQuantity > singleProduct?.quantity) {
+                            return;
+                          }
+                          const restTargetProduct =
+                            watch()?.returnProduct?.filter(
+                              (returnProduct: any) =>
+                                returnProduct?.sellProductId !==
+                                singleProduct?.id
+                            );
+                          const targetProduct = watch()?.returnProduct?.find(
+                            (returnProduct: any) =>
+                              returnProduct?.sellProductId === singleProduct?.id
+                          );
+                          setValue("returnProduct", [
+                            ...restTargetProduct,
+                            {
+                              sellProductId: targetProduct?.sellProductId,
+                              quantity: returnQuantity,
+                            },
+                          ]);
+                        }}
+                        value={
+                          watch()?.returnProduct?.find(
+                            (returnProduct: any) =>
+                              returnProduct?.sellProductId === singleProduct?.id
+                          ).quantity || ""
+                        }
+                        className="max-w-[150px] h-8"
+                        type="number"
+                        placeholder="Enter return quantity"
+                      />
+                    </TableCell>
+                    <TableCell className="custom-table">
+                      <label htmlFor={productIndex}>
+                        <b>
+                          {`${
+                            isNaN(
+                              singleProduct?.unitPrice *
+                                watch()?.returnProduct?.find(
+                                  (returnProduct: any) =>
+                                    returnProduct?.sellProductId ===
+                                    singleProduct?.id
+                                ).quantity
+                            )
+                              ? "0.00"
+                              : singleProduct?.unitPrice *
+                                watch()
+                                  ?.returnProduct?.find(
+                                    (returnProduct: any) =>
+                                      returnProduct?.sellProductId ===
+                                      singleProduct?.id
+                                  )
+                                  .quantity?.toFixed(2)
+                          }৳`}
+                        </b>
+                      </label>
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            <TableRow className="hover:bg-transparent !border-b">
+              <TableCell className="custom-table"></TableCell>
+              <TableCell className="custom-table"></TableCell>
+              <TableCell className="custom-table"></TableCell>
+              <TableCell className="custom-table"></TableCell>
+              <TableCell className="custom-table"></TableCell>
+              <TableCell className="custom-table text-lg font-semibold">
+                Return Total
+              </TableCell>
+              <TableCell className="custom-table text-lg font-semibold">{`${
+                totalReturn.toFixed(2) || "0.00"
+              }৳`}</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
 
-      <div className="grid grid-flow-col justify-between">
+      <div className="grid grid-flow-col justify-between items-center">
         {/* PRODUCT SEARCH INPUT */}
         <InputWrapper
+          className={exchange ? "visible" : "invisible"}
           label="Write Product Name/ Barcode"
           labelFor="search_product"
-          error=""
         >
           <Popover open={productOpen} onOpenChange={setProductOpen}>
             <PopoverTrigger id="search_product" asChild className="w-full">
               <Button
                 variant="outline"
-                role="search_product"
                 aria-expanded={productOpen}
                 className="w-full justify-between"
               >
@@ -312,13 +496,64 @@ const AddSaleExchangeReturnContainer: FC<
             </PopoverContent>
           </Popover>
         </InputWrapper>
+
+        <Button
+          onClick={() => setExchange(true)}
+          className={exchange ? "hidden" : "block"}
+          size="xs"
+        >
+          Add Exchange
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              className={exchange ? "block" : "hidden"}
+              variant={exchange ? "destructive" : "default"}
+              size="xs"
+            >
+              Remove Exchange
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                product and remove your data from the store.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  setExchange(false);
+                  setSelectedProduct([]);
+                  setValue("products", []);
+                }}
+              >
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
-      <section className="flex items-start gap-x-3 lg:gap-x-6 gap-y-3">
+      <section
+        className={`flex items-start ${
+          exchange && "gap-x-3 lg:gap-x-6"
+        }  gap-y-3`}
+      >
         {/* EXCHANGE PRODUCT INFORMATION INFORMATION */}
-        <div className="w-full lg:w-7/12">
-          <InfoWrapper heading="Exchange Product Information">
-            <div className={`flex flex-col gap-3 overflow-y-auto `}>
+        <div
+          className={`transition-all duration-150 ${
+            exchange ? "lg:w-7/12" : "w-0"
+          }`}
+        >
+          <InfoWrapper
+            className={exchange ? "visible my-2" : "invisible my-2"}
+            heading="Exchange Product Information"
+          >
+            <div className="flex flex-col gap-3 overflow-y-auto max-h-[500px]">
               {selectedProduct?.length > 0 ? (
                 selectedProduct.map(
                   (singleProduct: any, productIndex: number) => (
@@ -334,7 +569,11 @@ const AddSaleExchangeReturnContainer: FC<
                   )
                 )
               ) : (
-                <div className="flex items-center justify-center h-[550px] w-full">
+                <div
+                  className={`flex items-center justify-center w-full ${
+                    exchange && "h-[315px]"
+                  }`}
+                >
                   <p className="text-center">
                     <b>Product hasn't selected yet,</b> <br /> You can add new
                     product.
@@ -345,15 +584,91 @@ const AddSaleExchangeReturnContainer: FC<
           </InfoWrapper>
         </div>
         {/* ACCOUNT & PAY MANAGEMENT */}
-        <aside className="w-full lg:w-5/12">
-          <InfoWrapper heading="Payment Information">
+        <aside
+          className={`w-full transition-all duration-150  ${
+            exchange ? "lg:w-5/12" : "w-full flex justify-between"
+          } `}
+        >
+          <div className={`my-3 ${exchange || "w-1/2 mr-3"}`}>
+            <ul className="flex flex-col gap-1 my-2">
+              {/* NUMBER OF ITEMS */}
+              <li className="flex justify-between border-b-[1px] border-border/30">
+                <label>Number Of Items</label>
+                <b>{watch("products")?.length}</b>
+              </li>
+              {/* TOTAL QUANTITY */}
+              <li className="flex justify-between border-b-[1px] border-border/30">
+                <label>Total Items Quantity</label>
+                <b>{totalCalculator(watch("products"), "quantity")}</b>
+              </li>
+
+              <li className="flex justify-between text-lg font-semibold border-b-[1px] border-border/30">
+                <label>Total Return Amount</label>
+                <b>{totalReturn?.toFixed(2) || "0.00"}৳</b>
+              </li>
+              {/* TOTAL PRICE */}
+              <li className="flex justify-between text-lg font-semibold border-b-[1px] border-border/30">
+                <label>Total Payable Amount</label>
+                <b>
+                  {totalCalculator(watch("products"), "subTotal") || "0.00"}৳
+                </b>
+              </li>
+              <li
+                className={`flex justify-between text-lg font-semibold border-b-[1px] border-border/30 ${
+                  customerPayAmount && "text-success dark:text-green-500"
+                }`}
+              >
+                <label>Customer Will Pay</label>
+                <b>
+                  {customerPayAmount && (
+                    <CopyButton className="mr-2" copyItem={customerPayAmount} />
+                  )}
+                  {customerPayAmount?.toFixed(2) || "0.00"}৳
+                </b>
+              </li>
+              <li
+                className={`flex justify-between text-lg font-semibold border-b-[1px] border-border/30 ${
+                  sellerPayAmount && "text-destructive dark:text-red-500"
+                }`}
+              >
+                <label>Seller Will Pay</label>
+
+                <b>
+                  {sellerPayAmount && (
+                    <CopyButton className="mr-2" copyItem={sellerPayAmount} />
+                  )}
+                  {sellerPayAmount?.toFixed(2) || "0.00"}৳
+                </b>
+              </li>
+              <li className="flex justify-between text-lg font-semibold">
+                <label>Change</label>
+                <b>
+                  {customerPayAmount > 0 &&
+                  totalPaymentAmount - customerPayAmount > 0
+                    ? (totalPaymentAmount - customerPayAmount)?.toFixed(2)
+                    : "0.00"}
+                  ৳
+                </b>
+              </li>
+            </ul>
+          </div>
+          <InfoWrapper
+            className={`my-2 max-h-[300px] overflow-y-auto scroll-hidden ${
+              exchange || "w-1/2 ml-3"
+            }`}
+            heading="Payment Information"
+          >
             {/* PAYMENT METHOD TABLE */}
-            <AddPaymentTable
-              paymentTable={paymentTable}
-              setPaymentTable={setPaymentTable}
-              watch={watch}
-              property="payments"
-            />
+            <div className="">
+              <AddPaymentTable
+                paymentTable={paymentTable}
+                setPaymentTable={setPaymentTable}
+                watch={watch}
+                property="payments"
+                setError={setError}
+                register={register}
+              />
+            </div>
           </InfoWrapper>
         </aside>
       </section>
@@ -362,17 +677,3 @@ const AddSaleExchangeReturnContainer: FC<
 };
 
 export default AddSaleExchangeReturnContainer;
-
-//  <Select>
-//    <SelectTrigger>
-//      <SelectValue placeholder="Select a Group" />
-//    </SelectTrigger>
-//    <SelectContent>
-//      <SelectGroup>
-//        <SelectLabel>None</SelectLabel>
-//        <SelectItem value="none">None</SelectItem>
-//        <SelectItem value="wholesale">Wholesale Price</SelectItem>
-//        <SelectItem value="paikari">Paikari Dam</SelectItem>
-//      </SelectGroup>
-//    </SelectContent>
-//  </Select>;

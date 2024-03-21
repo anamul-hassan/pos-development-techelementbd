@@ -1,29 +1,33 @@
 import * as yup from "yup";
 
 export const addEditSaleExchangeReturnSchema = yup.object().shape({
+  branchId: yup.number().required("Branch is required"),
   customerId: yup.number().required("Customer is required"),
   sellId: yup.number().required("Sell is required"),
   customerPay: yup.number(),
   sellerPay: yup.number(),
   returnProduct: yup.array().of(
     yup.object().shape({
-      sellProductId: yup.number().required("Sell Product is required"),
+      sellProductId: yup.number().required("Sell product is required"),
       quantity: yup.number().required("Quantity is required"),
     })
   ),
   payments: yup.array().of(
     yup.object().shape({
-      accountId: yup.number().required("Account is required"),
-      paymentAmount: yup.number().required("Payment Amount is required"),
+      accountId: yup.number(),
+      paymentAmount: yup.number(),
     })
   ),
-});
-
-export const addEditSaleExchangeProductSchema = yup.object().shape({
-  variationProductId: yup.number().required("Variation Product is required"),
-  quantity: yup.number().required("Quantity is required"),
-  unitPrice: yup.number().required("Unit Price is required"),
-  warranty: yup.string(),
-  discount: yup.number(),
-  subTotal: yup.number().required("Subtotal is required"),
+  products: yup.array().of(
+    yup.object().shape({
+      variationProductId: yup.number().required("Product selected is required"),
+      quantity: yup
+        .number()
+        .required("Product quantity is required")
+        .positive("Must be positive number")
+        .integer("Must be integer number"),
+      unitPrice: yup.number().required("Product price is required"),
+      subTotal: yup.number().required("Sub-total is required"),
+    })
+  ),
 });

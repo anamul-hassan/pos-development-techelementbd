@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const purchaseApi = apiSlice.injectEndpoints({
@@ -13,8 +14,10 @@ const purchaseApi = apiSlice.injectEndpoints({
     }),
     // GET ALL PURCHASE
     getPurchases: builder.query({
-      query: () => ({
-        url: "/purchase/get-purchase-all",
+      query: (data) => ({
+        url: `/purchase/get-purchase-all?search=${data?.search || ""}&page=${
+          data?.page || 1
+        }&size=${data?.size || undefinedSize}&sortOrder=${data?.sort || "asc"}`,
       }),
       providesTags: ["purchase"],
     }),
@@ -22,13 +25,6 @@ const purchaseApi = apiSlice.injectEndpoints({
     getSinglePurchase: builder.query({
       query: (id) => ({
         url: `/purchase/get-purchase-by-id/${id}`,
-      }),
-      providesTags: ["purchase"],
-    }),
-    // SEARCH PURCHASE
-    searchPurchase: builder.query({
-      query: (search) => ({
-        url: `/purchase/get-purchase-all?search=${search}`,
       }),
       providesTags: ["purchase"],
     }),
@@ -63,7 +59,6 @@ export const {
   useAddPurchaseMutation,
   useGetPurchasesQuery,
   useGetSinglePurchaseQuery,
-  useSearchPurchaseQuery,
   useSearchSinglePurchaseQuery,
   useUpdatePurchaseMutation,
   useDeletePurchaseMutation,

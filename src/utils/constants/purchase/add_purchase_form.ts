@@ -47,8 +47,8 @@ const PURCHASE_GENERAL_INFO_FORM: IPurchaseGeneralInfo = {
   },
   payment_method: {
     label: {
-      en: "Select Payment Method ✽",
-      bn: "পেমেন্ট পদ্ধতি নির্বাচন করুন ✽",
+      en: "Select Payment Method",
+      bn: "পেমেন্ট পদ্ধতি নির্বাচন করুন",
     },
     placeholder: {
       en: "Select payment method",
@@ -57,8 +57,8 @@ const PURCHASE_GENERAL_INFO_FORM: IPurchaseGeneralInfo = {
   },
   payment_amount: {
     label: {
-      en: "Write Payment Amount ✽",
-      bn: "পেমেন্ট পরিমাণ লিখুন ✽",
+      en: "Write Payment Amount",
+      bn: "পেমেন্ট পরিমাণ লিখুন",
     },
     placeholder: {
       en: "Write payment amount",

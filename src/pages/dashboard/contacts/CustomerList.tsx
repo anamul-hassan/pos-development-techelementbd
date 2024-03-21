@@ -31,7 +31,6 @@ import InputWrapper from "@/components/common/form/InputWrapper";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/common/table/DataTable";
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
-import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import PaginationWrapper, {
   IPagination,
 } from "@/components/common/PaginationWrapper";
@@ -82,13 +81,11 @@ const CustomerList = () => {
           ...singleCustomer,
           dummyEmail: singleCustomer?.email || "Not Found",
           dummyPointAmount: singleCustomer?.pointAmount || "0.00৳",
-          dummyName: capitalizeEveryWord(
-            fullNameConverter(
-              singleCustomer?.firstName?.toLowerCase() === "n/a"
-                ? "Not Found"
-                : singleCustomer?.firstName,
-              singleCustomer?.lastName
-            )
+          dummyName: fullNameConverter(
+            singleCustomer?.firstName?.toLowerCase() === "n/a"
+              ? "Not Found"
+              : singleCustomer?.firstName,
+            singleCustomer?.lastName
           ),
         })
       );

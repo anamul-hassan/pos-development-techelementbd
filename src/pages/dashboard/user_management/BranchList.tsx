@@ -83,7 +83,6 @@ const BranchList = () => {
       const customizeBranches = branchData?.data?.map((singleBranch: any) => {
         return {
           ...singleBranch,
-          branchName: capitalizeEveryWord(singleBranch?.branchName),
           branchLocation: capitalizeEveryWord(singleBranch?.branchLocation),
         };
       });

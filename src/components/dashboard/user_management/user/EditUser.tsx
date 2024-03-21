@@ -1,7 +1,6 @@
 import FormWrapper from "@/components/common/form/FormWrapper";
 import InputWrapper from "@/components/common/form/InputWrapper";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -34,12 +33,7 @@ import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptySt
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { format } from "date-fns";
-import {
-  AlertCircle,
-  CalendarIcon,
-  LucideEye,
-  LucideEyeOff,
-} from "lucide-react";
+import { CalendarIcon, LucideEye, LucideEyeOff } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { LuCheck, LuLoader2, LuPlus } from "react-icons/lu";
@@ -48,6 +42,7 @@ import { BLOOD_GROUPS } from "@/utils/constants/common/blood_groups";
 import { GENDER_OPTIONS } from "@/utils/constants/common/gender_options";
 import { MARITAL_STATUS_OPTIONS } from "@/utils/constants/common/marital_status_options";
 import { USER_ROLE_OPTIONS } from "@/utils/constants/common/user_role_options";
+import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
 
 interface IAddUserProps {
   actionItem: any;
@@ -613,30 +608,13 @@ const EditUser: FC<IAddUserProps> = ({ actionItem }) => {
         </InputWrapper>
       </FormWrapper>
 
-      {/* ERROR MESSAGE */}
-      <div className="flex justify-between items-center my-2 w-full">
-        <div className="flex justify-start w-full md:max-w-[300px]">
-          {editUserError &&
-            Object?.keys(editUserError)?.length > 0 &&
-            "data" in editUserError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Add User Error</AlertTitle>
-                <AlertDescription>
-                  {editUserError?.data?.message ||
-                    "Something went wrong! try again"}
-                </AlertDescription>
-              </Alert>
-            )}
-        </div>
-        {/* UPDATE USER BUTTON */}
-        <div className="flex justify-end w-1/2">
-          <Button disabled={loadingEditUser} type="submit">
-            {loadingEditUser && <ButtonLoader />}
-            Update Now
-          </Button>
-        </div>
-      </div>
+      {/* ERROR  AND SUBMIT  MESSAGE */}
+      <SubmitErrorWrapper
+        error={editUserError}
+        loading={loadingEditUser}
+        buttonLabel="Update Now"
+        errorTitle="Update User Error"
+      />
     </form>
   );
 };

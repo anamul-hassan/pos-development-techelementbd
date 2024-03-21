@@ -23,7 +23,7 @@ const DashboardContentField: FC<IDashboardContentFieldProps> = ({
       />
       <section
         className={`scroll-hidden overscroll-y-contain pt-[41px] md:pt-[55px] mx-2 md:mx-8 h-full duration-100 transition-all ease-linear ${
-          sidebarOpen && "blur-[2px] md:blur-none "
+          sidebarOpen && "blur-[2px] md:blur-none"
         }`}
       >
         <Outlet />

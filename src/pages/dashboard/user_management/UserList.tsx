@@ -88,9 +88,8 @@ const UserList = () => {
           ...singleUser,
           dummyActive: singleUser?.active ? "Activate" : "Deactivate",
           dummyName:
-            capitalizeEveryWord(
-              fullNameConverter(singleUser.firstName, singleUser.lastName)
-            ) || "Not Found",
+            fullNameConverter(singleUser.firstName, singleUser.lastName) ||
+            "Not Found",
           dummyRole: capitalizeEveryWord(singleUser?.role),
         };
       });

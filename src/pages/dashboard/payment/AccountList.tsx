@@ -100,20 +100,6 @@ const AccountList: FC<IAccountListProps> = () => {
   // ACCOUNT ACTIONS AND ACCOUNT TABLE COLUMNS
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "dummyAccountName",
-      header: ({ column }) => {
-        return (
-          <button
-            className="flex items-center"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Account Name
-            <ArrowUpDown className="ml-1 size-3" />
-          </button>
-        );
-      },
-    },
-    {
       accessorKey: "dummyBankName",
       header: ({ column }) => {
         return (
@@ -127,6 +113,21 @@ const AccountList: FC<IAccountListProps> = () => {
         );
       },
     },
+    {
+      accessorKey: "dummyAccountName",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Account Name
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+
     {
       accessorKey: "dummyAccountType",
       header: ({ column }) => {

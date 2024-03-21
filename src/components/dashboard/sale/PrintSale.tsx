@@ -46,8 +46,7 @@ const PrintSale = React.forwardRef<HTMLDivElement, PrintPosProps>(
             <div className="-my-1 absolute">
               <img
                 className="w-10 grayscale"
-                // src={CLIENT_DETAILS?.sidebarLogo}
-                src="/public/fantabulous_main.png"
+                src={CLIENT_DETAILS?.sidebarLogo}
                 alt={CLIENT_DETAILS?.companyName + "logo"}
               />
             </div>

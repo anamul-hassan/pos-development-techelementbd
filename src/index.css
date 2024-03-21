@@ -4,8 +4,6 @@
 
 @layer base {
   :root {
-    --: "Roboto", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-anek_bangla: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
       "Noto Color Emoji";
@@ -51,21 +49,18 @@
   }
 
   .dark {
-    --roboto: "Roboto", ui-sans-serif, system-ui, sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-      "Noto Color Emoji";
     --anek_bangla: "Anek Bangla", ui-sans-serif, system-ui, sans-serif,
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
       "Noto Color Emoji";
 
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 190 50% 2%;
+    --foreground: 200 16% 93%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 190 50% 2%;
+    --card-foreground: 200 16% 93%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 190 50% 2%;
+    --popover-foreground: 200 16% 93%;
 
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
@@ -79,7 +74,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 192 51% 10%;
     --accent-foreground: 210 40% 98%;
 
     --success: 160 56% 18%;
@@ -91,9 +86,9 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 193 50% 24%;
-    --input: 193 50% 24%;
-    --ring: 193 50% 24%;
+    --border: 200 2% 32%;
+    --input: 200 2% 32%;
+    --ring: 200 2% 32%;
   }
 }
 
@@ -222,4 +217,8 @@
 /* SHADCN DATA PICKER CUSTOM CLASS */
 .rdp-vhidden {
   display: none;
+}
+
+.hh {
+  color: hsl(200 2% 32%);
 }

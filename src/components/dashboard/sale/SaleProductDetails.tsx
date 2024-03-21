@@ -102,17 +102,17 @@ const SaleProductDetails: FC<ISaleProductDetailsProps> = ({
 
         <li className="flex items-center ">
           <label className="font-semibold mr-2">Size</label>
-          <p>{capitalizeEveryWord(productDetails?.size) || "N/A"}</p>
+          <p>{productDetails?.size || "N/A"}</p>
         </li>
         <li className="flex items-center ">
           <label className="font-semibold mr-2">Color</label>
-          <p>{capitalizeEveryWord(productDetails?.color) || "N/A"}</p>
+          <p>{productDetails?.color || "N/A"}</p>
         </li>
         <li className="flex items-center">
           <label className="font-semibold mr-2">Available Stock</label>
           <p>
-            {productDetails?.product?.stock || "0"}
-            {productDetails?.product?.stock > 1 ? " Units" : " Unit"}
+            {productDetails?.stock || "0"}
+            {productDetails?.stock > 1 ? " Units" : " Unit"}
           </p>
         </li>
       </ul>
@@ -162,7 +162,7 @@ const SaleProductDetails: FC<ISaleProductDetailsProps> = ({
               }
               type="number"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                if (+e.target.value <= productDetails?.products?.stock) {
+                if (+e.target.value <= productDetails?.stock) {
                   const restProducts = previousProducts?.filter(
                     (product: any) =>
                       product?.variationProductId !== productDetails?.id
@@ -195,7 +195,7 @@ const SaleProductDetails: FC<ISaleProductDetailsProps> = ({
                 previousProducts?.find(
                   (product: any) =>
                     product?.variationProductId === productDetails?.id
-                )?.quantity >= productDetails?.products?.stock
+                )?.quantity >= productDetails?.stock
               }
               onClick={() => {
                 const restProducts = previousProducts?.filter(

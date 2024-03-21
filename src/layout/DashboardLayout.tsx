@@ -11,7 +11,7 @@ const DashboardLayout: FC<IDashboardLayoutProps> = () => {
   const [mouseEnter, setMouseEnter] = useState(false);
 
   return (
-    <section className="w-full h-screen flex overflow-hidden">
+    <section className="w-full h-screen flex ">
       <DashboardSidebar setMouseEnter={setMouseEnter} mouseEnter={mouseEnter} />
       <section
         className={` ${

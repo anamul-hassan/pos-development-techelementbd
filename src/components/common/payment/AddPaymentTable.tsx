@@ -43,6 +43,8 @@ interface IAddPaymentTableProps {
   property: string;
   paymentTable: IPaymentTable[];
   setPaymentTable: (paymentTable: IPaymentTable[]) => void;
+  setError?: any;
+  register?: any;
 }
 
 const AddPaymentTable: FC<IAddPaymentTableProps> = ({
@@ -50,6 +52,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
   property,
   paymentTable,
   setPaymentTable,
+  setError,
 }) => {
   const { sidebarOpen } = useAppContext();
   // THIS STATE PREVENT TO SET VALUE WHEN DROPDOWN IS CLOSE
@@ -90,9 +93,9 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
     setPaymentTable([...paymentTable, newItem]);
   };
   return (
-    <div>
+    <div className="-mx-2">
       {paymentTable?.map((singleAccount: any, accountIndex: number) => (
-        <ul key={accountIndex} className="grid grid-flow-col gap-3">
+        <ul key={accountIndex} className="grid grid-flow-col gap-x-2 gap-y-1">
           <li>
             {accountIndex === 0 ? (
               <InputWrapper label="#" error="" labelFor="add_new_method">
@@ -166,7 +169,6 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
             <InputWrapper
               labelFor="paying_method"
               label={paymentTableForm.payment_method.label["en"]}
-              error=""
               className={`w-full  ${
                 sidebarOpen
                   ? "lg:w-[94px] xl:w-[128px] truncate"
@@ -184,6 +186,10 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
                         : singleTable
                     );
                     setPaymentTable(updatedTable);
+                    setError(`payments[${accountIndex}].accountId`, {
+                      type: "custom",
+                      message: "",
+                    });
                   }
                 }}
                 value={singleAccount.accountId ? singleAccount.accountId : ""}
@@ -231,7 +237,6 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
           <li className="w-full">
             <InputWrapper
               label={paymentTableForm.payable_amount.label["en"]}
-              error=""
               labelFor="paying_amount"
             >
               {/* ENTER AMOUNT FILED */}
@@ -247,7 +252,6 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
                   );
                   setPaymentTable(updatedTable);
                 }}
-                className=""
                 id="paying_amount"
                 placeholder={paymentTableForm.payable_amount.placeholder["en"]}
               />

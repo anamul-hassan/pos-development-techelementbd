@@ -35,7 +35,7 @@ interface IClientDetails {
  */
 
 export const CLIENT_DETAILS: IClientDetails = {
-  companyName: "Tech Element BD",
+  companyName: "Beta",
   companyPlace: "",
   address: "Address Development, Development",
   email: "example@mail.com",
