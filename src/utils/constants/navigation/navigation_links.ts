@@ -183,7 +183,7 @@ const product_management_links = {
 // PRODUCT PURCHASE LINKS
 const product_purchase_links = {
   icon: LuArrowDownCircle,
-  label: { bn: "পণ্য ক্রয়", en: "Product Purchase" },
+  label: { bn: "পণ্য ক্রয়", en: "Purchase" },
   key: "product_purchase",
   href: "product_purchase",
   sublinks: [
@@ -197,9 +197,9 @@ const product_purchase_links = {
     // RETURN PURCHASE LIST
     {
       icon: LuListOrdered,
-      label: { bn: "ক্রয় ফেরত তালিকা", en: "Return Purchase List" },
-      key: "return_purchase_list",
-      href: "return_purchase_list",
+      label: { bn: "ক্রয় ফেরত তালিকা", en: "Exchange/ Return List" },
+      key: "purchase_exchange_return_list",
+      href: "purchase_exchange_return_list",
     },
   ],
 };
@@ -207,7 +207,7 @@ const product_purchase_links = {
 // SELL LINKS
 const product_sell_links = {
   icon: LuArrowUpCircle,
-  label: { bn: "পণ্য বিক্রয়", en: "Product Sale" },
+  label: { bn: "পণ্য বিক্রয়", en: "Sale" },
   key: "product_sale",
   href: "product_sale",
   sublinks: [
@@ -219,9 +219,9 @@ const product_sell_links = {
     },
     {
       icon: LuListOrdered,
-      label: { bn: "বিক্রয় ফেরত তালিকা", en: "Return & Exchange List" },
-      key: "sale_return_list",
-      href: "sale_return_list",
+      label: { bn: "বিক্রয় ফেরত তালিকা", en: "Exchange/ Return List" },
+      key: "sale_exchange_return_list",
+      href: "sale_exchange_return_list",
     },
   ],
 };

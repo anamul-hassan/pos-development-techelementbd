@@ -1,13 +1,13 @@
 import React from "react";
 import { IRouteProps } from "./route_interface";
-import ListReturnPurchasesPage from "@/pages/previous/HomeSection/Purchase/ReturnPurchase/ListReturnPurchasesPage/ListReturnPurchasesPage";
 import EditReturnPurchasePage from "@/pages/previous/HomeSection/Purchase/ReturnPurchase/EditReturnPurchasePage/EditReturnPurchasePage";
 import AddPurchaseOrderPage from "@/pages/previous/HomeSection/Purchase/PurchaseOrder/AddPurchaseOrderPage/AddPurchaseOrderPage";
 import ListPurchaseOrderPage from "@/pages/previous/HomeSection/Purchase/PurchaseOrder/ListPurchaseOrderPage/ListPurchaseOrderPage";
 import EditPurchaseOrderPage from "@/pages/previous/HomeSection/Purchase/PurchaseOrder/EditPurchaseOrderPage/EditPurchaseOrderPage";
 import AddPurchase from "@/pages/dashboard/purchase/AddPurchase";
 import PurchaseList from "@/pages/dashboard/purchase/PurchaseList";
-import AddPurchaseReturn from "@/pages/dashboard/purchase/return/AddPurchaseReturn";
+import AddPurchaseExchangeReturn from "@/pages/dashboard/purchase/purchase_exchange_return/AddPurchaseExchangeReturn";
+import PurchaseExchangeReturnList from "@/pages/dashboard/purchase/purchase_exchange_return/PurchaseExchangeReturnList";
 
 export const purchase_routes: IRouteProps[] = [
   {
@@ -21,17 +21,22 @@ export const purchase_routes: IRouteProps[] = [
 
   {
     path: "purchase_return/:id",
-    element: React.createElement(AddPurchaseReturn),
+    element: React.createElement(AddPurchaseExchangeReturn),
   },
+  {
+    path: "purchase_exchange_return_list",
+    element: React.createElement(PurchaseExchangeReturnList),
+  },
+  {
+    path: "add_purchase_exchange_return",
+    element: React.createElement(AddPurchaseExchangeReturn),
+  },
+
   // {
   //   path: "edit_purchase/:id",
   //   element: React.createElement(EditPurchasePage),
   // },
 
-  {
-    path: "return_purchase_list",
-    element: React.createElement(ListReturnPurchasesPage),
-  },
   {
     path: "edit_return_purchase/:id",
     element: React.createElement(EditReturnPurchasePage),

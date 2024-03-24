@@ -18,8 +18,8 @@ const dashboardApi = apiSlice.injectEndpoints({
     }),
     // GET DAY BOOK REPORT
     getDayBookReport: builder.query({
-      query: () => ({
-        url: "/product/get-day-book-reports",
+      query: (data) => ({
+        url: `/product/get-day-book-reports?fromDate=${data?.from}&toDate=${data?.to}`,
       }),
       providesTags: ["dashboard"],
     }),

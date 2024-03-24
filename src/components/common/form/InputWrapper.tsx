@@ -5,7 +5,7 @@ interface IInputWrapperProps {
   children: ReactNode;
   error?: string | undefined;
   label: string;
-  labelFor: string;
+  labelFor?: string;
   className?: string;
 }
 

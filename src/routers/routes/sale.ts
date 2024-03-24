@@ -15,12 +15,14 @@ import AddSale from "@/pages/dashboard/sale/AddSale";
 import SaleList from "@/pages/dashboard/sale/SaleList";
 import EditSale from "@/pages/dashboard/sale/EditSale";
 import AddSaleExchangeReturn from "@/pages/dashboard/sale/exchange_return/AddSaleExchangeReturn";
+import SaleExchangeReturnList from "@/pages/dashboard/sale/exchange_return/SaleExchangeReturnList";
 
 export const sale_routes: IRouteProps[] = [
   {
     path: "add_sale",
     element: React.createElement(AddSale),
   },
+
   {
     path: "sale_list",
     element: React.createElement(SaleList),
@@ -29,11 +31,16 @@ export const sale_routes: IRouteProps[] = [
     path: "edit_sale/:id",
     element: React.createElement(EditSale),
   },
-
   {
-    path: "sale_exchange_return/:id",
+    path: "add_sale_exchange_return/:id",
     element: React.createElement(AddSaleExchangeReturn),
   },
+
+  {
+    path: "sale_exchange_return_list",
+    element: React.createElement(SaleExchangeReturnList),
+  },
+
   {
     path: "add_draft",
     element: React.createElement(AddDraftPage),

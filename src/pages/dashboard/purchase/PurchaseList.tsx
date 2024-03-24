@@ -227,14 +227,18 @@ const PurchaseList = () => {
                 </DialogContent>
               </Dialog>
               {/* EXCHANGE AND RETURN  */}
-              {/* <Link to={`/purchase_return/${actionItem?.id?.toString()}`}> */}
-              <Link to={`/sale_exchange_return/${actionItem?.id?.toString()}`}>
+              {/* <Link
+                to={`/add_purchase_exchange_return/${actionItem?.id?.toString()}`}
+              > */}
+              <Link
+                to={`/add_sale_exchange_return/${actionItem?.id?.toString()}`}
+              >
                 <Button
                   variant="outline"
                   className="w-full flex justify-start"
                   size="xs"
                 >
-                  Return
+                  Exchange/ Return
                 </Button>
               </Link>
 

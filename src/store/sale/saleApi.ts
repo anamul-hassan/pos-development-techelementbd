@@ -1,3 +1,4 @@
+import { undefinedSize } from "../branch/branchApi";
 import { apiSlice } from "../root_api/apiSlice";
 
 const saleApi = apiSlice.injectEndpoints({
@@ -11,10 +12,13 @@ const saleApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["sale"],
     }),
-    //  GET ALL SALE
+    //  GET ALL SALES
     getSales: builder.query({
-      query: () => ({
-        url: "/sell/get-sell-all",
+      query: (data) => ({
+        url: `/sell/get-sell-all?search=${data?.search || ""}&page=${
+          data?.page || 1
+        }&size=${data?.size || undefinedSize}`,
+        method: "GET",
       }),
       providesTags: ["sale"],
     }),
@@ -23,7 +27,9 @@ const saleApi = apiSlice.injectEndpoints({
     getSingleSale: builder.query({
       query: (id) => ({
         url: `/sell/get-sell-by-id/${id}`,
+        method: "GET",
       }),
+
       providesTags: ["sale"],
     }),
 
@@ -32,14 +38,6 @@ const saleApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `/sell/delete-sell/${id}`,
         method: "DELETE",
-      }),
-      invalidatesTags: ["sale"],
-    }),
-    //
-    addSaleReturnExchange: builder.mutation({
-      query: () => ({
-        url: "/return/create-sell-return",
-        method: "POST",
       }),
       invalidatesTags: ["sale"],
     }),

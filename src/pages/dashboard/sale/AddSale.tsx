@@ -43,6 +43,7 @@ const AddSale: FC<IAddPointOfSellProps> = () => {
     watch,
     reset,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: yupResolver<any>(addEditSaleSchema),
     defaultValues: {
@@ -119,10 +120,13 @@ const AddSale: FC<IAddPointOfSellProps> = () => {
     }
   };
 
+  // console.log(watch(), "form");
+
   return (
     <section>
       <form onSubmit={addSaleHandleSubmit(onSubmit)}>
         <AddSaleContainer
+          setError={setError}
           totalVat={totalVat}
           totalPrice={totalPrice}
           vatAmount={vatAmount}

@@ -24,18 +24,11 @@ import FormWrapper from "@/components/common/form/FormWrapper";
 import { Input } from "@/components/ui/input";
 import InfoWrapper from "@/components/common/InfoWrapper";
 import HeadingParagraph from "@/components/common/HeadingParagraph";
-import { LuPlus, LuTrash } from "react-icons/lu";
+import { LuPlus } from "react-icons/lu";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useAppContext } from "@/context/hook/useAppContext";
 import SaleProductDetails from "./SaleProductDetails";
 import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
-import { useGetAccountsQuery } from "@/store/account/accountApi";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AddClientFormContainer from "./AddClientFormContainer";
@@ -43,19 +36,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { useGetCustomersQuery } from "@/store/customer/customerApi";
+import SyncedContainer from "@/components/container/SyncedContainer";
+import AddPaymentTable, {
+  IPaymentTable,
+} from "@/components/common/payment/AddPaymentTable";
 
 interface IAddSaleProps {
   register: any;
@@ -71,10 +57,10 @@ interface IAddSaleProps {
   discountAmount: string;
   setDiscountAmount: (discountAmount: string) => void;
   totalPrice: number | string;
+  setError: any;
 }
 
 const AddSaleContainer: FC<IAddSaleProps> = ({
-  // register,
   error,
   setValue,
   watch,
@@ -87,6 +73,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
   setVatAmount,
   totalPrice,
   totalVat,
+  setError,
 }) => {
   const { sidebarOpen } = useAppContext();
   const locale = "en";
@@ -95,8 +82,6 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
     search_client,
     discount_type,
     discount_amount,
-    payment_method,
-    payable_amount,
     vat_amount,
   } = ADD_EDIT_SALE_FORM as IAddEditSaleForm;
 
@@ -108,14 +93,11 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
   const [clientOpen, setClientOpen] = useState<boolean>(false);
   const [clientValue, setClientValue] = useState<string>("");
 
-  // THIS STATE PREVENT TO SET VALUE WHEN DROPDOWN IS CLOSE
-  const [accountUpdate, setAccountUpdate] = useState<boolean>(false);
-
   // INITIAL PRODUCT & CLIENT LIST STATE
   const [productList, setProductList] = useState<object[]>([]);
   const [clientList, setClientList] = useState<object[]>([]);
   // STATE FOR ADDING NEW PAYMENT OPTION
-  const [paymentMethodTable, setPaymentMethodTable] = useState([
+  const [paymentTable, setPaymentTable] = useState<IPaymentTable[]>([
     {
       index: 0,
       accountId: null,
@@ -157,11 +139,6 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
     }
   );
 
-  // GET ALL THE BANK ACCOUNT QUERY
-  const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
-    "All"
-  ) as any;
-
   const totalDiscount =
     watch("discountType") === "Fixed"
       ? +discountAmount
@@ -196,7 +173,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
     // SET THE PAYMENT DATA ON THE FORM
     setValue(
       "payments",
-      paymentMethodTable.map((account: any) => {
+      paymentTable.map((account: any) => {
         return {
           accountId: account.accountId,
           paymentAmount: account.paymentAmount,
@@ -224,7 +201,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
     clientData?.data,
     selectedProduct,
     setValue,
-    paymentMethodTable,
+    paymentTable,
     watch,
     totalPrice,
     totalDiscount,
@@ -235,7 +212,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
       setProductList([]);
       setClientList([]);
 
-      setPaymentMethodTable([
+      setPaymentTable([
         {
           index: 0,
           accountId: null,
@@ -257,38 +234,6 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
       setClear(false);
     }
   }, [clear, setClear, setValue]);
-
-  // console.log(selectedProduct, "pro list");
-
-  // REMOVE PAYMENT TABLE HANDLER
-  const removePaymentTableHandler = (index: number) => {
-    // FILTER OUT THE TABLE WITH THE SPECIFIC INDEX
-    const updatedPaymentMethodTable = paymentMethodTable.filter(
-      (table) => table.index !== index
-    );
-
-    // UPDATE THE INDEX OF THE REMAINING ITEMS
-    updatedPaymentMethodTable.forEach((table, idx) => {
-      table.index = idx;
-    });
-    // SET THE UPDATED TABLE IN THE STATE
-    setPaymentMethodTable(updatedPaymentMethodTable);
-  };
-
-  const addPaymentTableHandler = () => {
-    // GET THE HIGHEST INDEX NUMBER
-    const maxIndex = Math.max(
-      ...paymentMethodTable.map((account: any) => +account.index)
-    );
-    // CREATE A NEW OBJECT WITH THE REQUIRE PROPERTIES
-    const newItem = {
-      index: +maxIndex + 1,
-      accountId: null,
-      paymentAmount: "",
-    };
-    // UPDATE THE DATA ON THE STATE
-    setPaymentMethodTable([...paymentMethodTable, newItem]);
-  };
 
   return (
     <section>
@@ -674,45 +619,22 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
         </aside>
       </section>
       {/* PRODUCT INFORMATION & ACCOUNT & PAY MANAGEMENT */}
-      <section className="w-full flex flex-col lg:flex-row items-start gap-6">
+      <section className="w-full flex flex-col lg:flex-row items-start gap-6 pb-8">
         {/* PRODUCT INFORMATION */}
         <div className="w-full lg:w-8/12">
-          <InfoWrapper heading="Products Information" className="mt-0">
-            <div
-              className={`flex flex-col gap-3 overflow-y-auto 
-               ${
-                 !Object.keys(error)?.length &&
-                 paymentMethodTable?.length > 0 &&
-                 "h-[545px]"
-               }
-              ${
-                Object.keys(error)?.length > 0 &&
-                paymentMethodTable?.length > 0 &&
-                "h-[650px]"
-              } ${
-                (Object.keys(error)?.length > 0 &&
-                  paymentMethodTable?.length === 1) ||
-                "h-[731px] "
-              }${
-                Object.keys(error)?.length > 0 &&
-                paymentMethodTable?.length > 2 &&
-                "h-[810px]"
-              } ${
-                Object.keys(error)?.length > 0 &&
-                paymentMethodTable?.length > 3 &&
-                "h-[895px]"
-              }
-              } ${
-                Object.keys(error)?.length > 0 &&
-                paymentMethodTable?.length > 4 &&
-                "h-[980px]"
-              }
-               
-              `}
+          <SyncedContainer
+            trigger={paymentTable?.length + Object.keys(error)?.length}
+            className="flex flex-col gap-3 overflow-y-aut transition-all duration-150"
+            referenceId="add_sale_container"
+            height
+          >
+            <InfoWrapper
+              heading="Products Information"
+              className="mt-0 mb-0 w-full h-full"
             >
               {selectedProduct?.length > 0 ? (
                 selectedProduct.map((singleProduct: any) => (
-                  <div key={singleProduct?.id}>
+                  <div className="my-1" key={singleProduct?.id}>
                     <SaleProductDetails
                       setValue={setValue}
                       watch={watch}
@@ -723,327 +645,152 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                   </div>
                 ))
               ) : (
-                <div className="flex items-center justify-center h-[550px] w-full">
+                <div className="flex items-center mt-32 justify-center w-full h-full">
                   <p className="text-center">
                     <b>Product hasn't selected yet,</b> <br /> You can add new
                     product.
                   </p>
                 </div>
               )}
-            </div>
-          </InfoWrapper>
+            </InfoWrapper>
+          </SyncedContainer>
         </div>
         {/* ACCOUNT & PAY MANAGEMENT */}
         <aside className="w-full lg:w-4/12">
-          <div>
-            {/* PRICE & VAT&TAX & DISCOUNT & ITEMS NUMBER & ITEMS QUANTITY & TOTAL AMOUNT INFORMATION */}
-            <ul className="flex flex-col gap-1">
-              {/* TOTAL PRICE */}
-              <li className="flex justify-between border-b-[1px]">
-                <label>Maximum Retail Price &#40;MRP&#41;</label>
-                <b>
-                  {totalCalculator(watch("products"), "subTotal") > 0
-                    ? totalCalculator(watch("products"), "subTotal")?.toFixed(2)
-                    : "0"}
-                  ৳
-                </b>
-              </li>
-              {/* VAT & TAX */}
-              <li className="flex justify-between border-b-[1px]">
-                <label>&#40;&#43;&#41; Vat/Tax</label>
-                <b>{totalVat.toFixed(2) || "0.00"}৳</b>
-              </li>
-              {/* DISCOUNT */}
-              <li className="flex justify-between border-b-[1px]">
-                <label>&#40;&#45;&#45;&#41; Discount</label>
-                <b>{totalDiscount.toFixed(2)}৳</b>
-              </li>
-              {/* NUMBER OF ITEMS */}
-              <li className="flex justify-between border-b-[1px]">
-                <label>Number Of Items</label>
-                <b>{watch("products")?.length}</b>
-              </li>
-              {/* TOTAL QUANTITY */}
-              <li className="flex justify-between border-b-2">
-                <label>Total Items Quantity</label>
-                <b>{totalCalculator(watch("products"), "quantity")}</b>
-              </li>
-              {/* TOTAL PRICE */}
-              <li className="flex justify-between py-1">
-                <label className="font-[500]">Total Payable Amount</label>
-                <b>{(+totalPrice + +totalVat).toFixed(2) || "0.00"}৳</b>
-              </li>
-            </ul>
-            {/* PAYMENT METHOD */}
-            <div className="">
-              {paymentMethodTable?.map(
-                (singleAccount: any, accountIndex: number) => (
-                  <ul key={accountIndex} className="grid grid-flow-col gap-3">
-                    <li>
-                      {accountIndex === 0 ? (
-                        <InputWrapper
-                          label="#"
-                          error=""
-                          labelFor="add_new_method"
-                        >
-                          {/* ADD PAYMENT METHOD TABLE */}
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  disabled={
-                                    watch("payments")?.length ===
-                                    accountsData?.data?.length
-                                  }
-                                  onClick={() => addPaymentTableHandler()}
-                                  variant="outline"
-                                  size="icon"
-                                >
-                                  <LuPlus className="h-4 w-4" />
-                                  <span className="sr-only">
-                                    Add Another Pay Method Button
-                                  </span>
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                {/* TOOLTIP TEXT */}
-                                <p>Add Another Pay Method</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </InputWrapper>
-                      ) : (
-                        <InputWrapper
-                          label="#"
-                          error=""
-                          labelFor="add_new_method"
-                        >
-                          {/* REMOVE PAYMENT METHOD TABLE */}
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                className="group relative"
-                                variant="destructive"
-                                size="icon"
-                              >
-                                <LuTrash className="h-4 w-4" />
-                                {/* TOOLTIP TEXT */}
-                                <span className="custom-tooltip-top">
-                                  Remove Payment Method
-                                </span>
-                                <span className="sr-only">
-                                  Remove Pay Method Button
-                                </span>
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Payment Method Removal Confirmation
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to remove this payment
-                                  method? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    removePaymentTableHandler(accountIndex)
-                                  }
-                                >
-                                  Confirm
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </InputWrapper>
-                      )}
-                    </li>
-                    <li className="w-full">
-                      <InputWrapper
-                        labelFor="paying_method"
-                        label={payment_method.label[locale]}
-                        error=""
-                        className={`w-full  ${
-                          sidebarOpen
-                            ? "lg:w-[94px] xl:w-[128px] truncate"
-                            : "lg:w-[134px] xl:w-full"
-                        }`}
-                      >
-                        <Select
-                          onOpenChange={(open: boolean) =>
-                            setAccountUpdate(open)
-                          }
-                          onValueChange={(value: any) => {
-                            // THIS CONDITION PREVENT THE UPDATE DATA AUTOMATICALLY
-                            if (accountUpdate) {
-                              const updatedTable = paymentMethodTable.map(
-                                (item: any) =>
-                                  item.index === accountIndex
-                                    ? { ...item, accountId: +value }
-                                    : item
-                              );
-                              setPaymentMethodTable(updatedTable);
-                            }
-                          }}
-                          value={
-                            singleAccount.accountId
-                              ? singleAccount.accountId
-                              : ""
-                          }
-                        >
-                          <SelectTrigger
-                            id="paying_method"
-                            className={`w-full p-5 focus:ring-0 ${
-                              sidebarOpen
-                                ? "lg:w-[90px] xl:w-[120px] truncate"
-                                : "lg:w-[130px] xl:w-full"
-                            }`}
-                          >
-                            <SelectValue
-                              placeholder={payment_method.placeholder[locale]}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {!accountsData?.data?.length && accountLoading && (
-                              <div className="w-full h-24 flex items-center justify-center">
-                                {accountLoading && <ButtonLoader />}
-                              </div>
-                            )}
-                            {accountLoading ||
-                              (accountsData?.data &&
-                                accountsData?.data?.length > 0 &&
-                                accountsData?.data.map((singleAccount: any) => (
-                                  <SelectItem
-                                    disabled={watch("payments").some(
-                                      (accountItem2: any) =>
-                                        accountItem2.accountId ===
-                                        singleAccount?.id
-                                    )}
-                                    className="cursor-pointer"
-                                    key={singleAccount?.id}
-                                    value={singleAccount?.id}
-                                  >
-                                    {singleAccount?.accountName}
-                                  </SelectItem>
-                                )))}
-                          </SelectContent>
-                        </Select>
-                      </InputWrapper>
-                    </li>
-                    <li className="w-full">
-                      <InputWrapper
-                        label={payable_amount.placeholder[locale]}
-                        error=""
-                        labelFor="paying_amount"
-                      >
-                        {/* ENTER AMOUNT FILED */}
-                        <Input
-                          type="number"
-                          onWheel={(event) => event.currentTarget.blur()}
-                          value={singleAccount.paymentAmount || ""}
-                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            const updatedTable = paymentMethodTable.map(
-                              (item: any) =>
-                                item.index === accountIndex
-                                  ? { ...item, paymentAmount: +e.target.value }
-                                  : item
-                            );
-                            setPaymentMethodTable(updatedTable);
-                          }}
-                          className=""
-                          id="paying_amount"
-                          placeholder={payable_amount.placeholder[locale]}
-                        />
-                      </InputWrapper>
-                    </li>
-                  </ul>
-                )
-              )}
-            </div>
-
-            {/* PAYMENT ADDITIONAL INFORMATION */}
-            <div className="my-3">
-              <h4 className="heading-tertiary">Addition Information</h4>
+          <div id="add_sale_container">
+            <div>
+              {/* PRICE & VAT&TAX & DISCOUNT & ITEMS NUMBER & ITEMS QUANTITY & TOTAL AMOUNT INFORMATION */}
               <ul className="flex flex-col gap-1">
-                {/* PAYABLE AMOUNT */}
+                {/* TOTAL PRICE */}
                 <li className="flex justify-between border-b-[1px]">
-                  <label>Payable Amount</label>
-                  <b>{(+totalVat + +totalPrice).toFixed(2) || "0.00"}৳</b>
-                </li>
-                {/* RECEIVED CASH  */}
-                <li className="flex justify-between border-b-[1px]">
-                  <label>Received Cash</label>
+                  <label>Maximum Retail Price &#40;MRP&#41;</label>
                   <b>
-                    {totalCalculator(
-                      watch("payments"),
-                      "paymentAmount"
-                    ).toFixed(2)}
+                    {totalCalculator(watch("products"), "subTotal") > 0
+                      ? totalCalculator(watch("products"), "subTotal")?.toFixed(
+                          2
+                        )
+                      : "0"}
                     ৳
                   </b>
                 </li>
-                {/* CHANGE */}
+                {/* VAT & TAX */}
                 <li className="flex justify-between border-b-[1px]">
-                  <label>Change</label>
-                  <b>
-                    {(
-                      totalCalculator(watch("payments"), "paymentAmount") -
-                      (+totalPrice + +totalVat)
-                    ).toFixed(2) || "0.00"}
-                    ৳
-                  </b>
+                  <label>&#40;&#43;&#41; Vat/Tax</label>
+                  <b>{totalVat.toFixed(2) || "0.00"}৳</b>
+                </li>
+                {/* DISCOUNT */}
+                <li className="flex justify-between border-b-[1px]">
+                  <label>&#40;&#45;&#45;&#41; Discount</label>
+                  <b>{totalDiscount.toFixed(2)}৳</b>
+                </li>
+                {/* NUMBER OF ITEMS */}
+                <li className="flex justify-between border-b-[1px]">
+                  <label>Number Of Items</label>
+                  <b>{watch("products")?.length}</b>
+                </li>
+                {/* TOTAL QUANTITY */}
+                <li className="flex justify-between border-b-2">
+                  <label>Total Items Quantity</label>
+                  <b>{totalCalculator(watch("products"), "quantity")}</b>
+                </li>
+                {/* TOTAL PRICE */}
+                <li className="flex justify-between py-1">
+                  <label className="font-[500]">Total Payable Amount</label>
+                  <b>{(+totalPrice + +totalVat).toFixed(2) || "0.00"}৳</b>
                 </li>
               </ul>
+              {/* PAYMENT METHOD */}
+
+              <AddPaymentTable
+                scrollable
+                paymentTable={paymentTable}
+                setPaymentTable={setPaymentTable}
+                watch={watch}
+                property="payments"
+                setError={setError}
+              />
+
+              {/* PAYMENT ADDITIONAL INFORMATION */}
+              <div className="my-3">
+                <h4 className="heading-tertiary">Addition Information</h4>
+                <ul className="flex flex-col gap-1">
+                  {/* PAYABLE AMOUNT */}
+                  <li className="flex justify-between border-b-[1px]">
+                    <label>Payable Amount</label>
+                    <b>{(+totalVat + +totalPrice).toFixed(2) || "0.00"}৳</b>
+                  </li>
+                  {/* RECEIVED CASH  */}
+                  <li className="flex justify-between border-b-[1px]">
+                    <label>Received Cash</label>
+                    <b>
+                      {totalCalculator(
+                        watch("payments"),
+                        "paymentAmount"
+                      ).toFixed(2)}
+                      ৳
+                    </b>
+                  </li>
+                  {/* CHANGE */}
+                  <li className="flex justify-between border-b-[1px]">
+                    <label>Change</label>
+                    <b>
+                      {(
+                        totalCalculator(watch("payments"), "paymentAmount") -
+                        (+totalPrice + +totalVat)
+                      ).toFixed(2) || "0.00"}
+                      ৳
+                    </b>
+                  </li>
+                </ul>
+              </div>
+              {/* SALE ACTION BUTTON*/}
+              <div className="my-3 flex justify-around">
+                <Button size="sm" type="button" variant="destructive">
+                  Cancel & Clear
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={loading}
+                  type="submit"
+                  variant="success"
+                >
+                  {loading && <ButtonLoader />}
+                  Add Sale
+                </Button>
+              </div>
+              <div>
+                {Object.keys(error)?.length > 0 && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Add Sale Error</AlertTitle>
+                    <AlertDescription>
+                      {error[Object.keys(error)[0]].message ||
+                        "Something went wrong! try again"}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
             </div>
-            {/* PAYMENT ACTION BUTTON */}
-            <div className="my-8 flex justify-around">
-              <Button size="sm" type="button" variant="destructive">
-                Cancel & Clear
+            <div className="grid grid-cols-3 gap-3  mt-3">
+              <Button type="button" variant="default" size="sm">
+                Draft
               </Button>
-              <Button
-                size="sm"
-                disabled={loading}
-                type="submit"
-                variant="success"
-              >
-                {loading && <ButtonLoader />}
-                Add Sale
+              <Button type="button" variant="tertiary" size="sm">
+                Quotation
+              </Button>
+              <Button type="button" variant="destructive" size="sm">
+                Suspend
+              </Button>
+              <Button type="button" variant="warning" size="sm">
+                Reattempt
+              </Button>
+              <Button type="button" variant="success" size="sm">
+                SMS
+              </Button>
+              <Button type="button" variant="default" size="sm">
+                Reprint
               </Button>
             </div>
-            <div>
-              {Object.keys(error)?.length > 0 && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Add Sale Error</AlertTitle>
-                  <AlertDescription>
-                    {error[Object.keys(error)[0]].message ||
-                      "Something went wrong! try again"}
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3 mt-16">
-            <Button type="button" variant="default" size="sm">
-              Draft
-            </Button>
-            <Button type="button" variant="tertiary" size="sm">
-              Quotation
-            </Button>
-            <Button type="button" variant="destructive" size="sm">
-              Suspend
-            </Button>
-            <Button type="button" variant="warning" size="sm">
-              Reattempt
-            </Button>
-            <Button type="button" variant="success" size="sm">
-              SMS
-            </Button>
-            <Button type="button" variant="default" size="sm">
-              Reprint
-            </Button>
           </div>
         </aside>
       </section>

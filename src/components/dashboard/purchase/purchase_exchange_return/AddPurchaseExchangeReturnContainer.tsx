@@ -1,36 +1,12 @@
 import HeadingParagraph from "@/components/common/HeadingParagraph";
 import InfoWrapper from "@/components/common/InfoWrapper";
+import InputWrapper from "@/components/common/form/InputWrapper";
+import ButtonLoader from "@/components/common/loader/ButtonLoader";
 import DataLoader from "@/components/common/loader/DataLoader";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useGetSingleSaleQuery } from "@/store/sale/saleApi";
-import moment from "moment";
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import SaleProductDetails from "../SaleProductDetails";
 import AddPaymentTable, {
   IPaymentTable,
 } from "@/components/common/payment/AddPaymentTable";
-import InputWrapper from "@/components/common/form/InputWrapper";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
-import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import { cn } from "@/lib/utils";
-import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
+import SyncedContainer from "@/components/container/SyncedContainer";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,20 +18,45 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { totalCalculator } from "@/utils/helpers/totalCalculator";
-import CopyButton from "@/components/common/button/CopyButton";
+import { Button } from "@/components/ui/button";
+import { CommandGroup, CommandItem } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
+import { useGetSingleSaleQuery } from "@/store/sale/saleApi";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
-import SyncedContainer from "@/components/container/SyncedContainer";
+import { totalCalculator } from "@/utils/helpers/totalCalculator";
+import { Check, ChevronsUpDown, Command } from "lucide-react";
 
-interface IAddSaleExchangeReturnContainerProps {
+import moment from "moment";
+import { ChangeEvent, FC, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import SaleProductDetails from "../../sale/SaleProductDetails";
+import CopyButton from "@/components/common/button/CopyButton";
+
+interface IAddPurchaseExchangeReturnContainerProps {
   watch: any;
   setValue: any;
   setError: any;
   register: any;
 }
 
-const AddSaleExchangeReturnContainer: FC<
-  IAddSaleExchangeReturnContainerProps
+const AddPurchaseExchangeReturnContainer: FC<
+  IAddPurchaseExchangeReturnContainerProps
 > = ({ watch, setValue, setError, register }) => {
   const { branchId } = shareBranchAndUserInfo();
 
@@ -522,7 +523,6 @@ const AddSaleExchangeReturnContainer: FC<
         </InputWrapper>
         {/* ADD EXCHANGE AND REMOVE BUTTON */}
         <Button
-          type="button"
           onClick={() => setExchange(true)}
           className={exchange ? "hidden" : "block"}
           size="xs"
@@ -532,7 +532,6 @@ const AddSaleExchangeReturnContainer: FC<
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
-              type="button"
               className={exchange ? "block" : "hidden"}
               variant={exchange ? "destructive" : "default"}
               size="xs"
@@ -549,9 +548,8 @@ const AddSaleExchangeReturnContainer: FC<
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                type="button"
                 onClick={() => {
                   setExchange(false);
                   setSelectedProduct([]);
@@ -711,5 +709,4 @@ const AddSaleExchangeReturnContainer: FC<
     </section>
   );
 };
-
-export default AddSaleExchangeReturnContainer;
+export default AddPurchaseExchangeReturnContainer;

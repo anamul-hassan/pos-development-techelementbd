@@ -151,7 +151,7 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
       setClear(true);
       // SHOW TOAST FOR ADDING NEW POS
       toast({
-        title: "App Purchase Message",
+        title: "Add Purchase Message",
         description: "New Purchase added successfully",
       });
     }

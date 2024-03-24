@@ -45,7 +45,7 @@ const PrintSale = React.forwardRef<HTMLDivElement, PrintPosProps>(
           <div className="flex justify-start mb-2 relative">
             <div className="-my-1 absolute">
               <img
-                className="w-10 grayscale"
+                className="w-8 grayscale"
                 src={CLIENT_DETAILS?.sidebarLogo}
                 alt={CLIENT_DETAILS?.companyName + "logo"}
               />

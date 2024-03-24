@@ -1,17 +1,16 @@
 import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
-import AddSaleExchangeReturnContainer from "@/components/dashboard/sale/sale_return_exchange/AddSaleExchangeReturnContainer";
+import AddPurchaseExchangeReturnContainer from "@/components/dashboard/purchase/purchase_exchange_return/AddPurchaseExchangeReturnContainer";
 import { useToast } from "@/components/ui/use-toast";
 import { addEditSaleExchangeReturnSchema } from "@/schemas/sale/add_sale_exchange_return";
 import { useAddSaleExchangeReturnMutation } from "@/store/sale_exchange_return/saleExchangeReturnApi";
-import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-interface IAddSaleExchangeReturnProps {}
+interface IAddPurchaseReturnProps {}
 
-const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
+const AddPurchaseExchangeReturn: FC<IAddPurchaseReturnProps> = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [
@@ -32,28 +31,28 @@ const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
 
   const addExchangeReturnHandler = async (data: any) => {
     // REMOVE THE PROPERTY IF THE FALSY VALUE
-    const updateData = removeEmptyStringOrZeroProperties(data, [
-      "customerPay",
-      "sellerPay",
-    ]) as any;
+    // const updateData = removeEmptyStringOrZeroProperties(data, [
+    //   "customerPay",
+    //   "sellerPay",
+    // ]) as any;
 
-    // // LOGIC REMOVE PRODUCTS PROPERTY
-    if (!updateData?.products?.length) {
-      delete updateData?.products;
-    }
+    // LOGIC REMOVE PRODUCTS PROPERTY
+    // if (!updateData?.products?.length) {
+    //   delete updateData?.products;
+    // }
 
     // // FILTER THE FALSY PAYMENTS
-    const updatePayment = updateData?.payments?.filter(
-      (payment: any) =>
-        payment?.accountId !== null && payment?.paymentAmount > 0
-    );
+    // const updatePayment = updateData?.payments?.filter(
+    //   (payment: any) =>
+    //     payment?.accountId !== null && payment?.paymentAmount > 0
+    // );
 
     // // REMOVE THE PAYMENTS PROPERTY
-    if (updatePayment?.length > 0) {
-      updateData.payments = updatePayment;
-    } else {
-      delete updateData.payments;
-    }
+    // if (updatePayment?.length > 0) {
+    //   updateData.payments = updatePayment;
+    // } else {
+    //   delete updateData.payments;
+    // }
 
     const result = await addSaleExchangeReturn(data);
 
@@ -62,13 +61,12 @@ const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
         title: "Add Exchange Return Message",
         description: result?.data?.message,
       });
-      navigate("/sale_exchange_return_list", { replace: true });
+      navigate("/purchase_exchange_return_list", { replace: true });
     }
   };
-
   return (
     <form onSubmit={handleSubmit(addExchangeReturnHandler)}>
-      <AddSaleExchangeReturnContainer
+      <AddPurchaseExchangeReturnContainer
         watch={watch}
         setValue={setValue}
         setError={setError}
@@ -79,10 +77,10 @@ const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
         className="pt-4 pb-8"
         error={addSaleExchangeReturnError}
         buttonLabel="Add Exchange & Return"
-        errorTitle="Add Exchange & Return Error"
+        errorTitle="Add Return & Exchange Error"
       />
     </form>
   );
 };
 
-export default AddSaleExchangeReturn;
+export default AddPurchaseExchangeReturn;

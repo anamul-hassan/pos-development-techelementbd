@@ -4,8 +4,8 @@ import { CSVLink } from "react-csv";
 const DayBookExcel = ({ data }: any) => {
   if (!data || !data.stocks || !data.payments || !data.total) {
     return (
-      <Button disabled variant="tertiary" size="sm">
-        EXCEL
+      <Button disabled variant="tertiary" size="xs">
+        Excel
       </Button>
     );
   }
@@ -22,8 +22,8 @@ const DayBookExcel = ({ data }: any) => {
 
   return (
     <CSVLink data={combinedData} filename={"all_data.csv"} onClick={() => {}}>
-      <Button variant="tertiary" size="sm">
-        EXCEL
+      <Button variant="tertiary" size="xs">
+        Excel
       </Button>
     </CSVLink>
   );

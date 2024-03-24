@@ -21,12 +21,19 @@ import InfoWrapper from "@/components/common/InfoWrapper";
 import React, { useState } from "react";
 import { CalendarIcon } from "lucide-react";
 import DataLoader from "@/components/common/loader/DataLoader";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import DayBookExcel from "./DayBookExcel";
-import SalesReportPDF from "./SalesReportPDF";
 import { useGetDayBookReportQuery } from "@/store/dashboard/dashboardApi";
 import InputWrapper from "@/components/common/form/InputWrapper";
+import PdfTable, {
+  IPdfPageHeaderData,
+  IPdfTableColumn,
+  ITableSummary,
+} from "@/components/common/PdfTable";
+import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
+import moment from "moment";
+import { totalCalculator } from "@/utils/helpers/totalCalculator";
 
 interface IDayBookProps {
   id: string;
@@ -51,51 +58,128 @@ const DayBook: React.FC = () => {
 
   const { data: dayBooks, isLoading: dayReportLoading } =
     useGetDayBookReportQuery({
-      startDate:
-        date?.from instanceof Date ? date.from.toISOString() : undefined,
-      endDate: date?.to instanceof Date ? date.to.toISOString() : undefined,
+      from: date?.from instanceof Date ? date.from.toISOString() : undefined,
+      to: date?.to instanceof Date ? date.to.toISOString() : undefined,
     });
-
-  // CALCULATE TOTAL PROFIT
-  const totalProfit = dayBooks?.data?.stocks?.reduce(
-    (total: number, stock: IDayBookProps) => total + stock.profit,
-    0
-  );
-
-  // CALCULATE TOTAL SALES PRICES
-  const totalSalePrice = dayBooks?.data?.stocks?.reduce(
-    (total: number, stock: IDayBookProps) => total + stock.price,
-    0
-  );
-
-  // CALCULATE TOTAL PAYMENT
-  const totalPayment = dayBooks?.data?.payments?.reduce(
-    (total: number, payment: IDayPayablePaymentsProps) => total + payment.price,
-    0
-  );
 
   if (dayReportLoading) {
     return <DataLoader />;
   }
+
+  const columnsProduct: IPdfTableColumn[] = [
+    {
+      accessorKey: "productName",
+      header: "Product Name",
+    },
+    {
+      accessorKey: "quantity",
+      header: "Quality",
+    },
+    {
+      accessorKey: "price",
+      header: "Price",
+    },
+    {
+      accessorKey: "profit",
+      header: "Profit",
+    },
+  ];
+  const columnsPayment: IPdfTableColumn[] = [
+    {
+      accessorKey: "paymentType",
+      header: "Payment Type",
+    },
+    {
+      accessorKey: "price",
+      header: "Payment Amount",
+    },
+  ];
+
+  const headerProduct: IPdfPageHeaderData = {
+    company: CLIENT_DETAILS.companyName,
+    heading: "Day-book Report (Product)",
+    logo: CLIENT_DETAILS.sidebarLogo,
+    date,
+  };
+  const headerPayment: IPdfPageHeaderData = {
+    company: CLIENT_DETAILS.companyName,
+    heading: "Day-book Report (Payment)",
+    logo: CLIENT_DETAILS.sidebarLogo,
+    date,
+  };
+  const summaryPayment: ITableSummary = {
+    totalPrice: dayBooks?.data?.total?.totalPrice,
+    totalProfit: dayBooks?.data?.total?.totalProfit,
+    totalProduct: dayBooks?.data?.stocks?.length,
+    totalQuantity: dayBooks?.data?.total?.totalQuantity,
+  };
+
   return (
     <section className="pb-8">
       <div className="flex justify-between items-end">
-        <div className="space-x-3">
+        <div className="space-x-3 flex">
           {/* BUTTON & COMPONENT FOR EXCEL */}
           <DayBookExcel data={dayBooks?.data} />
           {/* BUTTON & COMPONENT FOR PDF */}
           <PDFDownloadLink
-            document={<SalesReportPDF data={dayBooks?.data} />}
-            fileName="day_book.pdf"
+            document={
+              <PdfTable
+                columns={columnsProduct}
+                data={dayBooks?.data?.stocks}
+                headerData={headerProduct}
+                summary={summaryPayment}
+              />
+            }
+            fileName={`${CLIENT_DETAILS?.companyName} || ${moment().format(
+              "DD MMMM, YYYY, hh:mm A"
+            )} || Daybook Report.pdf`}
           >
             {({ loading }) =>
               loading ? (
-                <Button variant="destructive" size="sm">
-                  <ButtonLoader />
+                <Button
+                  disabled={loading}
+                  className=" transition-all duration-150"
+                  variant="destructive"
+                  size="xs"
+                >
+                  <ButtonLoader /> Product
                 </Button>
               ) : (
-                <Button variant="destructive" size="sm">
-                  PDF
+                <Button variant="destructive" size="xs">
+                  Product
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
+          <PDFDownloadLink
+            document={
+              <PdfTable
+                columns={columnsPayment}
+                data={dayBooks?.data?.payments}
+                headerData={headerPayment}
+              />
+            }
+            fileName={`${CLIENT_DETAILS?.companyName} || ${moment().format(
+              "DD MMMM, YYYY, hh:mm A"
+            )} || Daybook Report (Payment).pdf`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  disabled={loading}
+                  className=" transition-all duration-150"
+                  variant="destructive"
+                  size="xs"
+                >
+                  <ButtonLoader /> Payment
+                </Button>
+              ) : (
+                <Button
+                  disabled={!dayBooks?.data?.payments?.length}
+                  variant="destructive"
+                  size="xs"
+                >
+                  Payment
                 </Button>
               )
             }
@@ -122,7 +206,7 @@ const DayBook: React.FC = () => {
                   {date?.from ? (
                     date.to ? (
                       <>
-                        {format(date.from, "LLL dd, y")} -{" "}
+                        {format(date.from, "LLL dd, y")} -
                         {format(date.to, "LLL dd, y")}
                       </>
                     ) : (
@@ -133,7 +217,7 @@ const DayBook: React.FC = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0" align="end">
                 <Calendar
                   initialFocus
                   mode="range"
@@ -150,10 +234,10 @@ const DayBook: React.FC = () => {
 
       <div>
         {/* SALE & POS PRODUCTS REPORT */}
-        <InfoWrapper heading="Daily Sales Report">
+        <InfoWrapper className="my-2" heading="Daily Sales Report">
           <section className="-mx-2">
             <Table className="border overflow-hidden">
-              <TableCaption>
+              <TableCaption className="mt-1.5">
                 Sales Report for{" "}
                 {date?.from && date?.to
                   ? `${format(date.from, "LLL dd, y")} - ${format(
@@ -165,10 +249,13 @@ const DayBook: React.FC = () => {
 
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Profit</TableHead>
+                  {["Name", "Quantity", "Price", "Profit"].map(
+                    (singleHeader: any, headerIndex: number) => (
+                      <TableHead className="custom-table" key={headerIndex}>
+                        {singleHeader}
+                      </TableHead>
+                    )
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -176,36 +263,50 @@ const DayBook: React.FC = () => {
                   dayBooks?.data?.stocks?.map(
                     (dayBook: IDayBookProps, index: number) => (
                       <TableRow key={index}>
-                        <TableCell>{dayBook?.productName}</TableCell>
-                        <TableCell>{dayBook?.quantity}</TableCell>
-                        <TableCell>{dayBook?.price}৳</TableCell>
-                        <TableCell>{dayBook?.profit}৳</TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.productName}
+                        </TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.quantity}
+                        </TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.price?.toFixed(2) || "0.00"}৳
+                        </TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.profit?.toFixed(2) || "0.00"}৳
+                        </TableCell>
                       </TableRow>
                     )
                   )}
 
-                <TableRow>
-                  <TableCell>Total Sale</TableCell>
-
-                  <TableCell>{totalSalePrice}৳</TableCell>
-                </TableRow>
-                <TableRow className="bg-accent">
-                  <TableCell>Total Profit</TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-
-                  <TableCell>{totalProfit}৳</TableCell>
+                <TableRow className="bg-accent hover:bg-accent text-base font-semibold">
+                  <TableCell className="custom-table">Total</TableCell>
+                  <TableCell className="custom-table">
+                    {totalCalculator(dayBooks?.data?.stocks, "quantity") || "0"}
+                  </TableCell>
+                  <TableCell className="custom-table">
+                    {totalCalculator(dayBooks?.data?.stocks, "price")?.toFixed(
+                      2
+                    ) || "0.00"}
+                    ৳
+                  </TableCell>
+                  <TableCell className="custom-table">
+                    {totalCalculator(dayBooks?.data?.stocks, "profit")?.toFixed(
+                      2
+                    ) || "0.00"}
+                    ৳
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </section>
         </InfoWrapper>
 
-        {/* PAYEABLE PAYMENT TO VENDOR */}
+        {/* PAYABLE PAYMENT TO VENDOR */}
         <InfoWrapper heading="Daily Payment Report">
           <section className="-mx-2">
             <Table className="border overflow-hidden">
-              <TableCaption>
+              <TableCaption className="mt-1.5">
                 Sales Report for{" "}
                 {date?.from && date?.to
                   ? `${format(date.from, "LLL dd, y")} - ${format(
@@ -217,9 +318,13 @@ const DayBook: React.FC = () => {
 
               <TableHeader>
                 <TableRow>
-                  <TableHead>Vendor Name</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Payment Type</TableHead>
+                  {["Vendor Name", "Payment Type", "Amount"].map(
+                    (singleHeader: any) => (
+                      <TableHead className="custom-table" key={singleHeader}>
+                        {singleHeader}
+                      </TableHead>
+                    )
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -227,18 +332,30 @@ const DayBook: React.FC = () => {
                   dayBooks?.data?.payments?.map(
                     (dayBook: IDayPayablePaymentsProps, index: number) => (
                       <TableRow key={index}>
-                        <TableCell>{dayBook?.supplierName}</TableCell>
-                        <TableCell>{dayBook?.paymentType}</TableCell>
-                        <TableCell>{dayBook?.price}৳</TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.supplierName}
+                        </TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.paymentType}
+                        </TableCell>
+                        <TableCell className="custom-table">
+                          {dayBook?.price?.toFixed(2) || "0.00"}৳
+                        </TableCell>
                       </TableRow>
                     )
                   )}
 
-                <TableRow className="bg-accent">
-                  <TableCell>Total Payment</TableCell>
-                  <TableCell></TableCell>
+                <TableRow className="bg-accent hover:bg-accent text-base font-semibold">
+                  <TableCell className="custom-table">Total Payment</TableCell>
+                  <TableCell className="custom-table"></TableCell>
 
-                  <TableCell>{totalPayment}৳</TableCell>
+                  <TableCell className="custom-table">
+                    {totalCalculator(
+                      dayBooks?.data?.payments,
+                      "price"
+                    )?.toFixed(2) || "0.00"}
+                    ৳
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -260,11 +377,20 @@ const DayBook: React.FC = () => {
               </TableCaption>
 
               <TableBody>
-                <TableRow className="bg-secondary ">
-                  <TableCell>Cash On Hand</TableCell>
+                <TableRow className="bg-accent hover:bg-accent text-base font-semibold">
+                  <TableCell className="custom-table">Cash On Hand</TableCell>
 
-                  <TableCell className="text-right">
-                    {totalSalePrice - totalPayment}৳
+                  <TableCell className="text-right custom-table">
+                    {isNaN(
+                      totalCalculator(dayBooks?.data?.stocks, "price") -
+                        totalCalculator(dayBooks?.data?.payments, "price")
+                    )
+                      ? "0.00"
+                      : Math.abs(
+                          totalCalculator(dayBooks?.data?.stocks, "price") -
+                            totalCalculator(dayBooks?.data?.payments, "price")
+                        )?.toFixed(2)}
+                    ৳
                   </TableCell>
                 </TableRow>
               </TableBody>

@@ -4,6 +4,9 @@ export const addEditSaleExchangeReturnSchema = yup.object().shape({
   branchId: yup.number().required("Branch is required"),
   customerId: yup.number().required("Customer is required"),
   sellId: yup.number().required("Sell is required"),
+  totalPrice: yup.number().required("Total price is required"),
+  totalPaymentAmount: yup.number().required("Total payment is required"),
+  returnPrice: yup.number().required(),
   customerPay: yup.number(),
   sellerPay: yup.number(),
   returnProduct: yup.array().of(
@@ -14,8 +17,8 @@ export const addEditSaleExchangeReturnSchema = yup.object().shape({
   ),
   payments: yup.array().of(
     yup.object().shape({
-      accountId: yup.number(),
-      paymentAmount: yup.number(),
+      accountId: yup.number().optional().nullable(),
+      paymentAmount: yup.number().optional(),
     })
   ),
   products: yup.array().of(

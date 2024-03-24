@@ -218,7 +218,9 @@ const SaleList = () => {
               </Button>
 
               {/* EXCHANGE AND RETURN  */}
-              <Link to={`/sale_exchange_return/${actionItem?.id?.toString()}`}>
+              <Link
+                to={`/add_sale_exchange_return/${actionItem?.id?.toString()}`}
+              >
                 <Button
                   variant="outline"
                   className="w-full flex justify-start"
