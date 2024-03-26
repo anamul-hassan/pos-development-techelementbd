@@ -2,7 +2,6 @@ import { FC } from "react";
 import Regular from "../../utils/fonts/Poppins-Regular.ttf";
 import SemiBold from "../../utils/fonts/Poppins-SemiBold.ttf";
 import Bold from "../../utils/fonts/Poppins-Bold.ttf";
-import moment from "moment";
 import {
   Document,
   Font,
@@ -13,7 +12,9 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import { DateRange } from "react-day-picker";
+import { totalCalculator } from "@/utils/helpers/totalCalculator";
+
+// FONT FOR STYLING PDF
 Font.register({
   family: "Poppins",
   fonts: [
@@ -34,7 +35,7 @@ Font.register({
     },
   ],
 });
-
+// CLASSES FOR STYLING PDF
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
@@ -124,25 +125,31 @@ const styles = StyleSheet.create({
   },
 });
 
-export interface ITableSummary {
+export interface IDaybookSummary {
   totalPrice: number;
   totalProfit: number;
   totalProduct: number;
   totalQuantity: number;
 }
 
-interface IPdfTableProps {
-  columns: IPdfTableColumn[];
+interface IPdfDaybookProps {
+  columns: {
+    columnsProduct: IPdfDaybookColumn[];
+    columnsPayment: IPdfDaybookColumn[];
+  };
   data: any;
   preview?: boolean;
-  headerData?: IPdfPageHeaderData;
+  headerData?: {
+    headerProduct: IPdfDaybookPageHeaderData;
+    headerPayment: IPdfDaybookPageHeaderData;
+  };
   paperSize?: "A4";
   className?: string;
   itemsPerPage?: number;
-  summary?: ITableSummary;
+  summary?: IDaybookSummary;
 }
 
-const PdfTable: FC<IPdfTableProps> = ({
+const PdfDaybook: FC<IPdfDaybookProps> = ({
   columns,
   data,
   headerData,
@@ -164,29 +171,35 @@ const PdfTable: FC<IPdfTableProps> = ({
   );
 };
 
-export default PdfTable;
+export default PdfDaybook;
 
-export interface IPdfPageHeaderData {
+export interface IPdfDaybookPageHeaderData {
   company: string;
   heading: string;
   subHeading?: string;
   logo: string;
-  date: DateRange | undefined;
+  date: string;
 }
-export interface IPdfTableColumn {
+export interface IPdfDaybookColumn {
   header: string;
   accessorKey: string;
   width?: number;
 }
-interface IPdfTableWrapper {
-  headerData?: IPdfPageHeaderData;
-  columns: IPdfTableColumn[];
+interface IPdfDaybookWrapper {
   data: any;
   paperSize?: "A4";
   itemsPerPage: number;
-  summary?: ITableSummary;
+  summary?: IDaybookSummary;
+  columns: {
+    columnsProduct: IPdfDaybookColumn[];
+    columnsPayment: IPdfDaybookColumn[];
+  };
+  headerData?: {
+    headerProduct: IPdfDaybookPageHeaderData;
+    headerPayment: IPdfDaybookPageHeaderData;
+  };
 }
-const PdfTableWrapper: FC<IPdfTableWrapper> = ({
+const PdfTableWrapper: FC<IPdfDaybookWrapper> = ({
   headerData,
   columns,
   data,
@@ -202,34 +215,85 @@ const PdfTableWrapper: FC<IPdfTableWrapper> = ({
     }
     return chunks;
   };
+  const chunks = chunkArray(data?.products, itemsPerPage);
 
-  const chunks = chunkArray(data, itemsPerPage);
+  const cashOnHand =
+    (summary?.totalPrice ?? 0) - totalCalculator(data?.payments, "price");
+
   return (
     <Document>
       {chunks.map((chunk, pageIndex) => (
         <Page key={pageIndex} size={paperSize} style={styles.page}>
-          {/* PAGE HEADER */}
-          <PdfPageHeader headerData={headerData} />
-
-          {/* TABLE CONTAINER */}
+          {/* PRODUCT PAGE HEADER */}
+          <PdfPageHeader headerData={headerData?.headerProduct} />
+          {/* PRODUCT PAGE HEADING */}
+          <Text style={styles.headingSecondary}>
+            Product/ Stock Information
+          </Text>
           <View style={styles.section}>
-            {/* TABLE HEADER */}
-            <PdfTableHeader columns={columns} />
+            {/* PRODUCT TABLE HEADER COMPONENT */}
+            <PdfTableHeader columns={columns?.columnsProduct} />
             {/* TABLE BODY COMPONENT */}
-            <PdfTableBody columns={columns} data={chunk} />
+            <PdfTableBody columns={columns?.columnsProduct} data={chunk} />
           </View>
+          <Text
+            style={{
+              ...styles.headingSecondary,
+              marginTop: 10,
+              marginBottom: -5,
+            }}
+          >
+            Product/ Stock Summary
+          </Text>
           {Object?.keys(summary || {})?.length > 0 && (
             <PdfTableSummary summary={summary} />
           )}
         </Page>
       ))}
+
+      {/* PAYMENT PAGE */}
+      <Page size={paperSize} style={styles.page}>
+        {/* PAYMENT PAGE HEADER */}
+        <PdfPageHeader headerData={headerData?.headerPayment} />
+
+        {/* PAYMENT TABLE CONTAINER & HEADING */}
+        <Text style={styles.headingSecondary}>Payments Summary</Text>
+        {data?.payments?.length > 0 && (
+          <View style={styles.section}>
+            {/* PAYMENT CONTAINER */}
+            <PdfTableHeader columns={columns?.columnsPayment} />
+            {/* TABLE BODY COMPONENT */}
+            <PdfTableBody
+              columns={columns?.columnsPayment}
+              data={data?.payments}
+            />
+          </View>
+        )}
+
+        {/* TABLE CONTAINER */}
+        <View style={{ ...styles.section, marginTop: 10 }}>
+          {/* TABLE BODY COMPONENT */}
+          <PdfTableBody
+            columns={[
+              { accessorKey: "title", header: "Product Name" },
+              { accessorKey: "handOnCash", header: "Product Name" },
+            ]}
+            data={[
+              {
+                title: "Cash On Hand",
+                handOnCash: cashOnHand > 0 ? cashOnHand.toFixed(2) : "0.00",
+              },
+            ]}
+          />
+        </View>
+      </Page>
     </Document>
   );
 };
-interface IPdfPageHeader {
-  headerData?: IPdfPageHeaderData;
+interface IPdfDaybookPageHeader {
+  headerData?: IPdfDaybookPageHeaderData;
 }
-const PdfPageHeader: FC<IPdfPageHeader> = ({ headerData }) => {
+const PdfPageHeader: FC<IPdfDaybookPageHeader> = ({ headerData }) => {
   return (
     <View style={styles.pageHeader}>
       <Image style={styles.image} src={headerData?.logo} />
@@ -240,27 +304,19 @@ const PdfPageHeader: FC<IPdfPageHeader> = ({ headerData }) => {
       >
         <Text style={styles.headingPrimary}>{headerData?.company}</Text>
         <Text style={styles.headingSecondary}>{headerData?.heading}</Text>
-        <Text style={styles.headingTertiary}>
-          {headerData?.date?.from
-            ? headerData?.date?.to
-              ? `${moment(headerData?.date?.from).format(
-                  "DD MMMM, YYYY"
-                )} to ${moment(headerData?.date?.to).format("DD MMMM, YYYY")}`
-              : `${moment(headerData?.date?.from).format("DD MMMM, YYYY")}`
-            : `${moment().format("DD MMMM, YYYY")}`}
-        </Text>
+        <Text style={styles.headingTertiary}>{headerData?.date}</Text>
       </View>
     </View>
   );
 };
 
 interface IPdfTableHeader {
-  columns: IPdfTableColumn[];
+  columns: IPdfDaybookColumn[];
 }
 const PdfTableHeader: FC<IPdfTableHeader> = ({ columns }) => {
   return (
     <View style={styles.tableRow}>
-      {columns?.map((singleColumn: IPdfTableColumn) => (
+      {columns?.map((singleColumn: IPdfDaybookColumn) => (
         <View key={singleColumn?.accessorKey} style={styles.tableHead}>
           <Text>{singleColumn?.header}</Text>
         </View>
@@ -269,13 +325,13 @@ const PdfTableHeader: FC<IPdfTableHeader> = ({ columns }) => {
   );
 };
 
-interface IPdfTableBody {
+interface IPdfDaybookBody {
   data: any;
-  columns: IPdfTableColumn[];
+  columns: IPdfDaybookColumn[];
 }
 
 // PDF TABLE BODY
-const PdfTableBody: FC<IPdfTableBody> = ({ data, columns }) => {
+const PdfTableBody: FC<IPdfDaybookBody> = ({ data, columns }) => {
   return (
     <View>
       {data?.length > 0 &&
@@ -318,7 +374,7 @@ const PdfTableBody: FC<IPdfTableBody> = ({ data, columns }) => {
 const PdfTableSummary = ({
   summary,
 }: {
-  summary: ITableSummary | undefined;
+  summary: IDaybookSummary | undefined;
 }) => {
   return (
     <View style={styles.summary}>

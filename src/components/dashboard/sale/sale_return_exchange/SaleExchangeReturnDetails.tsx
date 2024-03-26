@@ -1,5 +1,5 @@
-import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import Heading from "@/components/common/typography/Heading";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import {
   Table,
   TableBody,
@@ -14,19 +14,22 @@ import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import moment from "moment";
 import { FC } from "react";
 
-interface ISaleDetailsProps {
+interface ISaleExchangeReturnDetailsProps {
   actionItem: any;
 }
 
-const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
+const SaleExchangeReturnDetails: FC<ISaleExchangeReturnDetailsProps> = ({
+  actionItem,
+}) => {
   console.log(actionItem, "ac");
   return (
     <section className="space-y-4 font-anek">
-      <Heading variant="primary">Sale Details</Heading>
+      <Heading variant="primary">Sale Exchange/ Return Details</Heading>
       <div>
         {/* CUSTOMER INFORMATION */}
         <div>
           <Heading variant="secondary">Customer Information</Heading>
+          <h3 className="text-2xl font-semibold mb-2"></h3>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
             <li>
               <HeadingParagraph
@@ -109,7 +112,7 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
             <li>
               <HeadingParagraph
                 heading="Point"
-                paragraph={actionItem?.customer?.point || "0"}
+                paragraph={`${actionItem?.customer?.point || "0.00"}৳`}
               />
             </li>
             <li>
@@ -126,12 +129,13 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
         {/* SALE INFORMATION */}
         <div>
           <Heading variant="secondary">Sale Information</Heading>
+          <h3 className="text-2xl font-semibold mb-2"></h3>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
             <li>
               <HeadingParagraph
                 heading="Invoice Number"
                 paragraph={
-                  actionItem?.autoInvoiceNo?.toUpperCase() || "Not Found"
+                  actionItem?.sell?.autoInvoiceNo?.toUpperCase() || "Not Found"
                 }
               />
             </li>
@@ -139,7 +143,7 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
               <HeadingParagraph
                 heading="Sale Date"
                 paragraph={
-                  moment(actionItem?.saleDate).format(
+                  moment(actionItem?.sell?.saleDate).format(
                     "DD MMMM, YYYY, hh:mm A"
                   ) || "Not Found"
                 }
@@ -148,33 +152,29 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
             <li>
               <HeadingParagraph
                 heading="Sale Type"
-                paragraph={actionItem?.sellType || "Not Found"}
+                paragraph={actionItem?.sell?.sellType || "Not Found"}
               />
             </li>
             <li>
               <HeadingParagraph
                 heading="Discount Type"
-                paragraph={actionItem?.discountType || "Not Found"}
-              />
-            </li>
-            <li>
-              <HeadingParagraph
-                heading="Discount Amount"
-                paragraph={`${actionItem?.discount?.toFixed(2) || "0.00"}৳`}
+                paragraph={actionItem?.sell?.discountType || "Not Found"}
               />
             </li>
             <li>
               <HeadingParagraph
                 heading="Total Payment Amount"
                 paragraph={`${
-                  actionItem?.totalPaymentAmount?.toFixed(2) || "0.00"
+                  actionItem?.sell?.totalPaymentAmount?.toFixed(2) || "0.00"
                 }৳`}
               />
             </li>
             <li>
               <HeadingParagraph
                 heading="Total Amount"
-                paragraph={`${actionItem?.totalPrice?.toFixed(2) || "0.00"}৳`}
+                paragraph={`${
+                  actionItem?.sell?.totalPrice?.toFixed(2) || "0.00"
+                }৳`}
               />
             </li>
           </ul>
@@ -207,9 +207,9 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {actionItem?.payment &&
-                actionItem?.payment.length > 0 &&
-                actionItem?.payment?.map(
+              {actionItem?.Payment &&
+                actionItem?.Payment.length > 0 &&
+                actionItem?.Payment?.map(
                   (singlePayment: any, paymentIndex: any) => (
                     <TableRow key={paymentIndex}>
                       <TableCell className="custom-table">
@@ -261,9 +261,9 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {actionItem?.products &&
-                actionItem?.products.length > 0 &&
-                actionItem?.products?.map(
+              {actionItem?.SellProduct &&
+                actionItem?.SellProduct.length > 0 &&
+                actionItem?.SellProduct?.map(
                   (singleProduct: any, productIndex: any) => (
                     <TableRow key={productIndex}>
                       <TableCell className="custom-table">
@@ -294,9 +294,85 @@ const SaleDetails: FC<ISaleDetailsProps> = ({ actionItem }) => {
             </TableBody>
           </Table>
         </div>
+
+        {/* RETURN PRODUCT INFORMATION */}
+        <div>
+          <Heading variant="secondary"> Return Product Information</Heading>
+          <h3 className="text-2xl font-semibold mb-2"></h3>
+          <Table className="overflow-hidden border">
+            <TableCaption className="mt-0">
+              {actionItem?.ReturnProduct &&
+              !actionItem?.ReturnProduct.length ? (
+                <p className="text-center">There is no return product here!</p>
+              ) : (
+                <p>There are return products here</p>
+              )}
+            </TableCaption>
+            <TableHeader className="bg-tertiary/5">
+              <TableRow>
+                {[
+                  "Product Name",
+                  "Size",
+                  "Color",
+                  "Warranty",
+                  "Quantity",
+                  "Unit Price",
+                  "Subtotal",
+                ].map((item: any) => (
+                  <TableHead key={item} className="custom-table">
+                    {item}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {actionItem?.ReturnProduct &&
+                actionItem?.ReturnProduct.length > 0 &&
+                actionItem?.ReturnProduct?.map(
+                  (singleProduct: any, productIndex: any) => (
+                    <TableRow key={productIndex}>
+                      <TableCell className="custom-table">
+                        {singleProduct?.SellProduct?.variation?.productName ||
+                          "Not Found"}
+                      </TableCell>
+                      <TableCell className="custom-table">
+                        {singleProduct?.SellProduct?.variation?.size?.toUpperCase() ||
+                          "N/A"}
+                      </TableCell>
+                      <TableCell className="custom-table">
+                        {capitalizeEveryWord(
+                          singleProduct?.SellProduct?.variation?.color
+                        ) || "N/A"}
+                      </TableCell>
+                      <TableCell className="custom-table">
+                        {singleProduct?.SellProduct?.warranty || "N/A"}
+                      </TableCell>
+                      <TableCell className="custom-table">
+                        {singleProduct?.quantity || "N/A"}
+                      </TableCell>
+                      <TableCell className="custom-table uppercase">
+                        {`${
+                          singleProduct?.SellProduct?.unitPrice?.toFixed(2) ||
+                          "0.00"
+                        }৳`}
+                      </TableCell>
+                      <TableCell className="custom-table uppercase">
+                        {`${
+                          (
+                            singleProduct?.quantity *
+                            singleProduct?.SellProduct?.unitPrice
+                          )?.toFixed(2) || "0.00"
+                        }৳`}
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </section>
   );
 };
 
-export default SaleDetails;
+export default SaleExchangeReturnDetails;

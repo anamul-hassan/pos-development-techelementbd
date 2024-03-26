@@ -21,21 +21,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
-import { LuPlus, LuTrash } from "react-icons/lu";
-
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useGetAccountsQuery } from "@/store/account/accountApi";
 import InfoWrapper from "@/components/common/InfoWrapper";
 import PurchaseProductDetailsForm from "./PurchaseProductDetailsForm";
 import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -48,6 +34,9 @@ import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
 import { useGetSuppliersQuery } from "@/store/supplier/supplierApi";
 import { DISCOUNT_TYPES } from "@/utils/constants/common/discount_type";
 import { PURCHASE_STATUS } from "@/utils/constants/common/purchase_status";
+import AddPaymentTable from "@/components/common/payment/AddPaymentTable";
+import CopyButton from "@/components/common/button/CopyButton";
+import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 
 interface IAddPurchaseContainerProps {
   setValue: any;
@@ -55,6 +44,7 @@ interface IAddPurchaseContainerProps {
   register: any;
   error: any;
   clear: boolean;
+  setError: any;
 }
 
 const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
@@ -63,6 +53,7 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
   register,
   error,
   clear,
+  setError,
 }) => {
   // APP CONTEXT
   const { sidebarOpen } = useAppContext();
@@ -102,18 +93,13 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
       page: 1,
       size: 10000000,
     }) as any;
-  // GET ALL THE BANK ACCOUNT QUERY
-  const { data: accountsData, isLoading: accountLoading } = useGetAccountsQuery(
-    "All"
-  ) as any;
+
   // GET PRODUCT DATA BY SEARCH QUERY
   const { data: productData, isLoading: isProductLoading } =
     useSearchSingleProductQuery(productSearch) as any;
 
   // TIME STATE
   const [date, setDate] = useState<Date>();
-  // SELECT UPDATE STATE
-  const [update, setUpdate] = useState(false);
 
   // PURCHASE STATUS OPTIONS STATE
 
@@ -121,7 +107,7 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
   // const [discountType, setDiscountType] = useState(
 
   // STATE FOR ADDING NEW PAYMENT OPTION
-  const [paymentMethodTable, setPaymentMethodTable] = useState<any>([
+  const [paymentTable, setPaymentTable] = useState<any>([
     {
       index: 0,
       accountId: 0,
@@ -174,7 +160,7 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
     // SET THE PAYMENT DATA ON THE FORM
     setValue(
       "payments",
-      paymentMethodTable.map((account: any) => {
+      paymentTable.map((account: any) => {
         return {
           accountId: account.accountId,
           paymentAmount: account.paymentAmount ? account.paymentAmount : 0,
@@ -214,42 +200,12 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
     date,
     setValue,
     branchId,
-    paymentMethodTable,
+    paymentTable,
     selectedProduct,
     totalDiscount,
   ]);
 
-  // REMOVE PAYMENT TABLE HANDLER
-  const removePaymentTableHandler = (index: number) => {
-    // FILTER OUT THE TABLE WITH THE SPECIFIC INDEX
-    const updatedPaymentMethodTable = paymentMethodTable.filter(
-      (table: any) => table.index !== index
-    );
-
-    // UPDATE THE INDEX OF THE REMAINING ITEMS
-    updatedPaymentMethodTable.forEach((table: any, idx: number) => {
-      table.index = idx;
-    });
-    // SET THE UPDATED TABLE IN THE STATE
-    setPaymentMethodTable(updatedPaymentMethodTable);
-  };
-  // ADD NEW PAYMENT TABLE HANDLER
-  const addPaymentTableHandler = () => {
-    // GET THE HIGHEST INDEX NUMBER
-    const maxIndex = Math.max(
-      ...paymentMethodTable.map((account: any) => +account.index)
-    );
-    // CREATE A NEW OBJECT WITH THE REQUIRE PROPERTIES
-    const newItem = {
-      index: +maxIndex + 1,
-      accountId: 0,
-      paymentAmount: "",
-    };
-    // UPDATE THE DATA ON THE STATE
-    setPaymentMethodTable([...paymentMethodTable, newItem]);
-  };
-
-  // // REMOVE PRODUCT TABLE HANDLER
+  // REMOVE PRODUCT TABLE HANDLER
   const removeProductTableHandler = (productId: string) => {
     // FILTER OUT THE TABLE WITH THE SPECIFIC INDEX
     const updatedProductTable = selectedProduct.filter(
@@ -297,7 +253,7 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
       // RESET THE SELECTED PRODUCTS
       setSelectedProduct([]);
       // RESET THE PAYMENT TABLE
-      setPaymentMethodTable([
+      setPaymentTable([
         {
           index: 0,
           accountId: 0,
@@ -322,35 +278,37 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
   return (
     <section>
       {/* PRODUCT PRICE CALCULATION SUMMARY */}
-      <ul className="grid grid-cols-1 justify-items-start lg:grid-cols-5 md:grid-cols-3 md:justify-items-start lg:justify-items-center my-4 border py-1 rounded-md px-2 lg:px-0">
+      <ul
+        className={`grid grid-cols-1 justify-items-start lg:grid-cols-5 md:grid-cols-3 md:justify-items-start lg:justify-items-center my-4 border py-2 rounded-md px-2 lg:px-0 mx-1.5 ${
+          sidebarOpen ? "text-sm" : "text-sm md:text-base"
+        }`}
+      >
         <li>
-          <label className="text-sm md:text-base">Total Amount</label>
-          <b className="ml-2 text-sm md:text-base">
-            {totalPrice.toFixed(2) || "0.00"}৳
+          <label>Total Amount</label>
+          <b className="ml-2">{totalPrice.toFixed(2) || "0.00"}৳</b>
+        </li>
+        <li>
+          <label>Payable Amount</label>
+          <b className="ml-2 inline-flex items-center gap-x-2">
+            {totalPrice.toFixed(2) || "0.00"}৳{" "}
+            <CopyButton tooltipSide="right" copyItem={totalPrice} />
           </b>
         </li>
         <li>
-          <label className="text-sm md:text-base">Payable Amount</label>
-          <b className="ml-2 text-sm md:text-base">
-            {totalPrice.toFixed(2) || "0.00"}৳
-          </b>
+          <label>Discount Amount</label>
+          <b className="ml-2">{totalDiscount.toFixed(2) || "0.00"}৳</b>
         </li>
         <li>
-          <label className="text-sm md:text-base">Discount Amount</label>
-          <b className="ml-2 text-sm md:text-base">
-            {totalDiscount.toFixed(2) || "0.00"}৳
-          </b>
+          <label>Total Payment Amount</label>
+          <b className="ml-2">{totalPaymentAmount.toFixed(2) || "0.00"}৳</b>
         </li>
         <li>
-          <label className="text-sm md:text-base">Total Payment Amount</label>
-          <b className="ml-2 text-sm md:text-base">
-            {totalPaymentAmount.toFixed(2) || "0.00"}৳
-          </b>
-        </li>
-        <li>
-          <label className="text-sm md:text-base">Due</label>
-          <b className="ml-2 text-sm md:text-base">
-            {(totalPrice - totalPaymentAmount).toFixed(2) || "0.00"}৳
+          <label>Due</label>
+          <b className="ml-2">
+            {totalPrice - totalPaymentAmount > 0
+              ? (totalPrice - totalPaymentAmount).toFixed(2)
+              : "0.00"}
+            ৳
           </b>
         </li>
       </ul>
@@ -556,208 +514,15 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
             </div>
             <div className="w-full lg:w-5/12">
               {/* PAYMENT METHOD */}
-              <div className="max-h-[220px] overflow-y-auto scroll-hidden pb-1">
-                {paymentMethodTable?.map(
-                  (singleAccount: any, accountIndex: number) => (
-                    <ul
-                      key={accountIndex}
-                      className="grid grid-flow-row md:grid-flow-col gap-3 px-1"
-                    >
-                      <li>
-                        {accountIndex === 0 ? (
-                          <InputWrapper
-                            label="#"
-                            error=""
-                            labelFor="add_new_method"
-                          >
-                            {/* ADD PAYMENT METHOD TABLE */}
-                            <Button
-                              type="button"
-                              onClick={() => addPaymentTableHandler()}
-                              variant="outline"
-                              size="icon"
-                              className="group relative"
-                              disabled={
-                                watch("payments")?.length ===
-                                accountsData?.data?.length
-                              }
-                            >
-                              <LuPlus className="h-4 w-4" />
-
-                              <span className="sr-only">
-                                Add Another Pay Method Button
-                              </span>
-                              <span className="custom-tooltip-right">
-                                Add Another Payment Method
-                              </span>
-                            </Button>
-                          </InputWrapper>
-                        ) : (
-                          <InputWrapper label="#" error="" labelFor="#">
-                            {/* REMOVE PAYMENT METHOD TABLE */}
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  type="button"
-                                  className="group relative"
-                                  variant="destructive"
-                                  size="icon"
-                                >
-                                  <LuTrash className="h-4 w-4" />
-                                  {/* TOOLTIP TEXT */}
-                                  <span className="custom-tooltip-right">
-                                    Remove Payment Method
-                                  </span>
-                                  <span className="sr-only">
-                                    Remove Pay Method Button
-                                  </span>
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Payment Method Removal Confirmation
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to remove this payment
-                                    method? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() =>
-                                      removePaymentTableHandler(accountIndex)
-                                    }
-                                  >
-                                    Confirm
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </InputWrapper>
-                        )}
-                      </li>
-                      <li className="w-full">
-                        <InputWrapper
-                          className={`${
-                            sidebarOpen
-                              ? "lg:w-[95px] xl:w-[150px] 2xl:w-[160px] truncate"
-                              : "lg:w-[130px] xl:w-full"
-                          }`}
-                          labelFor={`paying_method${accountIndex}`}
-                          label={generalInfo?.payment_method?.label[locale]}
-                          error={
-                            error?.payments?.length > 0 &&
-                            error?.payments[accountIndex]?.accountId?.message
-                          }
-                          // className={`w-full ${
-                          //   sidebarOpen
-                          //     ? "lg:w-[90px] xl:w-[120px] truncate"
-                          //     : "lg:w-[130px] xl:w-full"
-                          // }`}
-                        >
-                          <Select
-                            onOpenChange={(open: boolean) => setUpdate(open)}
-                            onValueChange={(value: any) => {
-                              // THIS CONDITION PREVENT THE UPDATE DATA AUTOMATICALLY
-                              if (update) {
-                                const updatedTable = paymentMethodTable.map(
-                                  (item: any) =>
-                                    item.index === accountIndex
-                                      ? { ...item, accountId: +value }
-                                      : item
-                                );
-                                setPaymentMethodTable(updatedTable);
-                              }
-                            }}
-                            value={singleAccount.accountId || ""}
-                          >
-                            <SelectTrigger
-                              id={`paying_method${accountIndex}`}
-                              className={`w-full focus:ring-0 `}
-                            >
-                              <SelectValue
-                                placeholder={
-                                  generalInfo?.payment_method?.placeholder[
-                                    locale
-                                  ]
-                                }
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {!accountsData?.data?.length &&
-                                accountLoading && (
-                                  <div className="w-full h-24 flex items-center justify-center">
-                                    {accountLoading && <ButtonLoader />}
-                                  </div>
-                                )}
-                              {accountLoading ||
-                                (accountsData?.data &&
-                                  accountsData?.data?.length > 0 &&
-                                  accountsData?.data.map(
-                                    (singleAccount: any) => (
-                                      <SelectItem
-                                        disabled={watch("payments").some(
-                                          (accountItem2: any) =>
-                                            accountItem2.accountId ===
-                                            singleAccount?.id
-                                        )}
-                                        className="cursor-pointer"
-                                        key={singleAccount?.id}
-                                        value={singleAccount?.id}
-                                      >
-                                        {singleAccount?.accountName}
-                                      </SelectItem>
-                                    )
-                                  ))}
-                            </SelectContent>
-                          </Select>
-                        </InputWrapper>
-                      </li>
-                      <li className="w-full">
-                        <InputWrapper
-                          className={`${
-                            sidebarOpen
-                              ? "lg:w-[95px] xl:w-[150px] 2xl:w-[160px] truncate"
-                              : "lg:w-[130px] xl:w-full"
-                          }`}
-                          label={generalInfo?.payment_amount?.label[locale]}
-                          error={
-                            error?.payments?.length > 0 &&
-                            error?.payments[accountIndex]?.paymentAmount
-                              ?.message
-                          }
-                          labelFor={`enter_amount${accountIndex}`}
-                        >
-                          {/* ENTER AMOUNT FILED */}
-                          <Input
-                            type="number"
-                            value={singleAccount.paymentAmount || ""}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                              const updatedTable = paymentMethodTable.map(
-                                (item: any) =>
-                                  item.index === accountIndex
-                                    ? {
-                                        ...item,
-                                        paymentAmount: +e.target.value,
-                                      }
-                                    : item
-                              );
-                              setPaymentMethodTable(updatedTable);
-                            }}
-                            onWheel={(event) => event.currentTarget.blur()}
-                            id={`enter_amount${accountIndex}`}
-                            placeholder={
-                              generalInfo?.payment_amount.placeholder[locale]
-                            }
-                          />
-                        </InputWrapper>
-                      </li>
-                    </ul>
-                  )
-                )}
-              </div>
+              <AddPaymentTable
+                shrink
+                scrollable
+                paymentTable={paymentTable}
+                setPaymentTable={setPaymentTable}
+                watch={watch}
+                property="payments"
+                setError={setError}
+              />
             </div>
           </div>
         </FormWrapper>
@@ -776,13 +541,11 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                 id="search_supplier"
                 asChild
                 className={`w-full
-
                 ${
                   sidebarOpen
                     ? "md:w-[197px] lg:w-[178px] xl:w-[254px] truncate"
                     : "md:w-[324px] lg:w-[247px] xl:w-[313px] 2xl:!w-[321px]"
                 }
-
                 `}
               >
                 <Button
@@ -793,9 +556,10 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                   className="w-full justify-between"
                 >
                   {selectedSupplier?.firstName
-                    ? selectedSupplier?.firstName +
-                      " " +
-                      selectedSupplier?.lastName
+                    ? fullNameConverter(
+                        selectedSupplier?.firstName,
+                        selectedSupplier?.lastName
+                      )
                     : generalInfo?.search_supplier.placeholder[locale]}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -847,9 +611,10 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
                               : "opacity-0"
                           )}
                         />
-                        {singleSupplier?.firstName +
-                          " " +
-                          singleSupplier?.lastName}
+                        {fullNameConverter(
+                          singleSupplier?.firstName,
+                          singleSupplier?.lastName
+                        )}
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -861,7 +626,6 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
           <InputWrapper
             label={generalInfo.search_product.label[locale]}
             labelFor="search_product"
-            error=""
             className="w-full md:w-1/2"
           >
             <Popover open={productOpen} onOpenChange={setProductOpen}>
@@ -984,7 +748,7 @@ const AddPurchaseContainer: FC<IAddPurchaseContainerProps> = ({
 
       {/* PURCHASE PRODUCT FORM CONTAINER */}
       <section>
-        <InfoWrapper heading="Add Product For Purchasing" className="">
+        <InfoWrapper heading="Add Product For Purchasing" className="my-2">
           <div className="flex flex-col gap-2">
             {selectedProduct.length > 0 ? (
               selectedProduct?.map(

@@ -1,4 +1,4 @@
-import HeadingParagraph from "@/components/common/HeadingParagraph";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import InfoWrapper from "@/components/common/InfoWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { Input } from "@/components/ui/input";
@@ -45,7 +45,7 @@ import {
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import CopyButton from "@/components/common/button/CopyButton";
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
-import SyncedContainer from "@/components/container/SyncedContainer";
+import SyncedContainer from "@/components/common/container/SyncedContainer";
 
 interface IAddSaleExchangeReturnContainerProps {
   watch: any;
@@ -100,7 +100,7 @@ const AddSaleExchangeReturnContainer: FC<
       "returnProduct",
       saleData?.data?.products?.map((singleProduct: any) => ({
         sellProductId: singleProduct?.id,
-        quantity: singleProduct?.quantity,
+        quantity: 0,
       }))
     );
     // SET CUSTOMER ID TO THE FORM
@@ -193,7 +193,7 @@ const AddSaleExchangeReturnContainer: FC<
   return (
     <section>
       {/* PREVIOUS SALE INFORMATION */}
-      <InfoWrapper className="mb-4" heading="Previous Product Information">
+      <InfoWrapper className="mb-4" heading="Previous Sale Information">
         <ul className="grid grid-cols-1 md:grid-cols-3 gap-y-2 gap-x-3 md:gap-x-6 -mx-2">
           <li>
             <HeadingParagraph

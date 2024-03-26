@@ -5,6 +5,7 @@ import PaginationWrapper, {
 import InputWrapper from "@/components/common/form/InputWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { DataTable } from "@/components/common/table/DataTable";
+import SaleExchangeReturnDetails from "@/components/dashboard/sale/sale_return_exchange/SaleExchangeReturnDetails";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +29,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useGetSaleReturnExchangesQuery } from "@/store/sale_exchange_return/saleExchangeReturnApi";
 import { actionManager } from "@/utils/helpers/actionManager";
+import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import moment from "moment";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
 
@@ -68,17 +69,26 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
       search: sellReturnSearch,
     }) as any;
 
-  // console.log(sellReturnData);
-
   // SALE EXCHANGE/ RETURN TABLE DATA
   useEffect(() => {
     if (sellReturnData?.data?.length > 0) {
-      const sellReturn = sellReturnData?.data?.map((singleReturn: any) => {
-        return {
-          ...singleReturn,
-          date: moment(singleReturn?.date).format("YYYY-MM-DD"),
-        };
-      });
+      const sellReturn = sellReturnData?.data?.map((singleReturn: any) => ({
+        ...singleReturn,
+        dummyCustomerPay: `${singleReturn?.customerPay?.toFixed(2) || "0.00"}৳`,
+        dummySellerPay: `${singleReturn?.sellerPay?.toFixed(2) || "0.00"}৳`,
+        dummyReturnPrice: `${singleReturn?.returnPrice?.toFixed(2) || "0.00"}৳`,
+        sell: {
+          ...singleReturn.sell,
+          dummyAutoInvoiceNo: singleReturn?.sell?.autoInvoiceNo?.toUpperCase(),
+        },
+        customer: {
+          ...singleReturn?.customer,
+          dummyCustomerName: fullNameConverter(
+            singleReturn?.customer?.firstName,
+            singleReturn?.customer?.lastName
+          ),
+        },
+      }));
       setSellReturnList(sellReturn);
       setPagination((previousData: any) => ({
         ...previousData,
@@ -106,18 +116,58 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
   // SELL RETURN ACTIONS AND SELL RETURN TABLE COLUMNS
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "date",
+      accessorKey: "customer.dummyCustomerName",
       header: ({ column }) => {
         return (
           <button
             className="flex items-center"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Date
+            Customer Name
             <ArrowUpDown className="ml-1 size-3" />
           </button>
         );
       },
+    },
+    {
+      accessorKey: "customer.phone",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Customer Phone
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+    {
+      accessorKey: "sell.dummyAutoInvoiceNo",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Invoice Number
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+    {
+      accessorKey: "dummyCustomerPay",
+      header: "Customer Payment",
+    },
+    {
+      accessorKey: "dummySellerPay",
+      header: "Seller Payment",
+    },
+    {
+      accessorKey: "dummyReturnPrice",
+      header: "Return Payment",
     },
     {
       header: "Action",
@@ -131,7 +181,7 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                onMouseEnter={() => setActionItem({ actionItem, sellReturn })}
+                onMouseEnter={() => setActionItem(sellReturn)}
                 variant="ghost"
                 className="h-8 w-8 p-0"
               >
@@ -142,17 +192,9 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
             <DropdownMenuContent align="end" className="flex flex-col gap-1">
               <DropdownMenuLabel>Return Actions</DropdownMenuLabel>
 
-              {/* SALE RETURN / EXCHANGE PAYMENT */}
-              <Button
-                variant="outline"
-                className="w-full flex justify-start"
-                size="xs"
-              >
-                Pay
-              </Button>
-
               {/* EDIT SALE RETURN INFORMATION */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"
@@ -161,6 +203,7 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
               </Button>
 
               {/* SALE RETURN AND EXCHANGE DETAILS */}
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -171,8 +214,9 @@ const SaleExchangeReturnList: FC<ISaleExchangeReturnListProps> = () => {
                     Details
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
-                  {/* SALE RETURN AND EXCHANGE DETAILS FORM CONTAINER */}
+                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto scroll-hidden">
+                  {/* SALE EXCHANGE RETURN DETAILS*/}
+                  <SaleExchangeReturnDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
 

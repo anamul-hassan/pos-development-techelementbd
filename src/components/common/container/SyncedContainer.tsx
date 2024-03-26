@@ -28,9 +28,6 @@ const SyncedContainer: React.FC<HeightSyncedContainerProps> = ({
       if (height) {
         const referenceHeight = reference.clientHeight;
         container.style.height = `${referenceHeight}px`;
-
-        // container.style.border = "2px solid red";
-        // console.log("reference", reference);
       }
       if (width) {
         const referenceWidth = reference.clientWidth;

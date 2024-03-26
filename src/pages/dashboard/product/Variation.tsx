@@ -10,7 +10,7 @@ const Variation: FC<IVariationProps> = () => {
   return (
     <section>
       <Tabs defaultValue="color" className="my-2">
-        <TabsList>
+        <TabsList className="border">
           <TabsTrigger value="color">Color</TabsTrigger>
           <TabsTrigger value="size">Size</TabsTrigger>
           <TabsTrigger value="version">Version</TabsTrigger>

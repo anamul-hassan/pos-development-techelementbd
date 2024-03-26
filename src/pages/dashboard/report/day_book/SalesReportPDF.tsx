@@ -131,7 +131,7 @@ const SalesReportPDF = ({ data }: any) => {
                   {companyName?.toUpperCase()}
                 </Text>
                 <Text style={styles.headingSecondary}>Daily Sales Report</Text>
-                <Text style={styles.headingTertiary}>{currentDate}</Text>
+                {/* <Text style={styles.headingTertiary}>{currentDate}</Text> */}
               </View>
             </View>
 
@@ -213,7 +213,7 @@ const SalesReportPDF = ({ data }: any) => {
           {/* PAYMENT REPORT TABLE */}
           <View style={styles.section}>
             <Text style={styles.headingSecondary}>Daily Payment Report</Text>
-            <Text style={styles.headingSecondary}>Date: {currentDate}</Text>
+            {/* <Text style={styles.headingSecondary}>Date: {currentDate}</Text> */}
             <View style={styles.table}>
               <View style={styles.tableRow}>
                 <View style={styles.tableHeader}>

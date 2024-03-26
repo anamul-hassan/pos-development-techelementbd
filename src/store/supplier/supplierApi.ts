@@ -56,6 +56,15 @@ const supplierApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["supplier"],
     }),
+    // ADD SUPPLIER PAYMENT
+    addSupplierPayment: builder.mutation({
+      query: (data) => ({
+        url: "/payment/create-payment-supplier",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["supplier"],
+    }),
   }),
 });
 
@@ -66,4 +75,5 @@ export const {
   useGetSingleSupplierQuery,
   useGetSuppliersQuery,
   useUpdateSupplierMutation,
+  useAddSupplierPaymentMutation,
 } = supplierApi;

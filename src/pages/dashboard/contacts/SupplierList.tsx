@@ -8,6 +8,7 @@ import { DataTable } from "@/components/common/table/DataTable";
 import AddSupplier from "@/components/dashboard/contacts/supplier/AddSupplier";
 import EditSupplier from "@/components/dashboard/contacts/supplier/EditSupplier";
 import SupplierDetails from "@/components/dashboard/contacts/supplier/SupplierDetails";
+import AddSupplierPayment from "@/components/dashboard/contacts/supplier/supplier_payment/AddSupplierPayment";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -84,6 +85,9 @@ const SupplierList = () => {
               singleSupplier?.lastName
             ),
             dummyEmail: singleSupplier?.email || "Not Found",
+            dummyOpeningBalance: `${
+              singleSupplier?.openingBalance?.toFixed(2) || "0.00"
+            }৳`,
           };
         }
       );
@@ -141,6 +145,14 @@ const SupplierList = () => {
       accessorKey: "phone",
       header: "Phone",
     },
+    {
+      accessorKey: "memberShipId",
+      header: "Membership ID",
+    },
+    {
+      accessorKey: "dummyOpeningBalance",
+      header: "Opening Balance",
+    },
 
     {
       header: "Action",
@@ -164,9 +176,7 @@ const SupplierList = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="flex flex-col gap-1">
               <DropdownMenuLabel>Supplier Actions</DropdownMenuLabel>
-
               {/* EDIT SUPPLIER ROUTE */}
-
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -200,6 +210,23 @@ const SupplierList = () => {
                 <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto">
                   {/* SUPPLIER DETAILS CONTAINER */}
                   <SupplierDetails actionItem={actionItem} />
+                </DialogContent>
+              </Dialog>
+
+              {/* SUPPLIER PAYMENT */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    Payment
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90%] overflow-y-auto md:max-w-[700px]">
+                  {/* ADD SUPPLIER PAYMENT CONTAINER */}
+                  <AddSupplierPayment actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
               {/* SUPPLIER LEDGER */}

@@ -197,7 +197,7 @@ const product_purchase_links = {
     // RETURN PURCHASE LIST
     {
       icon: LuListOrdered,
-      label: { bn: "ক্রয় ফেরত তালিকা", en: "Exchange/ Return List" },
+      label: { bn: "ক্রয় ফেরত তালিকা", en: "Return List" },
       key: "purchase_exchange_return_list",
       href: "purchase_exchange_return_list",
     },

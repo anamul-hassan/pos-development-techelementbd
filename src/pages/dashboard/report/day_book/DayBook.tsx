@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,22 +18,32 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import InfoWrapper from "@/components/common/InfoWrapper";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CalendarIcon } from "lucide-react";
 import DataLoader from "@/components/common/loader/DataLoader";
 import DayBookExcel from "./DayBookExcel";
 import { useGetDayBookReportQuery } from "@/store/dashboard/dashboardApi";
 import InputWrapper from "@/components/common/form/InputWrapper";
-import PdfTable, {
-  IPdfPageHeaderData,
-  IPdfTableColumn,
-  ITableSummary,
-} from "@/components/common/PdfTable";
 import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import moment from "moment";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
+import { actionManager } from "@/utils/helpers/actionManager";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useGetBranchesQuery } from "@/store/branch/branchApi";
+import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
+import PdfDaybook, {
+  IDaybookSummary,
+  IPdfDaybookColumn,
+  IPdfDaybookPageHeaderData,
+} from "@/components/pdf/PdfDaybook";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import moment from "moment";
 
 interface IDayBookProps {
   id: string;
@@ -51,22 +61,48 @@ interface IDayPayablePaymentsProps {
 }
 
 const DayBook: React.FC = () => {
+  const [branch, setBranch] = useState<number | undefined>();
+  // BRANCH LIST QUERY
+  const { data: branchList, isLoading: branchLoading } = useGetBranchesQuery(
+    {}
+  );
+  const [products, setProducts] = useState<any>([]);
+  const [payments, setPayments] = useState<any>([]);
+
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
-    to: addDays(new Date(), 20),
+    to: new Date(),
   });
 
   const { data: dayBooks, isLoading: dayReportLoading } =
     useGetDayBookReportQuery({
-      from: date?.from instanceof Date ? date.from.toISOString() : undefined,
-      to: date?.to instanceof Date ? date.to.toISOString() : undefined,
+      from:
+        date?.from instanceof Date
+          ? format(date.from, "yyyy-MM-dd")
+          : undefined,
+      to: date?.to instanceof Date ? format(date.to, "yyyy-MM-dd") : undefined,
     });
 
-  if (dayReportLoading) {
-    return <DataLoader />;
-  }
+  useEffect(() => {
+    if (dayBooks?.data?.stocks?.length > 0) {
+      const products = dayBooks?.data?.stocks?.map((singleItem: any) => ({
+        ...singleItem,
+        price: singleItem?.price?.toFixed(2) || "0.00",
+        profit: singleItem?.profit?.toFixed(2) || "0.00",
+      }));
 
-  const columnsProduct: IPdfTableColumn[] = [
+      setProducts(products);
+    }
+    if (dayBooks?.data?.payments?.length > 0) {
+      const payments = dayBooks?.data?.payments?.map((singlePayment: any) => ({
+        ...singlePayment,
+        price: singlePayment?.price?.toFixed(2) || "0.00",
+      }));
+      setPayments(payments);
+    }
+  }, [dayBooks?.data]);
+
+  const columnsProduct: IPdfDaybookColumn[] = [
     {
       accessorKey: "productName",
       header: "Product Name",
@@ -84,10 +120,10 @@ const DayBook: React.FC = () => {
       header: "Profit",
     },
   ];
-  const columnsPayment: IPdfTableColumn[] = [
+  const columnsPayment: IPdfDaybookColumn[] = [
     {
       accessorKey: "paymentType",
-      header: "Payment Type",
+      header: "Payment By",
     },
     {
       accessorKey: "price",
@@ -95,24 +131,39 @@ const DayBook: React.FC = () => {
     },
   ];
 
-  const headerProduct: IPdfPageHeaderData = {
+  const fromDate = date?.from
+    ? moment(date?.from).format("DD MMMM, YYYY")
+    : null;
+  const toDate = date?.to ? moment(date?.to).format("DD MMMM, YYYY") : null;
+
+  const dateRange = toDate
+    ? toDate === fromDate
+      ? fromDate
+      : `${fromDate} to ${toDate}`
+    : fromDate;
+
+  const headerProduct: IPdfDaybookPageHeaderData = {
     company: CLIENT_DETAILS.companyName,
     heading: "Day-book Report (Product)",
     logo: CLIENT_DETAILS.sidebarLogo,
-    date,
+    date: dateRange || "",
   };
-  const headerPayment: IPdfPageHeaderData = {
+  const headerPayment: IPdfDaybookPageHeaderData = {
     company: CLIENT_DETAILS.companyName,
     heading: "Day-book Report (Payment)",
     logo: CLIENT_DETAILS.sidebarLogo,
-    date,
+    date: dateRange || "",
   };
-  const summaryPayment: ITableSummary = {
+  const summaryPayment: IDaybookSummary = {
     totalPrice: dayBooks?.data?.total?.totalPrice,
     totalProfit: dayBooks?.data?.total?.totalProfit,
     totalProduct: dayBooks?.data?.stocks?.length,
     totalQuantity: dayBooks?.data?.total?.totalQuantity,
   };
+
+  if (dayReportLoading) {
+    return <DataLoader />;
+  }
 
   return (
     <section className="pb-8">
@@ -123,16 +174,15 @@ const DayBook: React.FC = () => {
           {/* BUTTON & COMPONENT FOR PDF */}
           <PDFDownloadLink
             document={
-              <PdfTable
-                columns={columnsProduct}
-                data={dayBooks?.data?.stocks}
-                headerData={headerProduct}
+              <PdfDaybook
+                columns={{ columnsProduct, columnsPayment }}
+                headerData={{ headerProduct, headerPayment }}
+                data={{ products, payments }}
                 summary={summaryPayment}
+                itemsPerPage={30}
               />
             }
-            fileName={`${CLIENT_DETAILS?.companyName} || ${moment().format(
-              "DD MMMM, YYYY, hh:mm A"
-            )} || Daybook Report.pdf`}
+            fileName={`${CLIENT_DETAILS?.companyName} ◉ ${dateRange} ◉ Daybook Report (Product, Payment).pdf`}
           >
             {({ loading }) =>
               loading ? (
@@ -142,51 +192,49 @@ const DayBook: React.FC = () => {
                   variant="destructive"
                   size="xs"
                 >
-                  <ButtonLoader /> Product
+                  <ButtonLoader /> Pdf
                 </Button>
               ) : (
                 <Button variant="destructive" size="xs">
-                  Product
-                </Button>
-              )
-            }
-          </PDFDownloadLink>
-          <PDFDownloadLink
-            document={
-              <PdfTable
-                columns={columnsPayment}
-                data={dayBooks?.data?.payments}
-                headerData={headerPayment}
-              />
-            }
-            fileName={`${CLIENT_DETAILS?.companyName} || ${moment().format(
-              "DD MMMM, YYYY, hh:mm A"
-            )} || Daybook Report (Payment).pdf`}
-          >
-            {({ loading }) =>
-              loading ? (
-                <Button
-                  disabled={loading}
-                  className=" transition-all duration-150"
-                  variant="destructive"
-                  size="xs"
-                >
-                  <ButtonLoader /> Payment
-                </Button>
-              ) : (
-                <Button
-                  disabled={!dayBooks?.data?.payments?.length}
-                  variant="destructive"
-                  size="xs"
-                >
-                  Payment
+                  Pdf
                 </Button>
               )
             }
           </PDFDownloadLink>
         </div>
 
-        <div className={cn("grid gap-2 mt-7")}>
+        <div className="grid gap-2 mt-7 gir">
+          {/* BRANCH LIST */}
+          {actionManager(["admin"]) && (
+            <InputWrapper label="Select Branch" labelFor="branch">
+              <Select
+                value={branch?.toString()}
+                onValueChange={(value: string) => {
+                  setBranch(+value);
+                }}
+              >
+                <SelectTrigger id="branch">
+                  <SelectValue placeholder="Select Branch" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
+                  {branchList?.data?.length > 0 &&
+                    branchList?.data?.map((singleBranch: any) => (
+                      <SelectItem
+                        key={singleBranch?.id}
+                        value={singleBranch?.id?.toString()}
+                      >
+                        {capitalizeEveryWord(singleBranch?.branchName)}
+                      </SelectItem>
+                    ))}
+                  {!branchList?.data?.length && branchLoading && (
+                    <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
+                      <ButtonLoader />
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </InputWrapper>
+          )}
           <InputWrapper
             label="Select Date Range"
             error=""
@@ -240,10 +288,7 @@ const DayBook: React.FC = () => {
               <TableCaption className="mt-1.5">
                 Sales Report for{" "}
                 {date?.from && date?.to
-                  ? `${format(date.from, "LLL dd, y")} - ${format(
-                      date.to,
-                      "LLL dd, y"
-                    )}`
+                  ? dateRange
                   : "Please select a date range"}
               </TableCaption>
 
@@ -309,22 +354,17 @@ const DayBook: React.FC = () => {
               <TableCaption className="mt-1.5">
                 Sales Report for{" "}
                 {date?.from && date?.to
-                  ? `${format(date.from, "LLL dd, y")} - ${format(
-                      date.to,
-                      "LLL dd, y"
-                    )}`
+                  ? dateRange
                   : "Please select a date range"}
               </TableCaption>
 
               <TableHeader>
                 <TableRow>
-                  {["Vendor Name", "Payment Type", "Amount"].map(
-                    (singleHeader: any) => (
-                      <TableHead className="custom-table" key={singleHeader}>
-                        {singleHeader}
-                      </TableHead>
-                    )
-                  )}
+                  {["Payment By", "Amount"].map((singleHeader: any) => (
+                    <TableHead className="custom-table" key={singleHeader}>
+                      {singleHeader}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -332,9 +372,6 @@ const DayBook: React.FC = () => {
                   dayBooks?.data?.payments?.map(
                     (dayBook: IDayPayablePaymentsProps, index: number) => (
                       <TableRow key={index}>
-                        <TableCell className="custom-table">
-                          {dayBook?.supplierName}
-                        </TableCell>
                         <TableCell className="custom-table">
                           {dayBook?.paymentType}
                         </TableCell>
@@ -347,7 +384,6 @@ const DayBook: React.FC = () => {
 
                 <TableRow className="bg-accent hover:bg-accent text-base font-semibold">
                   <TableCell className="custom-table">Total Payment</TableCell>
-                  <TableCell className="custom-table"></TableCell>
 
                   <TableCell className="custom-table">
                     {totalCalculator(
@@ -366,13 +402,10 @@ const DayBook: React.FC = () => {
         <InfoWrapper heading="Cash On Hand">
           <section className="-mx-2">
             <Table className="border overflow-hidden">
-              <TableCaption>
+              <TableCaption className="mt-1.5">
                 Sales Report for{" "}
                 {date?.from && date?.to
-                  ? `${format(date.from, "LLL dd, y")} - ${format(
-                      date.to,
-                      "LLL dd, y"
-                    )}`
+                  ? dateRange
                   : "Please select a date range"}
               </TableCaption>
 

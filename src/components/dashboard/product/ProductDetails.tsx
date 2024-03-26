@@ -1,6 +1,7 @@
-import HeadingParagraph from "@/components/common/HeadingParagraph";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import PhotoLazyLoadWrapper from "@/components/common/photo/PhotoLazyLoadWrapper";
 import { FC } from "react";
+import Heading from "@/components/common/typography/Heading";
 
 interface IProductDetailsProps {
   actionItem: any;
@@ -9,15 +10,18 @@ interface IProductDetailsProps {
 const ProductDetails: FC<IProductDetailsProps> = ({ actionItem }) => {
   return (
     <section className="space-y-4 font-anek">
+      <Heading variant="primary"> Product Details </Heading>
       {/* PERSONAL INFORMATION */}
-      <div className="">
+      <div>
         <div>
           <PhotoLazyLoadWrapper
             className="size-20 border-[0.5px] border-tertiary/40 rounded-md"
             src={actionItem?.image}
             alt={actionItem?.productName}
           />
-          <h3 className="text-2xl font-semibold mb-2">Product Information</h3>
+          <Heading className="my-2" variant="secondary">
+            Product Information
+          </Heading>
         </div>
 
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">

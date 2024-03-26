@@ -104,23 +104,28 @@ const AddSale: FC<IAddPointOfSellProps> = () => {
   });
   // ADDING NEW SALE
   const onSubmit = async (data: any) => {
-    const result = await addSale(data);
-    if (result?.data?.success) {
-      // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
-      handlePrint();
-      // RESET PREVIOUS FORM DATA
-      reset();
-      // GIVE PERMISSION TO CLEAR ALL PREVIOUS DATA
-      setClear(true);
-      // SHOW TOAST FOR ADDING NEW SALE
-      toast({
-        title: "Sale Message",
-        description: "Sale added successfully",
+    if (data?.totalPaymentAmount !== data?.totalPrice) {
+      return setError("totalPaymentAmount", {
+        type: "custom",
+        message: "Payment amount not sufficient",
       });
+    } else {
+      const result = await addSale(data);
+      if (result?.data?.success) {
+        // AFTER COMPLETE THE ADDING SALE CALL TO PRINT
+        handlePrint();
+        // RESET PREVIOUS FORM DATA
+        reset();
+        // GIVE PERMISSION TO CLEAR ALL PREVIOUS DATA
+        setClear(true);
+        // SHOW TOAST FOR ADDING NEW SALE
+        toast({
+          title: "Sale Message",
+          description: "Sale added successfully",
+        });
+      }
     }
   };
-
-  // console.log(watch(), "form");
 
   return (
     <section>

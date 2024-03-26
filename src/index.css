@@ -176,18 +176,6 @@
   }
 
   /* HEADING AND PARAGRAPH CLASSES */
-  .heading-primary {
-    @apply text-[32px] font-[500] text-foreground leading-7 text-ellipsis;
-  }
-  .heading-secondary {
-    @apply text-[24px] font-[500] text-foreground leading-7 text-ellipsis;
-  }
-  .heading-tertiary {
-    @apply text-[20px] font-[400] text-foreground/90 leading-7 text-ellipsis;
-  }
-  .paragraph {
-    @apply text-[16px] font-[400] text-foreground/90 leading-7  max-w-none truncate;
-  }
 
   /* USE FOR TESTING */
   .test-border {
@@ -200,7 +188,7 @@
   /* CUSTOMIZE TABLE CLASSES */
   /* TABLE  */
   .custom-table {
-    @apply leading-8 h-1 py-1 px-2;
+    @apply leading-7 h-1 py-0.5 px-2;
   }
 }
 

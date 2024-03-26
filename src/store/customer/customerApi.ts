@@ -58,6 +58,15 @@ const customerApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["customer"],
     }),
+    // ADD CUSTOMER PAYMENT
+    addCustomerPayment: builder.mutation({
+      query: (data) => ({
+        url: "/payment/create-payment-customer",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["customer"],
+    }),
   }),
 });
 
@@ -68,4 +77,5 @@ export const {
   useGetSellPurchaseCustomerByIdQuery,
   useDeleteCustomerMutation,
   useUpdateCustomerMutation,
+  useAddCustomerPaymentMutation,
 } = customerApi;

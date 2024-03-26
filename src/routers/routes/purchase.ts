@@ -18,7 +18,6 @@ export const purchase_routes: IRouteProps[] = [
     path: "purchase_list",
     element: React.createElement(PurchaseList),
   },
-
   {
     path: "purchase_return/:id",
     element: React.createElement(AddPurchaseExchangeReturn),
@@ -28,7 +27,7 @@ export const purchase_routes: IRouteProps[] = [
     element: React.createElement(PurchaseExchangeReturnList),
   },
   {
-    path: "add_purchase_exchange_return",
+    path: "add_purchase_exchange_return/:id",
     element: React.createElement(AddPurchaseExchangeReturn),
   },
 

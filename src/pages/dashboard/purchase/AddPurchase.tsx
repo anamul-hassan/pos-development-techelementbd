@@ -2,7 +2,7 @@ import BarCode from "@/components/common/BarCode";
 import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
 import AddPurchaseContainer from "@/components/dashboard/purchase/AddPurchaseContainer";
 import { useToast } from "@/components/ui/use-toast";
-import { addEditPurchaseSchema } from "@/schemas/purchase/purchase_schema";
+import { addEditPurchaseSchema } from "@/schemas/purchase/add_edit_purchase_schema";
 import { useAddPurchaseMutation } from "@/store/purchase/purchaseApi";
 import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
 import { objectCopier } from "@/utils/helpers/objectCopier";
@@ -39,6 +39,7 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
     setValue,
     formState: { errors },
     reset,
+    setError,
   } = useForm({
     resolver: yupResolver(addEditPurchaseSchema),
     defaultValues: {
@@ -152,7 +153,7 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
       // SHOW TOAST FOR ADDING NEW POS
       toast({
         title: "Add Purchase Message",
-        description: "New Purchase added successfully",
+        description: "Purchase added successfully",
       });
     }
   };
@@ -166,6 +167,7 @@ const AddPurchase: FC<IAddPurchaseProps> = () => {
           setValue={setValue}
           error={errors}
           clear={clear}
+          setError={setError}
         />
 
         {/* ERROR MESSAGE */}

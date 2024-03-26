@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { FC, ReactNode } from "react";
+import Heading from "../typography/Heading";
 
 interface IFormWrapperProps {
   size: "full" | "half";
@@ -23,8 +24,9 @@ const FormWrapper: FC<IFormWrapperProps> = ({
       } font-anek`}
     >
       <div className={`flex flex-col ${size === "half" && "items-center"}`}>
-        <h2
-          className={`heading-secondary relative ${
+        <Heading
+          variant="secondary"
+          className={`relative ${
             subheading && size === "half" && "!w-36 !text-center"
           } ${!subheading && size === "full" && "!w-full !text-left"}`}
         >
@@ -34,7 +36,7 @@ const FormWrapper: FC<IFormWrapperProps> = ({
               {subheading}
             </span>
           )}
-        </h2>
+        </Heading>
       </div>
       <div className={cn("w-full", className)}>{children}</div>
     </section>

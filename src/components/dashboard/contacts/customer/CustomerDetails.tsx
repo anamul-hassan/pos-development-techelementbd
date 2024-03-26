@@ -1,4 +1,5 @@
-import HeadingParagraph from "@/components/common/HeadingParagraph";
+import Heading from "@/components/common/typography/Heading";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { FC } from "react";
 
@@ -9,9 +10,10 @@ interface ICustomerDetailsProps {
 const CustomerDetails: FC<ICustomerDetailsProps> = ({ actionItem }) => {
   return (
     <section className="space-y-4 font-anek">
+      <Heading variant="primary">Customer Details</Heading>
       {/* PERSONAL INFORMATION */}
       <div>
-        <h3 className="text-2xl font-semibold mb-2">Personal Information</h3>
+        <Heading variant="secondary">Personal Information</Heading>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
           <li>
             <HeadingParagraph
@@ -107,8 +109,8 @@ const CustomerDetails: FC<ICustomerDetailsProps> = ({ actionItem }) => {
         </ul>
       </div>
       {/* GENERAL INFORMATION */}
-      <div className="">
-        <h3 className="text-2xl font-semibold mb-2">General Information</h3>
+      <div>
+        <Heading variant="secondary">General Information</Heading>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
           <li>
             <HeadingParagraph

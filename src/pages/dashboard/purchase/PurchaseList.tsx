@@ -40,7 +40,7 @@ import {
   useGetPurchasesQuery,
 } from "@/store/purchase/purchaseApi";
 import PurchaseDetails from "@/components/dashboard/purchase/PurchaseDetails";
-import { format } from "date-fns";
+import moment from "moment";
 
 const PurchaseList = () => {
   const { toast } = useToast();
@@ -83,20 +83,24 @@ const PurchaseList = () => {
         (singlePurchase: any) => {
           return {
             ...singlePurchase,
-            supplierName: fullNameConverter(
-              singlePurchase?.supplier?.firstName,
-              singlePurchase?.supplier?.lastName
-            ),
-            dummyReferenceNo: singlePurchase?.referenceNo || "Not Found",
-            phone: singlePurchase?.supplier?.phone,
-            dummyTotalPrice:
-              `${singlePurchase?.totalAmount?.toFixed(2)}৳` || "0.00৳",
-            dummyTotalPayment:
-              `${singlePurchase?.totalPaymentAmount?.toFixed(2)}৳` || "0.00৳",
-            dummyDueAmount: `${singlePurchase?.due?.toFixed(2)}৳` || "0.00৳",
-            dummyAdvancedAmount:
-              singlePurchase?.supplier?.advanceAmount?.toFixed(2),
-            date: format(singlePurchase?.purchaseDate, "PPP"),
+            supplier: {
+              ...singlePurchase?.supplier,
+              dummyName: fullNameConverter(
+                singlePurchase?.supplier?.firstName,
+                singlePurchase?.supplier?.lastName
+              ),
+            },
+            dummyTotalAmount: `${
+              singlePurchase?.totalAmount?.toFixed(2) || "0.00"
+            }৳`,
+            dummyTotalPaymentAmount: `${
+              singlePurchase?.totalPaymentAmount?.toFixed(2) || "0.00"
+            }৳`,
+            dummyDue: `${singlePurchase?.due?.toFixed(2) || "0.00"}৳`,
+            dummyDate: `${
+              moment(singlePurchase?.purchaseDate).format("DD MMMM, YYYY") ||
+              "Not Found"
+            }`,
           };
         }
       );
@@ -120,7 +124,7 @@ const PurchaseList = () => {
   // POS ACTIONS AND POS TABLE COLUMNS
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "supplierName",
+      accessorKey: "supplier.dummyName",
       header: ({ column }) => {
         return (
           <button
@@ -135,31 +139,23 @@ const PurchaseList = () => {
     },
 
     {
-      accessorKey: "phone",
+      accessorKey: "supplier.phone",
       header: "Supplier's Phone",
     },
     {
-      accessorKey: "dummyReferenceNo",
-      header: " Reference No",
-    },
-    {
-      accessorKey: "dummyTotalPrice",
+      accessorKey: "dummyTotalAmount",
       header: "Total Amount",
     },
     {
-      accessorKey: "dummyDueAmount",
+      accessorKey: "dummyDue",
       header: "Due Amount",
     },
     {
-      accessorKey: "dummyAdvancedAmount",
-      header: "Advance Amount",
-    },
-    {
-      accessorKey: "dummyTotalPayment",
+      accessorKey: "dummyTotalPaymentAmount",
       header: "Total Payment",
     },
     {
-      accessorKey: "date",
+      accessorKey: "dummyDate",
       header: ({ column }) => {
         return (
           <button
@@ -222,23 +218,20 @@ const PurchaseList = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto scroll-hidden">
-                  {/* PURCHASE DETAILS FORM CONTAINER */}
+                  {/* PURCHASE DETAILS */}
                   <PurchaseDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
               {/* EXCHANGE AND RETURN  */}
-              {/* <Link
-                to={`/add_purchase_exchange_return/${actionItem?.id?.toString()}`}
-              > */}
               <Link
-                to={`/add_sale_exchange_return/${actionItem?.id?.toString()}`}
+                to={`/add_purchase_exchange_return/${actionItem?.id?.toString()}`}
               >
                 <Button
                   variant="outline"
                   className="w-full flex justify-start"
                   size="xs"
                 >
-                  Exchange/ Return
+                  Return
                 </Button>
               </Link>
 

@@ -9,7 +9,7 @@ const saleExchangeReturnApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["sale-return-exchange"],
+      invalidatesTags: ["sale-exchange-return"],
     }),
     // GET ALL SALE RETURN / EXCHANGE
     getSaleReturnExchanges: builder.query({
@@ -19,7 +19,7 @@ const saleExchangeReturnApi = apiSlice.injectEndpoints({
         }&size=${data?.size || undefinedSize}&sortOrder=${data?.sort || "asc"}`,
         method: "GET",
       }),
-      providesTags: ["sale-return-exchange"],
+      providesTags: ["sale-exchange-return"],
     }),
   }),
 });

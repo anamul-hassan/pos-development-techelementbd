@@ -5,6 +5,7 @@ import PaginationWrapper, {
 import InputWrapper from "@/components/common/form/InputWrapper";
 import DataLoader from "@/components/common/loader/DataLoader";
 import { DataTable } from "@/components/common/table/DataTable";
+import PurchaseExchangeReturnDetails from "@/components/dashboard/purchase/purchase_exchange_return/PurchaseExchangeReturnDetails";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,11 +27,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useGetSaleReturnExchangesQuery } from "@/store/sale_exchange_return/saleExchangeReturnApi";
+import { useGetPurchaseExchangeReturnQuery } from "@/store/purchase_exchange_return/purchaseExchangeReturnApi";
 import { actionManager } from "@/utils/helpers/actionManager";
+import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import moment from "moment";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
 
@@ -51,8 +52,6 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
     },
   });
 
-  const [deleteDone, setDeleteDone] = useState(false);
-
   // PURCHASE RETURN/ EXCHANGE SEARCH INPUT STATE
   const [purchaseReturnSearch, setPurchaseReturnSearch] = useState("");
   // PURCHASE RETURN/ EXCHANGE LIST STATE
@@ -61,14 +60,12 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
 
   //   GET PURCHASE RETURN/ EXCHANGE QUERY
   const { data: purchaseReturnData, isLoading: purchaseReturnDataLoading } =
-    useGetSaleReturnExchangesQuery({
+    useGetPurchaseExchangeReturnQuery({
       sort: pagination?.sort,
       page: pagination?.page,
       size: pagination?.size,
       search: purchaseReturnSearch,
     }) as any;
-
-  // console.log(sellReturnData);
 
   // PURCHASE RETURN/ EXCHANGE TABLE DATA
   useEffect(() => {
@@ -77,7 +74,17 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
         (singleReturn: any) => {
           return {
             ...singleReturn,
-            date: moment(singleReturn?.date).format("YYYY-MM-DD"),
+            supplier: {
+              ...singleReturn?.supplier,
+              dummyName: fullNameConverter(
+                singleReturn?.supplier?.firstName,
+                singleReturn?.supplier?.lastName
+              ),
+              dummyEmail: singleReturn?.supplier?.email || "Not Found",
+            },
+            dummyReturnPrice: `${
+              singleReturn?.returnPrice?.toFixed(2) || "0.00"
+            }৳`,
           };
         }
       );
@@ -87,19 +94,9 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
         meta: purchaseReturnData?.meta,
       }));
     }
-
-    // SELL RETURN AND EXCHANGE DELETE MESSAGE
-    if (deleteDone) {
-      toast({
-        title: "Purchase Return & Exchange Delete Message",
-        description: "Purchase return & exchange deleted successfully",
-      });
-      setDeleteDone(false);
-    }
   }, [
     toast,
     pagination.size,
-    deleteDone,
     purchaseReturnData?.data,
     purchaseReturnData?.meta,
     purchaseReturnSearch,
@@ -108,18 +105,45 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
   // PURCHASE RETURN/ EXCHANGE ACTIONS AND TABLE COLUMNS
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "date",
+      accessorKey: "supplier.dummyName",
       header: ({ column }) => {
         return (
           <button
             className="flex items-center"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Date
+            Supplier Name
             <ArrowUpDown className="ml-1 size-3" />
           </button>
         );
       },
+    },
+
+    {
+      accessorKey: "supplier.dummyEmail",
+      header: ({ column }) => {
+        return (
+          <button
+            className="flex items-center"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Supplier Email
+            <ArrowUpDown className="ml-1 size-3" />
+          </button>
+        );
+      },
+    },
+    {
+      accessorKey: "supplier.phone",
+      header: " Supplier Phone",
+    },
+    {
+      accessorKey: "supplier.memberShipId",
+      header: "Membership ID",
+    },
+    {
+      accessorKey: "dummyReturnPrice",
+      header: "Return Amount",
     },
     {
       header: "Action",
@@ -133,7 +157,7 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                onMouseEnter={() => setActionItem({ actionItem, sellReturn })}
+                onMouseEnter={() => setActionItem(sellReturn)}
                 variant="ghost"
                 className="h-8 w-8 p-0"
               >
@@ -146,6 +170,7 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
 
               {/* PURCHASE RETURN / EXCHANGE PAYMENT */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"
@@ -155,6 +180,7 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
 
               {/* EDIT PURCHASE RETURN INFORMATION */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"
@@ -173,8 +199,9 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
                     Details
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
-                  {/* PURCHASE RETURN AND EXCHANGE DETAILS FORM CONTAINER */}
+                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto scroll-hidden">
+                  {/* PURCHASE EXCHANGE RETURN DETAILS*/}
+                  <PurchaseExchangeReturnDetails actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
 
@@ -182,6 +209,7 @@ const PurchaseExchangeReturnList: FC<IPurchaseExchangeReturnListProps> = () => {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
+                    disabled
                     type="button"
                     variant="destructive"
                     className="w-full flex justify-start"

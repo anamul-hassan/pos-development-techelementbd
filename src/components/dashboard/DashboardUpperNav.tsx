@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import InternationalizeToggle from "../InternationalizeToggle";
 import { ModeToggle } from "../ModeToggle";
 import { LucideAlignLeft, LucideBellRing, LucideUser2 } from "lucide-react";
@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LuLayoutGrid } from "react-icons/lu";
 import { CLIENT_DETAILS } from "@/utils/constants/client_information/client_details";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import AddPaymentWrapper from "../common/payment/AddPaymentWrapper";
 
 interface IDashboardUpperNavProps {
   sidebarOpen: boolean;
@@ -30,6 +32,7 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
   setSidebarOpen,
   setMouseEnter,
 }) => {
+  const [paymentOpen, setPaymentOpen] = useState<boolean>(false);
   return (
     <nav
       className={`w-screen md:w-full overflow-hidden py-1 md:py-1.5 absolute left-0 top-0 z-50 transition-all duration-500 backdrop-blur-sm border-b px-2 md:px-8 bg-tertiary/5`}
@@ -76,8 +79,23 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
           </li>
           <li>
             <Link to="/day_book_report">
-              <Button size="xs">Day-book</Button>
+              <Button variant="success" size="xs">
+                Day-book
+              </Button>
             </Link>
+          </li>
+          <li>
+            <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" variant="destructive" size="xs">
+                  Payment
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90%] overflow-y-auto md:max-w-[700px]">
+                {/* CUSTOMER DETAILS CONTAINER */}
+                <AddPaymentWrapper setPaymentOpen={setPaymentOpen} />
+              </DialogContent>
+            </Dialog>
           </li>
         </ul>
 
@@ -119,6 +137,23 @@ const DashboardUpperNav: FC<IDashboardUpperNavProps> = ({
                       Day-book
                     </Button>
                   </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        className="w-full"
+                        variant="destructive"
+                        size="xs"
+                      >
+                        Payment
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="w-[800px] max-h-[90%] overflow-y-auto">
+                      {/* ADD PAYMENT CONTAINER */}
+                      <AddPaymentWrapper setPaymentOpen={setPaymentOpen} />
+                    </DialogContent>
+                  </Dialog>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

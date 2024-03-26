@@ -38,6 +38,7 @@ import InfoWrapper from "@/components/common/InfoWrapper";
 import AddCustomer from "@/components/dashboard/contacts/customer/AddCustomer";
 import EditCustomer from "@/components/dashboard/contacts/customer/EditCustomer";
 import CustomerDetails from "@/components/dashboard/contacts/customer/CustomerDetails";
+import AddCustomerPayment from "@/components/dashboard/contacts/customer/customer_payment/AddCustomerPayment";
 
 const CustomerList = () => {
   const { toast } = useToast();
@@ -212,6 +213,23 @@ const CustomerList = () => {
                 <DialogContent className="sm:max-w-[800px] max-h-[90%] overflow-y-auto">
                   {/* CUSTOMER DETAILS CONTAINER */}
                   <CustomerDetails actionItem={actionItem} />
+                </DialogContent>
+              </Dialog>
+
+              {/* CUSTOMER PAYMENT */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full flex justify-start"
+                    size="xs"
+                  >
+                    Payment
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90%] overflow-y-auto md:max-w-[700px]">
+                  {/* ADD CUSTOMER PAYMENT CONTAINER */}
+                  <AddCustomerPayment actionItem={actionItem} />
                 </DialogContent>
               </Dialog>
 

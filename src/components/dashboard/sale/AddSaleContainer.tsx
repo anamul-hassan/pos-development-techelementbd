@@ -23,9 +23,8 @@ import {
 import FormWrapper from "@/components/common/form/FormWrapper";
 import { Input } from "@/components/ui/input";
 import InfoWrapper from "@/components/common/InfoWrapper";
-import HeadingParagraph from "@/components/common/HeadingParagraph";
-import { LuPlus } from "react-icons/lu";
-
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
+import { LuMinus, LuPlus } from "react-icons/lu";
 import { useAppContext } from "@/context/hook/useAppContext";
 import SaleProductDetails from "./SaleProductDetails";
 import { useSearchSinglePurchaseQuery } from "@/store/purchase/purchaseApi";
@@ -35,13 +34,14 @@ import AddClientFormContainer from "./AddClientFormContainer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { totalCalculator } from "@/utils/helpers/totalCalculator";
 import { percentageCalculator } from "@/utils/helpers/percentageCalculator";
-
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { useGetCustomersQuery } from "@/store/customer/customerApi";
-import SyncedContainer from "@/components/container/SyncedContainer";
+import SyncedContainer from "@/components/common/container/SyncedContainer";
 import AddPaymentTable, {
   IPaymentTable,
 } from "@/components/common/payment/AddPaymentTable";
+import CopyButton from "@/components/common/button/CopyButton";
+import { useDispatch } from "react-redux";
 
 interface IAddSaleProps {
   register: any;
@@ -75,6 +75,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
   totalVat,
   setError,
 }) => {
+  const dispatch = useDispatch();
   const { sidebarOpen } = useAppContext();
   const locale = "en";
   const {
@@ -158,7 +159,9 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
       const availableProduct = productData?.data
         ?.filter((product: any) => !idsToRemove.includes(product.id))
         .filter((singleProduct: any) => singleProduct?.stock !== 0);
-      setProductList(availableProduct);
+      if (!clear) {
+        setProductList(availableProduct);
+      }
     } else {
       setProductList([]);
     }
@@ -205,13 +208,13 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
     watch,
     totalPrice,
     totalDiscount,
+    clear,
   ]);
 
   useEffect(() => {
     if (clear) {
       setProductList([]);
       setClientList([]);
-
       setPaymentTable([
         {
           index: 0,
@@ -231,9 +234,12 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
           key: "Persent",
         },
       ]);
+      setProductSearch("");
+      setClientSearch("");
+
       setClear(false);
     }
-  }, [clear, setClear, setValue]);
+  }, [clear, setClear, setValue, dispatch]);
 
   return (
     <section>
@@ -264,17 +270,21 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                       <Button
                         variant="outline"
                         role="search_product"
-                        aria-expanded={productOpen}
                         className="w-full justify-between"
                       >
-                        {selectedProduct && selectedProduct?.length > 0
-                          ? selectedProduct?.find(
-                              (product: any) => product.id === productValue
-                            )?.productName
-                            ? selectedProduct?.find(
-                                (product: any) => product.id === productValue
-                              )?.productName
-                            : search_product.placeholder[locale]
+                        {selectedProduct && selectedProduct.length > 0
+                          ? (() => {
+                              const foundProduct = selectedProduct.find(
+                                (product: any) => product.id === +productValue
+                              );
+                              if (foundProduct && foundProduct.productName) {
+                                return foundProduct.productName.length > 30
+                                  ? foundProduct.productName.slice(0, 30)
+                                  : foundProduct.productName;
+                              } else {
+                                return search_product.placeholder[locale];
+                              }
+                            })()
                           : search_product.placeholder[locale]}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -313,7 +323,7 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                                   setProductValue(
                                     currentValue === productValue
                                       ? ""
-                                      : currentValue
+                                      : singleProduct?.id
                                   );
 
                                   // GET SELECTED PRODUCT FROM THE LIST
@@ -675,12 +685,20 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                 </li>
                 {/* VAT & TAX */}
                 <li className="flex justify-between border-b-[1px]">
-                  <label>&#40;&#43;&#41; Vat/Tax</label>
+                  <label>
+                    &#40;
+                    <LuPlus className="inline" />
+                    &#41; Vat/Tax
+                  </label>
                   <b>{totalVat.toFixed(2) || "0.00"}৳</b>
                 </li>
                 {/* DISCOUNT */}
                 <li className="flex justify-between border-b-[1px]">
-                  <label>&#40;&#45;&#45;&#41; Discount</label>
+                  <label>
+                    &#40;
+                    <LuMinus className="inline" />
+                    &#41; Discount
+                  </label>
                   <b>{totalDiscount.toFixed(2)}৳</b>
                 </li>
                 {/* NUMBER OF ITEMS */}
@@ -696,12 +714,19 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                 {/* TOTAL PRICE */}
                 <li className="flex justify-between py-1">
                   <label className="font-[500]">Total Payable Amount</label>
-                  <b>{(+totalPrice + +totalVat).toFixed(2) || "0.00"}৳</b>
+                  <b className="flex items-center gap-x-2">
+                    <CopyButton
+                      tooltipSide="left"
+                      copyItem={+totalPrice + +totalVat}
+                    />
+                    {(+totalPrice + +totalVat).toFixed(2) || "0.00"}৳
+                  </b>
                 </li>
               </ul>
               {/* PAYMENT METHOD */}
 
               <AddPaymentTable
+                shrink
                 scrollable
                 paymentTable={paymentTable}
                 setPaymentTable={setPaymentTable}
@@ -734,10 +759,17 @@ const AddSaleContainer: FC<IAddSaleProps> = ({
                   <li className="flex justify-between border-b-[1px]">
                     <label>Change</label>
                     <b>
-                      {(
-                        totalCalculator(watch("payments"), "paymentAmount") -
-                        (+totalPrice + +totalVat)
-                      ).toFixed(2) || "0.00"}
+                      {totalCalculator(watch("payments"), "paymentAmount") -
+                        (+totalPrice + +totalVat) >
+                      0
+                        ? (
+                            totalCalculator(
+                              watch("payments"),
+                              "paymentAmount"
+                            ) -
+                            (+totalPrice + +totalVat)
+                          ).toFixed(2)
+                        : "0.00"}
                       ৳
                     </b>
                   </li>

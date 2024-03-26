@@ -1,4 +1,4 @@
-import HeadingParagraph from "@/components/common/HeadingParagraph";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import { FC } from "react";
 
 interface IProductCategoryDetailsProps {

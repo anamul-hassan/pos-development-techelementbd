@@ -1,8 +1,9 @@
-import HeadingParagraph from "@/components/common/HeadingParagraph";
+import HeadingParagraph from "@/components/common/typography/HeadingParagraph";
 import PhotoLazyLoadWrapper from "@/components/common/photo/PhotoLazyLoadWrapper";
 import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { fullNameConverter } from "@/utils/helpers/fullNameConverter";
 import { FC } from "react";
+import Heading from "@/components/common/typography/Heading";
 
 interface IUserDetailsProps {
   actionItem: any;
@@ -11,15 +12,16 @@ interface IUserDetailsProps {
 const UserDetails: FC<IUserDetailsProps> = ({ actionItem }) => {
   return (
     <section className="space-y-4 font-anek">
+      <Heading variant="primary">User Details</Heading>
       {/* PERSONAL INFORMATION */}
-      <div className="">
+      <div>
         <div>
           <PhotoLazyLoadWrapper
             className="size-20 border-[0.5px] border-tertiary/40 rounded-md"
             src={actionItem?.avatar}
             alt={fullNameConverter(actionItem?.firstName, actionItem?.lastName)}
           />
-          <h3 className="text-2xl font-semibold mb-2">Personal Information</h3>
+          <Heading variant="secondary">Personal Information</Heading>
         </div>
 
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
@@ -104,8 +106,8 @@ const UserDetails: FC<IUserDetailsProps> = ({ actionItem }) => {
         </ul>
       </div>
       {/* GENERAL INFORMATION */}
-      <div className="">
-        <h3 className="text-2xl font-semibold mb-2">General Information</h3>
+      <div>
+        <Heading variant="secondary">General Information</Heading>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-3 md:gap-x-6">
           <li>
             <HeadingParagraph

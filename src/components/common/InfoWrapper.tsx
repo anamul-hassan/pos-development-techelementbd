@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { FC, ReactNode } from "react";
+import Heading from "./typography/Heading";
 
 interface IInfoWrapperProps {
   heading: string;
@@ -20,7 +21,9 @@ const InfoWrapper: FC<IInfoWrapperProps> = ({
       )}
     >
       <div className="border-b bg-tertiary/5">
-        <h4 className="py-1 px-4 heading-secondary">{heading}</h4>
+        <Heading className="py-1 px-4" variant="secondary">
+          {heading}
+        </Heading>
       </div>
       <div className="px-4 py-2">{children}</div>
     </div>

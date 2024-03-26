@@ -1,7 +1,7 @@
 import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
 import AddSaleExchangeReturnContainer from "@/components/dashboard/sale/sale_return_exchange/AddSaleExchangeReturnContainer";
 import { useToast } from "@/components/ui/use-toast";
-import { addEditSaleExchangeReturnSchema } from "@/schemas/sale/add_sale_exchange_return";
+import { addEditSaleExchangeReturnSchema } from "@/schemas/sale/add_edit_sale_exchange_return";
 import { useAddSaleExchangeReturnMutation } from "@/store/sale_exchange_return/saleExchangeReturnApi";
 import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -55,7 +55,13 @@ const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
       delete updateData.payments;
     }
 
-    const result = await addSaleExchangeReturn(data);
+    const refineData = {
+      ...updateData,
+      returnProduct: updateData?.returnProduct?.filter(
+        (singleProduct: any) => singleProduct?.quantity !== 0
+      ),
+    };
+    const result = await addSaleExchangeReturn(refineData);
 
     if (result?.data?.success) {
       toast({
@@ -65,7 +71,6 @@ const AddSaleExchangeReturn: FC<IAddSaleExchangeReturnProps> = () => {
       navigate("/sale_exchange_return_list", { replace: true });
     }
   };
-
   return (
     <form onSubmit={handleSubmit(addExchangeReturnHandler)}>
       <AddSaleExchangeReturnContainer

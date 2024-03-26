@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { addAndEditClientSchema } from "@/schemas/sell/add_edit_client _schema";
+import { addAndEditClientSchema } from "@/schemas/sale/add_edit_client _schema";
 import { useGetBranchesQuery } from "@/store/branch/branchApi";
 import { useAddCustomerMutation } from "@/store/customer/customerApi";
 import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";

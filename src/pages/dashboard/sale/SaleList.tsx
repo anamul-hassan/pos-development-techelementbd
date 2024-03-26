@@ -83,8 +83,11 @@ const SaleList = () => {
             singleSale?.customer?.lastName
           ),
           phone: singleSale?.customer?.phone,
-          totalPrice: singleSale?.totalPrice.toFixed(2),
-          totalPayment: singleSale?.totalPaymentAmount.toFixed(2),
+          dummyAutoInvoiceNumber: singleSale.autoInvoiceNo?.toUpperCase(),
+          dummyTotalPrice: `${singleSale?.totalPrice.toFixed(2) || "0.00"}৳`,
+          dummyTotalPayment: `${
+            singleSale?.totalPaymentAmount.toFixed(2) || "0.00"
+          }৳`,
           date: format(singleSale?.saleDate, "PPP"),
         };
       });
@@ -126,13 +129,17 @@ const SaleList = () => {
       accessorKey: "phone",
       header: "Phone",
     },
+    {
+      accessorKey: "dummyAutoInvoiceNumber",
+      header: "Invoice No",
+    },
 
     {
-      accessorKey: "totalPrice",
+      accessorKey: "dummyTotalPrice",
       header: "Total Amount",
     },
     {
-      accessorKey: "totalPayment",
+      accessorKey: "dummyTotalPayment",
       header: "Total ",
     },
     {
@@ -174,6 +181,7 @@ const SaleList = () => {
 
               {/* PAY SALE INFORMATION */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"
@@ -183,6 +191,7 @@ const SaleList = () => {
 
               {/* EDIT SALE INFORMATION */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"
@@ -202,7 +211,7 @@ const SaleList = () => {
                     Details
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[800px] max-h-[90%] overflow-y-auto">
+                <DialogContent className="sm:max-w-[1000px] max-h-[90%] overflow-y-auto">
                   {/* PRODUCT DETAILS FORM CONTAINER */}
                   <SaleDetails actionItem={actionItem} />
                 </DialogContent>
@@ -210,6 +219,7 @@ const SaleList = () => {
 
               {/* LEDGER SALE INFORMATION */}
               <Button
+                disabled
                 variant="outline"
                 className="w-full flex justify-start"
                 size="xs"

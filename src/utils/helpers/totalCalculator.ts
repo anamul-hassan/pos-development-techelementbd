@@ -1,5 +1,5 @@
 export const totalCalculator = (
-  numbersCollection: string[] | number[],
+  numbersCollection: object[],
   propertyName: string
 ) => {
   const total = numbersCollection

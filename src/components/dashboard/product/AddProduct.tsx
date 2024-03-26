@@ -1,8 +1,8 @@
+import BranchSelectorInput from "@/components/common/BranchSelectorInput";
 import FormWrapper from "@/components/common/form/FormWrapper";
 import InputWrapper from "@/components/common/form/InputWrapper";
+import SubmitErrorWrapper from "@/components/common/form/SubmitErrorWrapper";
 import ButtonLoader from "@/components/common/loader/ButtonLoader";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,13 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { useToast } from "@/components/ui/use-toast";
 import { addAndEditProductSchema } from "@/schemas/product/product_schema";
-import { useGetBranchesQuery } from "@/store/branch/branchApi";
 import { useGetBrandsQuery } from "@/store/brand/brandApi";
 import { useAddThumbnailMutation } from "@/store/file/fileApi";
-
 import { useAddProductMutation } from "@/store/product/productApi";
 import { useGetProductCategoriesQuery } from "@/store/product_category/productCategoryApi";
 import { useGetProductSubCategoriesQuery } from "@/store/product_sub_category/productSubCategoryApi";
@@ -26,10 +23,8 @@ import { ADD_EDIT_PRODUCT_FORM } from "@/utils/constants/product/add_edit_produc
 import { actionManager } from "@/utils/helpers/actionManager";
 import { capitalizeEveryWord } from "@/utils/helpers/capitalizeEveryWord";
 import { removeEmptyStringOrZeroProperties } from "@/utils/helpers/removeEmptyStringProperties";
-
 import { shareBranchAndUserInfo } from "@/utils/helpers/shareBranchAndUserInfo";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AlertCircle } from "lucide-react";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { LuCheck, LuLoader2 } from "react-icons/lu";
@@ -58,13 +53,9 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
   const { data: unitList, isLoading: unitLoading } = useGetUnitsQuery(
     {}
   ) as any;
-  // BRANCH LIST QUERY
-  const { data: branchList, isLoading: branchLoading } = useGetBranchesQuery(
-    {}
-  );
 
   // ADD PRODUCT MUTATION
-  const [addProduct, { isLoading: loadingAddProduct, error: addProductError }] =
+  const [addProduct, { isLoading: addProductLoading, error: addProductError }] =
     useAddProductMutation({}) as any;
   // ADD THUMBNAIL MUTATION
   const [
@@ -307,68 +298,22 @@ const AddProduct: FC<IAddProductProps> = ({ setAddProductOpen }) => {
         </InputWrapper>
         {/* BRANCH LIST */}
         {actionManager(["admin"]) && (
-          <InputWrapper
-            label={ADD_EDIT_PRODUCT_FORM.branch.label[locale]}
-            labelFor="branch"
-            error={errors?.branchId?.message}
-          >
-            <Select
-              value={branch?.toString()}
-              onValueChange={(value: string) => {
-                setBranch(+value);
-                setError("branchId", { type: "custom", message: "" });
-              }}
-            >
-              <SelectTrigger id="branch" className="">
-                <SelectValue
-                  placeholder={ADD_EDIT_PRODUCT_FORM.branch.placeholder[locale]}
-                />
-              </SelectTrigger>
-              <SelectContent className="max-h-[200px] overflow-y-auto">
-                {branchList?.data?.length > 0 &&
-                  branchList?.data?.map((singleBranch: any) => (
-                    <SelectItem
-                      key={singleBranch?.id}
-                      value={singleBranch?.id?.toString()}
-                    >
-                      {capitalizeEveryWord(singleBranch?.branchName)}
-                    </SelectItem>
-                  ))}
-                {!branchList?.data?.length && branchLoading && (
-                  <div className="flex justify-center w-full h-8 items-center bg-accent rounded-md">
-                    <ButtonLoader />
-                  </div>
-                )}
-              </SelectContent>
-            </Select>
-          </InputWrapper>
+          <BranchSelectorInput
+            error={errors}
+            setError={setError}
+            branch={branch}
+            setBranch={setBranch}
+          />
         )}
       </FormWrapper>
 
       {/* ERROR MESSAGE */}
-      <div className="flex justify-between items-center my-2 w-full">
-        <div className="flex justify-start w-full md:max-w-[300px]">
-          {addProductError &&
-            Object?.keys(addProductError)?.length > 0 &&
-            "data" in addProductError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Add Product Error</AlertTitle>
-                <AlertDescription>
-                  {addProductError?.data?.message ||
-                    "Something went wrong! try again"}
-                </AlertDescription>
-              </Alert>
-            )}
-        </div>
-        {/* ADD PRODUCT BUTTON */}
-        <div className="flex justify-end w-1/2">
-          <Button disabled={loadingAddProduct} type="submit">
-            {loadingAddProduct && <ButtonLoader />}
-            Add Now
-          </Button>
-        </div>
-      </div>
+      <SubmitErrorWrapper
+        errorTitle="Add Product Error"
+        buttonLabel="Add Now"
+        loading={addProductLoading}
+        error={addProductError}
+      />
     </form>
   );
 };

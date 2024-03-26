@@ -42,6 +42,8 @@ interface IAddPaymentTableProps {
   register?: any;
   scrollable?: boolean;
   className?: string;
+  shrink?: boolean;
+  required?: boolean;
 }
 
 const AddPaymentTable: FC<IAddPaymentTableProps> = ({
@@ -52,6 +54,8 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
   setError,
   scrollable,
   className,
+  shrink,
+  required,
 }) => {
   const { sidebarOpen } = useAppContext();
   // THIS STATE PREVENT TO SET VALUE WHEN DROPDOWN IS CLOSE
@@ -91,6 +95,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
     // UPDATE THE DATA ON THE STATE
     setPaymentTable([...paymentTable, newItem]);
   };
+
   return (
     <aside className={cn("", className)}>
       <div
@@ -173,9 +178,11 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
             <li className="w-full">
               <InputWrapper
                 labelFor="paying_method"
-                label={paymentTableForm.payment_method.label["en"]}
+                label={`${paymentTableForm.payment_method.label["en"]} ${
+                  required ? "✽" : ""
+                }`}
                 className={`w-full  ${
-                  sidebarOpen
+                  sidebarOpen && shrink
                     ? "lg:w-[94px] xl:w-[128px] truncate"
                     : "lg:w-[134px] xl:w-full"
                 }`}
@@ -203,7 +210,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
                   <SelectTrigger
                     id="paying_method"
                     className={`w-full p-5 focus:ring-0 ${
-                      sidebarOpen
+                      sidebarOpen && shrink
                         ? "lg:w-[90px] xl:w-[120px] truncate"
                         : "lg:w-[130px] xl:w-full"
                     }`}
@@ -227,7 +234,7 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
                           <SelectItem
                             disabled={watch(property)?.some(
                               (accountItem2: any) =>
-                                accountItem2.accountId === singleAccount?.id
+                                accountItem2?.accountId === singleAccount?.id
                             )}
                             className="cursor-pointer"
                             key={singleAccount?.id}
@@ -242,7 +249,9 @@ const AddPaymentTable: FC<IAddPaymentTableProps> = ({
             </li>
             <li className="w-full">
               <InputWrapper
-                label={paymentTableForm.payable_amount.label["en"]}
+                label={`${paymentTableForm.payable_amount.label["en"]} ${
+                  required ? "✽" : ""
+                }`}
                 labelFor="paying_amount"
               >
                 {/* ENTER AMOUNT FILED */}
